@@ -54,7 +54,11 @@ ready(function(){
         xhr.send(params);
     }
 
+<<<<<<< HEAD
     // Detect #LOGIN button click, Make POST request TO THE SERVER
+=======
+    // POST TO THE SERVER
+>>>>>>> 701adf1 (First Push)
     document.querySelector("#LOGIN").addEventListener("click", function(e) {
         e.preventDefault();
         let email = document.getElementById("email");
@@ -78,4 +82,11 @@ ready(function(){
         }, queryString);
     });
 
+<<<<<<< HEAD
+=======
+    ajaxPOST("/marketplace", function(data){
+        //document.getElementById("grid-item-pokeMartTable").innerHTML = ;
+    });
+
+>>>>>>> 701adf1 (First Push)
 })
