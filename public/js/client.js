@@ -54,7 +54,7 @@ ready(function(){
         xhr.send(params);
     }
 
-    // POST TO THE SERVER
+    // Detect #LOGIN button click, Make POST request TO THE SERVER
     document.querySelector("#LOGIN").addEventListener("click", function(e) {
         e.preventDefault();
         let email = document.getElementById("email");
@@ -76,10 +76,6 @@ ready(function(){
             //document.getElementById("errorMsg").innerHTML = dataParsed.msg;
 
         }, queryString);
-    });
-
-    ajaxPOST("/marketplace", function(data){
-        //document.getElementById("grid-item-pokeMartTable").innerHTML = ;
     });
 
 })
