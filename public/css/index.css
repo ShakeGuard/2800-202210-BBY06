@@ -1,0 +1,51 @@
+body{
+    background-color: #dfdfdf;
+}
+
+/* Universal Selector */
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* a Tag Selector */
+a, a:visited, a:active{
+    text-decoration: none;
+    color: black;
+}
+
+a:hover{
+    color: rgb(90, 90, 90);
+}
+
+#Base-Container{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    margin-top: 15vh;
+    background-color: #d2d2d2;
+    margin-left: 20vw;
+    margin-right: 20vw;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    border-radius: 25px;
+    box-shadow: 5px 5px 10px rgb(179, 179, 179);
+}
+#grid-container-form{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(9,auto);
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+    place-items: center;
+    
+}
+.pokeball{
+    margin-top: 5vh;
+    width: 8vw;
+    height: auto;
+}
+
+.form-item{
+    margin: 10px;
+    font-size: 2vw;
+}
