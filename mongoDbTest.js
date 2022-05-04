@@ -240,6 +240,36 @@ app.post("/logout", (req, res) => {
 	} 
 })
 
+app.post("/signup", async (req, res) => {
+	// TODO: Should probably sanitize some of these before sticking them in the database
+	const name = req.body.name;
+	const emailAddress = req.body.email;
+	const pwd = req.body.password;
+	const avatarURL = req.body.avatarURL;
+	const date = new Date().toISOString();
+	const achievements = req.body.achievements;
+	const admin = false;
+	const kit = req.body.kit;
+
+	// Set response header regardless of success/failure
+	res.setHeader("Content-Type", "application/json");
+
+	try {
+		await db.collection('users')
+			.insertOne({name, emailAddress, pwd, avatarURL, date, achievements, admin, kit});
+
+		// TODO: This should redirect to the login page when thats done		
+		res.send("User created successfully");
+	} catch(e) {
+		console.log(e);
+		if(e.message.includes("email dup key")) {
+			res.status(403).send("A user already exists with that email.");
+		} else {			
+			res.status(500).send("Could not create user because of a server issue.");
+		}
+	}
+})
+
 // RUN SERVER
 let port = 8000;
 app.listen(port, function () {
