@@ -40,10 +40,13 @@ let mongo, db;
 // TODO:
 // * Do this exactly once when the app starts up, save the connection.
 const connectMongo = async (url, dbName) => {
+
+	let mongo, db;
+
 	let dotAnim; // Interval handler for the "dots" animation.
 	try {
 		dotAnim = setInterval(() => process.stdout.write('…'), 1000);
-		const mongo = await Promise.race([
+		mongo = await Promise.race([
 			MongoClient.connect(url, {
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
@@ -52,8 +55,8 @@ const connectMongo = async (url, dbName) => {
 				setTimeout(() => rej("Timed out after 15 seconds."), 15000)
 			})
 		]);
-		const db = mongo.db(dbName);
-		console.error(`Connected to "${url}", using database "${argv.dbName}"`);
+		db = mongo.db(dbName);
+		console.log(`Connected to "${url}", using database "${argv.dbName}"`);
 	} catch (error) {
 		console.log(); // Newline!
 		console.error(`Tried connecting to ${url}, using database ${dbName}`);
