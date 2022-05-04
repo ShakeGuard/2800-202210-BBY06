@@ -1,5 +1,7 @@
 import { MongoClient } from 'mongodb';
 import express from 'express';
+import session from 'express-session';
+import bcrypt from 'bcrypt';
 import fs from 'fs';
 
 // Use `yargs` to parse command-line arguments.
@@ -82,6 +84,15 @@ try {
 
 
 app.use(express.json());
+app.use(session(
+	{
+	  secret: "shhhh...secret",
+	  name: "ShakeGuardSessionID",
+	  resave: false,
+	  // create a unique identifier for that client
+	  saveUninitialized: true
+	})
+  );
 // static path mappings
 app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
@@ -161,7 +172,7 @@ app.post('/delete-person', async (req, res) => {
 		console.log(results);
 		if(results.deletedCount === 0) {
 			errMsg = "Could not find person to delete."
-			throw new Error();
+			throw new Error(errMsg);
 		}
 		// Send success response
 		res.send({ status: "success", msg: "successfully deleted person." });
@@ -172,7 +183,48 @@ app.post('/delete-person', async (req, res) => {
 	}
 })
 
-
+app.post("/login", async (req, res) => {
+	const email = req.body.email;
+	const pwd = req.body.password;
+	let errMsg = null;
+	// Set response header regardless of success/failure
+	res.setHeader("Content-Type", "application/json");
+	try {
+		const results = await db.collection('users').find({emailAddress: email}).toArray();
+		if(results.length === 0) {
+			// Could not find user
+			res.status(401).send("Invalid email");
+		} else if (results.length > 1) {
+			// Many users with same email
+			// TODO: This is bad and should let someone know
+			errMsg = "Found multiple users with that email address.";
+			throw new Error();
+		} else {
+			// found user. validate password
+			bcrypt.compare(pwd, results[0].pwd, function(err, result) {
+				if(result) {
+					// Password matches, create session
+					req.session.loggedIn = true;
+					req.session.save(err => {
+						if(err)
+							console.log(err);
+					})
+					res.send("Logged in.");
+				} else {
+					// Password does not match
+					res.status(401).send("Invalid password");
+				}
+			});
+		}
+	} catch(e) {
+		console.log(e);
+		if(errMsg) {
+			res.status(403).send(errMsg);
+		} else {
+			res.status(500).send("There was most likely a problem with the server");
+		}
+	}
+})
 
 
 
