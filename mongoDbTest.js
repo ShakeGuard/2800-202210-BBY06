@@ -232,7 +232,7 @@ app.post("/logout", (req, res) => {
 		req.session.destroy(err => {
 			if(err) {
 				// TODO: Should this be a 400 or 500?
-				res.status(400).send("Unable to logout");
+				res.status(422).send("Unable to logout");
 			} else {
 				res.redirect(200, "/");
 			}
