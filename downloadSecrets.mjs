@@ -19,7 +19,7 @@ const argv = yargs(hideBin(process.argv))
 		type: 'string'
 	})
 	.option('hostname', {
-		alias: 'h',
+		alias: 'a',
 		description: 'The hostname of the server to attempt to download secrets from. Defaults to \"db.nokko.me\".',
 		type: 'string'
 	})
@@ -48,12 +48,15 @@ console.log(`Found home directory: "${path.format(homeDir)}".`);
 
 let keyFilePath;
 if (argv.keyfile) {
+	console.log("keyfile:", argv.keyfile)
 	keyFilePath = path.normalize(argv.keyfile).split(path.sep);
 } else {
 	keyFilePath = [path.format(homeDir), '.ssh', 'id_rsa'];
 }
 
-const potentialKeyFile = path.resolve(...keyFilePath);
+// TODO: test if --keyfile argument resolves properly on Windows, 
+// do we need to use 'C:\' instead of '/' here depending on platform?
+const potentialKeyFile = path.resolve('/', ...keyFilePath);
 console.log(`Testing if "${potentialKeyFile}" exists…`);
 
 try {

@@ -1,0 +1,1 @@
+echo "removeSecrets.cmd is not implemented, remove the .secrets directory manually if needed."
