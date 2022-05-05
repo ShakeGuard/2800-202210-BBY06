@@ -186,19 +186,13 @@ app.post('/delete-person', async (req, res) => {
 app.post("/login", async (req, res) => {
 	const email = req.body.email;
 	const pwd = req.body.password;
-	let errMsg = null;
 	// Set response header regardless of success/failure
 	res.setHeader("Content-Type", "application/json");
 	try {
 		const results = await db.collection('users').find({emailAddress: email}).toArray();
 		if(results.length === 0) {
 			// Could not find user
-			res.status(401).send("Invalid email");
-		} else if (results.length > 1) {
-			// Many users with same email
-			// TODO: This is bad and should let someone know
-			errMsg = "Found multiple users with that email address.";
-			throw new Error();
+			res.status(401).send("userNotFound");
 		} else {
 			// found user. validate password
 			bcrypt.compare(pwd, results[0].pwd, function(err, result) {
@@ -212,17 +206,13 @@ app.post("/login", async (req, res) => {
 					res.send("Logged in.");
 				} else {
 					// Password does not match
-					res.status(401).send("Invalid password");
+					res.status(401).send("passwordMismatch");
 				}
 			});
 		}
 	} catch(e) {
 		console.log(e);
-		if(errMsg) {
-			res.status(403).send(errMsg);
-		} else {
-			res.status(500).send("There was most likely a problem with the server");
-		}
+		res.status(500).send("serverIssue");
 	}
 })
 
@@ -232,7 +222,7 @@ app.post("/logout", (req, res) => {
 		req.session.destroy(err => {
 			if(err) {
 				// TODO: Should this be a 400 or 500?
-				res.status(422).send("Unable to logout");
+				res.status(422).send("logoutFailed");
 			} else {
 				res.redirect(200, "/");
 			}
@@ -261,15 +251,14 @@ app.post("/signup", async (req, res) => {
 	try {
 		await db.collection('users')
 			.insertOne({name, emailAddress, pwd, avatarURL, date, achievements, admin, kit});
-
-		// TODO: This should redirect to the login page when thats done		
-		res.send("User created successfully");
+	
+		res.redirect(200, "/");
 	} catch(e) {
 		console.log(e);
 		if(e.message.includes("email dup key")) {
-			res.status(403).send("A user already exists with that email.");
+			res.status(403).send("emailInUse");
 		} else {			
-			res.status(500).send("Could not create user because of a server issue.");
+			res.status(500).send("serverIssue");
 		}
 	}
 })
