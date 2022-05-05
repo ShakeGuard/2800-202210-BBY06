@@ -6,5 +6,9 @@
     "mysql2": "^2.3.3",
     "ssh2-sftp-client": "^8.0.0",
     "yargs": "^17.4.1"
+  },
+
+  "scripts": {
+    "prestart": "node downloadSecrets.mjs"
   }
 }
