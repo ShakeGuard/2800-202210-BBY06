@@ -121,10 +121,13 @@ app.post("/login", async (req, res) => {
 					// Password matches, create session
 					req.session.loggedIn = true;
 					req.session.save(err => {
-						if(err)
+						if(err) {
 							console.log(err);
+							res.status(500).send("couldNotSaveSession");
+						} else {
+							res.send("loginSuccessful");
+						}
 					})
-					res.send("Logged in.");
 				} else {
 					// Password does not match
 					res.status(401).send("passwordMismatch");
@@ -187,5 +190,5 @@ app.post("/signup", async (req, res) => {
 // RUN SERVER
 let port = 8000;
 app.listen(port, function () {
-  console.log(`Server listening on http://localhost:${port} !`);
+  console.log(`Server listening on http://localhost:${port}`);
 })
