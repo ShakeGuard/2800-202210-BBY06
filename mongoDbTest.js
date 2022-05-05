@@ -277,5 +277,5 @@ app.post("/signup", async (req, res) => {
 // RUN SERVER
 let port = 8000;
 app.listen(port, function () {
-  console.log('Listening on port ' + port + '!');
+  console.log(`Server listening on http://localhost:${port} !`);
 })
