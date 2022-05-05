@@ -249,7 +249,11 @@ app.post("/signup", async (req, res) => {
 	const date = new Date().toISOString();
 	const achievements = req.body.achievements;
 	const admin = false;
-	const kit = req.body.kit;
+	const kit = {
+		description: "",
+		order: [],
+		items: []
+	};
 
 	// Set response header regardless of success/failure
 	res.setHeader("Content-Type", "application/json");
