@@ -100,88 +100,9 @@ app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
 
 app.get('/', function (req, res) {
-	let doc = fs.readFileSync("./html/mongo.html", "utf8");
+	let doc = fs.readFileSync("./html/index.html", "utf8");
 	res.send(doc);
 });
-
-// Create example 
-app.post('/create-person', async (req, res) => {
-	console.log(req.body);
-	const name = req.body.name;
-	const email = req.body.email;
-
-	// Set response header regardless of success/failure
-	res.setHeader("Content-Type", "application/json");
-	try {
-		const insertResult = await db.collection('testCollection').insertOne({name, email});
-		console.log(insertResult);
-
-		// Send success response
-		res.send({ status: "success", msg: "successfully added person." });
-	} catch(e) {
-		console.log(e);
-		//send fail response
-		res.send({ status: "fail", msg: "could not add person." });
-	} 
-})
-
-// Read example
-// This example just gets all the documents in a collection
-// use .fineOne() instead to get just one document
-app.get('/people', async function (req, res) {
-	// Get every document in 'testCollection' collection
-	// send names to client
-  	const results = await db.collection('testCollection').find({}).toArray();
-  	const names = results.map(element => {
-		return element.name;
-	})
-
-	// Send query result
-	res.send(names);
-})
-
-// Update example
-app.post('/change-name', async (req, res) => {
-	const givenEmail = req.body.email;
-	const newName = req.body.name;
-
-	// Set response header regardless of success/failure
-	res.setHeader("Content-Type", "application/json");
-	try {
-		const results = await db.collection('testCollection').updateOne({email: givenEmail}, {$set: {name: newName}})
-		console.log(results);
-
-		// Send success response
-		res.send({ status: "success", msg: "successfully changed name." });
-	} catch(e) {
-		console.log(e);
-		//send fail response
-		res.send({ status: "fail", msg: "could not change name." });
-	}
-})
-
-// Delete example
-app.post('/delete-person', async (req, res) => {
-	const email = req.body.email;
-	const name = req.body.name;
-	let errMsg = null;
-	// Set response header regardless of success/failure
-	res.setHeader("Content-Type", "application/json");
-	try {
-		const results = await db.collection('testCollection').deleteOne({email: email, name: name});
-		console.log(results);
-		if(results.deletedCount === 0) {
-			errMsg = "Could not find person to delete."
-			throw new Error(errMsg);
-		}
-		// Send success response
-		res.send({ status: "success", msg: "successfully deleted person." });
-	} catch(e) {
-		console.log(e);
-		//send fail response
-		res.send({ status: "fail", msg: errMsg ? errMsg : "could not delete person." });
-	}
-})
 
 app.post("/login", async (req, res) => {
 	const email = req.body.email;
