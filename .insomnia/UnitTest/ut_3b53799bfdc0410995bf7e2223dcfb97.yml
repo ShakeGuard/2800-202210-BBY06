@@ -1,0 +1,10 @@
+_id: ut_3b53799bfdc0410995bf7e2223dcfb97
+type: UnitTest
+parentId: uts_0632262a5032487f8621fc538dadfbff
+modified: 1651698446943
+created: 1651698430827
+requestId: req_f540769243a94ae898908e64ef91727e
+name: Login Invalid Password Returns 401
+code: |-
+  const response1 = await insomnia.send();
+  expect(response1.status).to.equal(401);

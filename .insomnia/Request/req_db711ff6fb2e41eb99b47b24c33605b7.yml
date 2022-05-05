@@ -1,0 +1,33 @@
+_id: req_db711ff6fb2e41eb99b47b24c33605b7
+type: Request
+parentId: wrk_a9661c8c41ed444ea5f6e4c6bc397cf3
+modified: 1651699253896
+created: 1651698515627
+url: http://localhost:8000/login
+name: Login invalid email
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"email": "not.my.email@gmail.com",
+    	"password": "not_bacon"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_7187cac77b1f4a83bac29305629b4366
+  - name: Cookie
+    value: ShakeGuardSessionID=s%253At9BeOdZFUBpWc-HAgXTVANaCk8A9gEiR.XZKsN%252FO6HbD7VU0CT7WOh6X9nsukmgZxb1bJWkU8IWA
+    id: pair_9c4d693e82c249da879fbaa044f9c95a
+authentication: {}
+metaSortKey: -1651698515627
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

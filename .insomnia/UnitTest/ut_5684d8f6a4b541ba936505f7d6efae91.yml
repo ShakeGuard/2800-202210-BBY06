@@ -1,0 +1,10 @@
+_id: ut_5684d8f6a4b541ba936505f7d6efae91
+type: UnitTest
+parentId: uts_0632262a5032487f8621fc538dadfbff
+modified: 1651698580886
+created: 1651698565082
+requestId: req_db711ff6fb2e41eb99b47b24c33605b7
+name: Login Invalid Email Returns 401
+code: |-
+  const response1 = await insomnia.send();
+  expect(response1.status).to.equal(401);

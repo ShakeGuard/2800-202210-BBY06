@@ -1,0 +1,30 @@
+_id: req_f540769243a94ae898908e64ef91727e
+type: Request
+parentId: wrk_a9661c8c41ed444ea5f6e4c6bc397cf3
+modified: 1651698477622
+created: 1651698374977
+url: localhost:8000/login
+name: Login invalid password
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"email": "alexkonghockey@gmail.com",
+    	"password": "not_the_right_password"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_dd5f4cc127014d13847209741e31babf
+authentication: {}
+metaSortKey: -1651698374977
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

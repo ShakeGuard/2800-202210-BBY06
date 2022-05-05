@@ -1,0 +1,30 @@
+_id: req_3d7f9298baf44e8b96de5cb4d19e6eb5
+type: Request
+parentId: wrk_a9661c8c41ed444ea5f6e4c6bc397cf3
+modified: 1651703789244
+created: 1651697798418
+url: localhost:8000/login
+name: Login
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"email": "alexkonghockey@gmail.com",
+    	"password": "not_bacon"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_d58c148f86b943529304b4ea14d1cc6d
+authentication: {}
+metaSortKey: -1651697798418
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

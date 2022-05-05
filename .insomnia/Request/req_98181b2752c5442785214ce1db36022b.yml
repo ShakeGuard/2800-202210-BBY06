@@ -1,0 +1,58 @@
+_id: req_98181b2752c5442785214ce1db36022b
+type: Request
+parentId: wrk_a9661c8c41ed444ea5f6e4c6bc397cf3
+modified: 1651708539990
+created: 1651703871067
+url: localhost:8000/signup
+name: Signup
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: >-
+    {
+      "name": "Jim Bob",
+      "email": "jimbob@gmail.com",
+      "password": "$2b$10$dpUs.qr.pi5kESAzC69AZunfR1PEPxM5i8P.ayS6K5fWnHzm0ux4m",
+      "avatarURL": "/avatar/<filename>.png",
+      "achievements": [
+        "gettingStarted",
+        "planKit",
+        "finishKit"
+      ],
+      "kit": {
+    	"description": "GrabAndGo",
+    	"order": [1, 0],
+    	"items": [
+    		{
+    			"id": "<UUID>",
+    			"complete": false,
+    			"type": "bandages",
+    			"quantity": 50,
+    			"name": "BAND-AID Bandages"
+    		},
+    		{
+    			"id": "<UUID>",
+    			"complete": true,
+    			"type": "flashlight",
+    			"quantity": 1,
+    			"name": "Flashlight"
+    		}
+    	]
+    }
+
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_c235dfd727ab4ab2b35e9cd4924f2e5b
+authentication: {}
+metaSortKey: -1651703871067
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
