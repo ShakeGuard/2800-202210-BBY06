@@ -14,20 +14,19 @@ body{
     grid-template-rows: repeat(5, auto);
 }
 
+#Continue-Link{
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
 .Arrow-CSS{
-    color: #FFFFFF;
-}
-
-.Checkmark.Arrow-CSS{
-    color: #17A5BA;
-}
-
-#Sign-up-Link{
-    margin-top: 25px;
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 1;
+    place-self: center;
 }
 
 .material-symbols-outlined {
-  font-size: 100px !important;
+  font-size: 10vw !important;
   font-variation-settings:
   'FILL' 0,
   'wght' 400,
@@ -38,7 +37,6 @@ body{
 #Base-Container-Continue-Link{
     margin-top: 10vh;
     display: grid;
-    place-items: center;
     grid-template-columns: 1fr .5fr;
     grid-template-rows: 1fr;
 }
