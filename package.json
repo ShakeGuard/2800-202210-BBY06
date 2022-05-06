@@ -11,6 +11,7 @@
   },
   "scripts": {
     "prestart": "node downloadSecrets.mjs",
+    "preprod": "node downloadSecrets.mjs",
     "test": "echo \"No tests defined!\"",
     "start": "node mongoDbTest.js -i localhost -p 27017 --db test",
     "prod": "node mongoDbTest.js -i db.nokko.me -p 27017 --auth true --db shakeguard"
