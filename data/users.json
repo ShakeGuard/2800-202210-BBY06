@@ -1,0 +1,36 @@
+[{
+  "_id":  "6271b990351af81c4150c1d3",
+  "name": "Katy Petrova",
+  "emailAddress": "katy@nokko.me",
+  "pwd": "$2b$10$lkogZxP4cIm0zHyk81G3suvvu48dhZRz1I1T5kSR1Ly85VZncaz5y",
+  "avatarURL": "/avatar/<filename>.png",
+  "dateJoined": {
+    "$date": {
+      "$numberLong": "1651619110000"
+    }
+  },
+  "achievements": [
+    "gettingStarted",
+    "planKit",
+    "finishKit"
+  ],
+  "admin": true
+},{
+  "_id": "6271b990351af81c4150c1d4",
+  "name": "Alex Kong",
+  "emailAddress": "alexkonghockey@gmail.com",
+  "pwd": "$2b$10$dpUs.qr.pi5kESAzC69AZunfR1PEPxM5i8P.ayS6K5fWnHzm0ux4m",
+  "avatarURL": "/avatar/<filename>.png",
+  "dateJoined": {
+    "$date": {
+      "$numberLong": "1651704348000"
+    }
+  },
+  "achievements": [
+    "gettingStarted",
+    "planKit",
+    "finishKit"
+  ],
+  "admin": false
+	}
+]

@@ -72,6 +72,7 @@ const connectMongo = async (url, dbName) => {
 			})
 		]);
 		db = mongo.db(dbName);
+		initDatabase(db);
 		console.log(`Connected to "${url}", using database "${dbName}"`);
 	} catch (error) {
 		console.log(); // Newline!
@@ -102,14 +103,42 @@ const connectMongo = async (url, dbName) => {
 	return [mongo, db];
 }
 
+// If db does not contain collections we need, add them.
+// Else do nothing
+const initDatabase = async(db) => {
+
+	// There are no collections in this database so we need to add ours.
+	const users = await db.collection("BBY-6_users").find({}).toArray();
+	if(users.length === 0 ){
+		const usersJson = JSON.parse(fs.readFileSync('./data/users.json', 'utf-8'))
+		await db.collection("BBY-6_users").insertMany(usersJson);
+	}
+	
+	const items = await db.collection("BBY-6_items").find({}).toArray();
+	if(items.length === 0 ){
+		const itemsJson = JSON.parse(fs.readFileSync('./data/items.json', 'utf-8'))
+		await db.collection("BBY-6_items").insertMany(itemsJson);
+	}
+
+	const categories = await db.collection("BBY-6_categories").find({}).toArray();
+	if(categories.length === 0 ){
+		const categoriesJson = JSON.parse(fs.readFileSync('./data/categories.json', 'utf-8'))
+		await db.collection("BBY-6_categories").insertMany(categoriesJson);
+	}
+
+	const articles = await db.collection("BBY-6_articles").find({}).toArray();
+	if(articles.length === 0 ){
+		const articlesJson = JSON.parse(fs.readFileSync('./data/articles.json', 'utf-8'))
+		await db.collection("BBY-6_articles").insertMany(articlesJson);
+	}
+}
+
 console.log("Connecting to MongoDB instance…");
 try {
 	[mongo, db] = await connectMongo(url, dbName);
 } catch (err) {
 	console.error(`Could not connect to MongoDB instance at ${url}!`);
 }
-
-
 
 app.use(express.json());
 app.use(session(
@@ -189,7 +218,7 @@ app.post("/signup", async (req, res) => {
 	const pwd = req.body.password;
 	const avatarURL = req.body.avatarURL;
 	const date = new Date().toISOString();
-	const achievements = req.body.achievements;
+	const achievements = [];
 	const admin = false;
 	const kit = {
 		description: "",
