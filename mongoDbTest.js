@@ -112,6 +112,8 @@ const initDatabase = async(db) => {
 	if(users.length === 0 ){
 		const usersJson = JSON.parse(fs.readFileSync('./data/users.json', 'utf-8'))
 		await db.collection("BBY-6_users").insertMany(usersJson);
+		// Create a unique index on the emailAddress field in the users collection.
+		await db.collection("BBY-6_users").createIndex({ emailAddress: 1 }, { unique: true });
 	}
 	
 	const items = await db.collection("BBY-6_items").find({}).toArray();
@@ -235,8 +237,7 @@ app.post("/signup", async (req, res) => {
 	
 		res.redirect(200, "/");
 	} catch(e) {
-		console.log(e);
-		if(e.message.includes("email dup key")) {
+		if(e.code === 11000) {
 			res.status(403).send("emailInUse");
 		} else {			
 			res.status(500).send("serverIssue");
