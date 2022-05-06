@@ -237,6 +237,7 @@ app.post("/signup", async (req, res) => {
 	
 		res.redirect(200, "/");
 	} catch(e) {
+		// Email addresses have a unique index so mongo will give error code 11000 if the email is already in use
 		if(e.code === 11000) {
 			res.status(403).send("emailInUse");
 		} else {			
