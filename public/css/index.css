@@ -108,3 +108,15 @@ body {
 #section-heading2 {
     font-size: 1.3em;
 }
+.form-item{
+    margin: 10px;
+    font-size: 2vw;
+}
+
+.success {
+	color: green;
+}
+
+.fail {
+	color: red;
+}

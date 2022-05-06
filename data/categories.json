@@ -1,0 +1,16 @@
+[{
+  "_id": "6271bc8a351af81c4150c1f8",
+  "categoryName": "The Cascadia Subduction Zone",
+  "authorName": "Professor Smarts",
+  "authorID": null,
+  "blurb": "Learn about British Columbia's major geological feature!",
+  "datePublished": "2022-05-03T23:05:10Z",
+  "articles": [
+    {
+      "$oid": "6271bc42351af81c4150c1ef"
+    },
+    {
+      "$oid": "6271bc42351af81c4150c1f0"
+    }
+  ]
+}]

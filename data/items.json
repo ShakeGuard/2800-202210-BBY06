@@ -1,0 +1,13 @@
+[{
+  "_id": "6271baf9351af81c4150c1e7",
+  "type": "bandages",
+  "prettyName": "BAND-AID Bandages",
+  "description": "BAND-AID makes bandages, they work as bandages. Good during disasters, perhaps.",
+  "pictureURL": "/items/<imageFile>.png"
+},{
+  "_id": "6271baf9351af81c4150c1e8",
+  "type": "flashlight",
+  "prettyName": "Flashlight",
+  "description": "Electricity can go out so flashlights are a must.",
+  "pictureURL": "/items/<imageFile>.png"
+}]
