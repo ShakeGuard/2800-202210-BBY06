@@ -26,7 +26,7 @@ const argv = yargs(hideBin(process.argv))
   })
   .option('dbName', {
 	  alias: 'db',
-	  description: "The name of the database to use in the MongoDB instance. Defaults to `test`.",
+	  description: "The name of the database to use in the MongoDB instance. Defaults to `COMP2800`.",
 	  type: 'string'
   })
   .option('auth', {
@@ -42,7 +42,7 @@ const app = express();
 // Defaults for address and port:
 const url = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
 
-const dbName = argv.dbName ?? "test";
+const dbName = argv.dbName ?? "COMP2800";
 
 // The MongoDB connection and Database objects.
 // Populated by the connectMongo(…) function.
@@ -72,7 +72,7 @@ const connectMongo = async (url, dbName) => {
 			})
 		]);
 		db = mongo.db(dbName);
-		console.log(`Connected to "${url}", using database "${argv.dbName}"`);
+		console.log(`Connected to "${url}", using database "${dbName}"`);
 	} catch (error) {
 		console.log(); // Newline!
 		console.error(`Tried connecting to ${url}, using database ${dbName}`);
@@ -138,7 +138,7 @@ app.post("/login", async (req, res) => {
 	// Set response header regardless of success/failure
 	res.setHeader("Content-Type", "application/json");
 	try {
-		const results = await db.collection('users').find({emailAddress: email}).toArray();
+		const results = await db.collection('BBY-6_users').find({emailAddress: email}).toArray();
 		if(results.length === 0) {
 			// Could not find user
 			res.status(401).send("userNotFound");
@@ -201,7 +201,7 @@ app.post("/signup", async (req, res) => {
 	res.setHeader("Content-Type", "application/json");
 
 	try {
-		await db.collection('users')
+		await db.collection('BBY-6_users')
 			.insertOne({name, emailAddress, pwd, avatarURL, date, achievements, admin, kit});
 	
 		res.redirect(200, "/");
