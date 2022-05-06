@@ -1,0 +1,8 @@
+#Grid-Container-Form{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, auto);
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+    place-items: center;
+}
