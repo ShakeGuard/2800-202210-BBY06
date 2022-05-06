@@ -7,6 +7,12 @@ import fs from 'fs';
 // Use `yargs` to parse command-line arguments.
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
+
+// Grab secrets file
+import { readSecrets } from './shakeguardSecrets.mjs'
+
+const secrets = await readSecrets();
+
 const argv = yargs(hideBin(process.argv))
   .option('instanceAddress', {
     alias: 'i',
@@ -22,6 +28,11 @@ const argv = yargs(hideBin(process.argv))
 	  alias: 'db',
 	  description: "The name of the database to use in the MongoDB instance. Defaults to `test`.",
 	  type: 'string'
+  })
+  .option('auth', {
+		description: "If `--auth true`, the app will attempt to log into the MongoDB instance with"
+				+  "the username and password specified in the file `.secrets/mongodb_auth.json`.",
+		type: 'boolean'	
   })
   .help()
   .alias('help', 'h').parse();
@@ -50,6 +61,9 @@ const connectMongo = async (url, dbName) => {
 		dotAnim = setInterval(() => process.stdout.write('…'), 1000);
 		mongo = await Promise.race([
 			MongoClient.connect(url, {
+				auth: argv.auth ? {
+					...secrets['mongodb_auth.json']
+				} : undefined,
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
 			}),
@@ -63,8 +77,22 @@ const connectMongo = async (url, dbName) => {
 		console.log(); // Newline!
 		console.error(`Tried connecting to ${url}, using database ${dbName}`);
 		console.error("Ran into an error while connecting to MongoDB!");
-		console.error('Error object:');
+		switch (error.message) {
+			case "credentials must be an object with 'username' and 'password' properties":
+				if (argv.auth) {
+					console.error("Error: --auth option was set, but secrets module could "
+								+ "not load username and password for MongoDB instance!");
+					console.error("Try redownloading .secrets or running without the --auth option.")
+				}
+				break;
+		
+			default:
+				break;
+		}
+
+		console.error('Error object details:');
 		console.dir(error);
+
 		console.error('Exiting early due to errors!')
 		// TODO: consider any cleanup code before exiting: any open file handles?
 		process.exit();
