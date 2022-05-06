@@ -1,0 +1,63 @@
+/* Universal button styles */
+.button {
+    padding: 1em 2em;
+    border: none;
+    border-radius: 1em;
+    outline: none;
+    font: inherit;
+    font-weight: 700;
+    font-size: 1.2em;
+    color: inherit;
+    margin-top: 1em;
+    transition: background-color 0.1s ease-in;
+}
+
+.button:hover,
+.button:active,
+.button:focus {
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+
+}
+
+.button-primary {
+    background-color: #FBB33B;
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+}
+
+.button-primary:hover, 
+.button-primary:active, 
+.button-primary:focus {
+    background-color: #E99812;
+}
+
+.button-secondary {
+    border: 2px solid #FBB33B;
+    background-color: white;
+}
+
+.button-secondary:hover, 
+.button-secondary:active, 
+.button-secondary:focus {
+    background-color: #FBB33B;
+}
+
+
+.button-nav {
+    margin: 0;
+    padding: 0.8em 0.8em 0.6em 0.8em;
+    background-color: transparent;
+}
+
+.button-nav:hover,
+.button-nav:active,
+.button-nav:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+a.button {
+    text-decoration: none;
+}
+
+.block {
+    display: block;
+}
