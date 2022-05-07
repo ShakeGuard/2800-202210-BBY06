@@ -5,20 +5,15 @@ on:
 
 # Example from https://github.com/Cyb3r-Jak3/html5validator-action/wiki/Getting-Started
 jobs:
-  linters: 
-    name: stylelint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nok-ko/stylelint-csstree-validator-action@nok-ko-patch-csstree
-        env:
-          PATTERN: "public/css/*.css"
-          INDENT_SPACES: 4
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2 # Requried with all actions
+    - uses: actions/checkout@v2 # Required with all actions
     - name: Checks HTML5
       uses: Cyb3r-Jak3/html5validator-action@v7.1.1
       with:
         root: html/
+    - name: Validates CSS
+      uses: nok-ko/validate-css-action@main
+      with:
+        directory: public/css
