@@ -30,25 +30,11 @@ a:visited{
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    background-image: url(../images/mountain1.jpg);
+    background-image: 
+        linear-gradient(rgba(23,165,186,0.8),rgba(23,165,186,0.8)),
+        url(../images/mountain1.jpg);
     filter: blur(8px);
     -webkit-filter: blur(1.5px);
-    margin-left: 5vw;
-    margin-right: 5vw;
-    margin-top: 5vh;
-    margin-bottom: 5vh;
-    border-radius: 25px;
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 1;
-}
-
-#Base-Container-OpacityCard{
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    background-color: #17A5BA; 
-    opacity: .75;
     margin-left: 5vw;
     margin-right: 5vw;
     margin-top: 5vh;
