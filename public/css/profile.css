@@ -1,0 +1,24 @@
+h2 {
+    text-align: center;
+    font-size: 3rem;
+}
+
+#Form-Container {
+    justify-items: center;
+}
+
+:root {
+    color: white;
+    margin: 0;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+}
+
+#Button-Logout{
+    border: none;    
+    border-radius: 25px;
+    background-color: #FBB33B;
+    width: 25vw;
+    height: auto;
+    margin: 10px;
+}

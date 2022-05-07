@@ -13,7 +13,7 @@
     "prestart": "node downloadSecrets.mjs",
     "preprod": "node downloadSecrets.mjs",
     "test": "echo \"No tests defined!\"",
-    "start": "node mongoDbTest.js -i localhost -p 27017 --db COMP2800",
-    "prod": "node mongoDbTest.js -i db.nokko.me -p 27017 --auth true --db shakeguard"
+    "start": "node main.js -i localhost -p 27017 --db COMP2800",
+    "prod": "node main.js -i db.nokko.me -p 27017 --auth true --db shakeguard"
   }
 }

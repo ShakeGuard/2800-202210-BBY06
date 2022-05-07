@@ -1,3 +1,5 @@
+"use strict";
+
 import { MongoClient } from 'mongodb';
 import express from 'express';
 import session from 'express-session';
@@ -10,6 +12,10 @@ import { hideBin } from 'yargs/helpers'
 
 // Grab secrets file
 import { readSecrets } from './shakeguardSecrets.mjs'
+
+console.log = () => {};
+console.dir = () => {};
+console.error = () => {};
 
 const secrets = await readSecrets();
 
@@ -159,7 +165,26 @@ app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
 
 app.get('/', function (req, res) {
+	if (req.session.loggedIn) {
+		res.redirect('/profile');
+		console.log("User logged in!");
+		return;
+	}
 	let doc = fs.readFileSync("./html/index.html", "utf8");
+	res.send(doc);
+});
+
+app.get('/profile', function (req, res) {
+	if (!req.session.loggedIn) {
+		res.redirect("/login");
+		return;
+	}
+	let doc = fs.readFileSync("./html/profile.html", "utf8");
+	res.send(doc);
+});
+
+app.get('/login', function (req, res) {
+	let doc = fs.readFileSync("./html/login.html", "utf8");
 	res.send(doc);
 });
 
@@ -204,10 +229,9 @@ app.post("/logout", (req, res) => {
 	if(req.session) {
 		req.session.destroy(err => {
 			if(err) {
-				// TODO: Should this be a 400 or 500?
 				res.status(422).send("logoutFailed");
 			} else {
-				res.redirect(200, "/");
+				res.status(200).send('logoutSuccessful');
 			}
 		})
 	} 

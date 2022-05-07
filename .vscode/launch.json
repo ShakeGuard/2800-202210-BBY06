@@ -9,8 +9,6 @@
                 "<node_internals>/**"
             ],
             // TODO: Write proper tests!
-            // "args": ["--keyfile", "/Users/nokko/.ssh/id_rsa"],
-            // "args": ["--hostname", "45.79.103.161", "--username", "nokko"],
             // Remove the old .secrets directory before launching the downloadSecrets script:
             "preLaunchTask": "Remove .secrets",
             "program": "${workspaceFolder}/downloadSecrets.mjs"

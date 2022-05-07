@@ -1,3 +1,5 @@
+"use strict";
+
 // downloadSecrets.js – Downloads the `.secrets` directory via SFTP.
 import SFTPClient from 'ssh2-sftp-client';
 import yargs from 'yargs';
@@ -5,6 +7,11 @@ import {hideBin} from 'yargs/helpers';
 import path from 'node:path';
 import { open, access } from 'node:fs/promises';
 import { constants } from 'node:fs';
+
+console.log = () => {};
+console.warn = () => {};
+console.error = () => {};
+console.dir = () => {};
 
 const homeDirStr = (await import('os')).homedir();
 const homeDir = path.parse(homeDirStr);
