@@ -1,0 +1,97 @@
+@import url('https://api.fontshare.com/css?f[]=satoshi@400,401,700,701&display=swap'); 
+@import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
+
+body {
+    background-color: #dfdfdf;
+}
+
+a{
+    color: #FFFFFF;
+}
+
+a:visited{
+    color: #FFFFFF;
+}
+
+.ShakeGuard-Logo{
+    margin-top: 5vh;
+    width: 50vw;
+    height: auto;
+}
+
+#Base-Container{
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+#Base-Container-Image{
+    z-index: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    background-image: 
+        linear-gradient(rgba(23,165,186,0.8),rgba(23,165,186,0.8)),
+        url(../images/mountain1.jpg);
+    filter: blur(8px);
+    -webkit-filter: blur(1.5px);
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    border-radius: 25px;
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+#Form-Container{
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    border-radius: 25px;
+    box-shadow: 5px 5px 10px rgb(179, 179, 179);
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+.Grid-Container-Form-Input{
+    background-color: #FFFFFF;
+    text-indent: 10px;
+    margin: 10px;
+    border: none;  
+    border-radius: 25px;
+    width: 70vw;
+    height: auto;
+}
+
+.Form-Item{
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    margin-left: 10px;
+    font-size: 5vw;
+}
+
+.Bottom-Text{
+    color: #FFFFFF;
+    font-size: 5vw;
+}
+
+#Sign-up-Link{
+    color: #FFFFFF;
+    margin-top: -1vh;
+    margin-bottom: 5vh;
+}
+
+#Button-Login{
+    border: none;    
+    border-radius: 25px;
+    background-color: #FBB33B;
+    width: 25vw;
+    height: auto;
+    margin: 10px;
+}

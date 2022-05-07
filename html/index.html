@@ -1,30 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Magnitude</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/img/favicon.ico" rel="icon" type="image/x-icon" />
-    <link href="css/index.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet"> 
+    <title>ShakeGuard</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/images/comp2800_logo_favicon.ico" rel="icon" type="image/x-icon" />
+
+    <!-- Our stylesheets -->
+    <link href="/css/buttons.css" rel="stylesheet" />
+    <link href="/css/index.css" rel="stylesheet" />
+
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   </head>
   <body>
+    <!-- Page contents -->
+    <div id="grid-container-main">
+      <!-- Nav -->
+      <div id="nav-container">
+        <div id="navbar">
+          <div id="navbar-logo-white">
+            <a href="/">
+              <img src="/images/comp2800_logo_white.svg" alt="ShakeGuard Logo" />
+            </a>
+          </div>
+          <button name="button" class="button button-nav" id="menu-button-icon">
+            <span class="material-icons md-24x md-light">menu</span>
+          </button>
+        </div>
+      </div>
 
-    <div id="Base-Container">
-        <h1>This is the Login Page</h1>
-        <form id="grid-container-form">
-            <img src="images/Poké_Ball_Origin.png" alt="" class="pokeball">
-            <h1 class="form-item" id="formTitle">Carleone-Aquarin Poké Mart</h1>
-            <input class="form-item" id="email" type="email" required="required" placeholder="Email" value="jaywang@bcit.ca"/>
-            <input class="form-item" id="password" type="password" required="required" placeholder="Password" value="123456"/>
-            <input class="form-item" type="button" value="Login" id="LOGIN"/>
-            <h4 class="form-item" id="forgotP"><a href="#">Forgot Login?</a></h4>
-            <h4 class="form-item" id="notMemberP"><a href="#">Get Membership</a></h4>
-            <p class="form-item" id="errorMsg">&nbsp;</p>
-            <p><span class="form-item" id="serverMsg"></span></p>
-        </form>
+      <!-- Hero banner -->
+      <div id="hero-container">
+        <div id="hero-message">
+          <h1 id="hero-message-heading1">Get ready for the <span class="heading-emphasis">Big One</span></h1>
+          <p id="hero-message-paragraph">Prepare your earthquake kit today</p>
+        </div>
+        <!-- Call-to-action 1 -->
+        <a href="/login" class="button button-primary block" id="hero-button-start">
+          Start your kit
+        </a>
+      </div>
+
+      <!-- Other content -->
+      <div id="section-container">
+        <h2 id="section-heading2">or learn more</h2>
+
+        <div class="button-group">
+          <!-- Call-to-action 2 -->
+          <a href="#" class="button button-secondary block" id="section-button-resources-checklist">
+            Earthquake kit checklist
+          </a>
+
+          <!-- Call-to-action 3 -->
+          <a href="#" class="button button-secondary block" id="section-button-resources">
+            Earthquake resources
+          </a>
+        </div>
+      </div>
     </div>
 
-    <script src="js/client.js"></script>
 </body>
 </html>

@@ -1,0 +1,121 @@
+@import url('https://api.fontshare.com/css?f[]=satoshi@400,401,700,701&display=swap');
+@import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+}
+
+/* Google Material icons */
+.material-icons.md-36 { font-size: 36px; }
+
+.material-icons.md-dark { color: rgba(0, 0, 0, 1); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+
+/* Page contents */
+#grid-container-main {
+    text-align: center;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto 1fr;
+}
+
+/* Navbar styles */
+#nav-container {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    grid-row: 1 / span 1;
+}
+#navbar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#navbar-logo-white img {
+    height: 10vh;
+    margin: 0 2vw;
+}
+
+#menu-button-icon {
+    margin: 0 2vw;
+}
+
+
+#hero-container {
+    grid-row: 2 / span 1;
+    width: 100vw;
+    height: auto;
+}
+
+.heading-emphasis {
+    font-family: "Sharpie", serif;
+}
+
+#hero-message {
+    min-height: 20vh;
+    padding: 30% 10% 15% 10%;
+    color: white;
+
+    background-image:
+        /* color overlay */
+        linear-gradient(
+            rgba(23, 165, 186, 0.8), 
+            rgba(23, 165, 186, 0.8)
+        ),
+        url("../images/ali-kazal-jwyFn9kxQuc-unsplash.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+}
+
+#hero-message-heading1 {
+    font-size: 2.2em;
+}
+
+/* Keep the two words together in the "Big One" */
+#hero-message-heading1 span {
+    white-space: nowrap;
+}
+
+#hero-message-paragraph {
+    font-size: 1.4em;
+    margin-top: 0.5em;
+}
+
+#hero-button-start {
+    margin-top: -8%;
+    margin-left: 12%;
+    margin-right: 12%;
+}
+
+#section-container {
+    padding: 5% 12% 12% 12%;
+    grid-row: 3 / span 1;
+}
+
+#section-heading2 {
+    font-size: 1.3em;
+}
+.form-item{
+    margin: 10px;
+    font-size: 2vw;
+}
+
+.success {
+	color: green;
+}
+
+.fail {
+	color: red;
+}
