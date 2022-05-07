@@ -4,7 +4,7 @@ Team Members:
 [Alex Kong], [A00961078], [1D], [May 6]
 [Katy Petrova], [A01281045], [2C], [May 6]
 
-This assignment is [25]% complete
+This assignment is [90]% complete
 
 We are right before the Week 2 Milestone Handin, so in terms of progress:
 Front End has finished:
