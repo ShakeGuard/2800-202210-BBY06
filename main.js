@@ -202,8 +202,16 @@ app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
 
 app.get('/', async function (req, res) {
-	
-	let doc = await readFile("./html/index.html", "utf8");
+	if (req.session.loggedIn) {
+		if (req.session.isAdmin) {
+			res.redirect('/dashboard');
+		} else {
+			res.redirect('/profile');
+		}
+		console.log("User logged in!");
+	}
+
+	const doc = await readFile("./html/index.html", "utf8");
 	let index = new JSDOM(doc);
 
 	// Add the footer
@@ -211,6 +219,7 @@ app.get('/', async function (req, res) {
 
 	res.send(index.serialize());
 });
+
 app.get('/profile-details', async(req, res) => {
 	// Check that the user is logged in.
 
@@ -222,7 +231,7 @@ app.get('/profile-details', async(req, res) => {
 		res.status(500).send("userNotFound");
 		return;
 	} else {
-		res.setHeader("Content-Type", "application/json");
+		// res.setHeader("Content-Type", "application/json");
 		res.status(200).send({
 			name: req.session.name,
 			email: req.session.email
@@ -257,6 +266,11 @@ app.get('/profile', async (req, res) => {
 	if (redirectToLogin(req, res)) {
 		return;
 	}
+	if (req.session.isAdmin) {
+		res.redirect('/dashboard');
+		return;
+	}
+
 	let doc = await readFile("./html/user-profile.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let profile = await loadHeaderFooter(baseDOM);
@@ -368,6 +382,18 @@ app.get('/login', async function (req, res) {
 	res.send(login.serialize());
 });
 
+app.get('/dashboard', function (req, res) {
+	if (req.session.isAdmin) {
+		const doc = fs.readFileSync("./html/profile.html", "utf-8");
+		// TODO: templating
+		const newDoc = doc.replace('hidden', '');
+		res.send(newDoc);
+	} else {
+		// Unauthorized TODO: test
+		res.redirect('/profile');
+	}
+});
+
 app.post("/login", async (req, res) => {
 	const email = req.body.email;
 	const pwd = req.body.password;
@@ -378,30 +404,34 @@ app.post("/login", async (req, res) => {
 		if(results.length === 0) {
 			// Could not find user
 			res.status(401).send("userNotFound");
-		} else {
-			// found user. validate password
-			bcrypt.compare(pwd, results[0].pwd, function(err, result) {
-				if(result) {
-					// Password matches, create session
-					req.session.loggedIn = true;
-					req.session.name = results[0].name;
-					req.session.email = req.body.email;
-					req.session.save(err => {
-						if(err) {
-							console.log(err);
-							res.status(500).send("couldNotSaveSession");
-						} else {
-							res.send("loginSuccessful");
-						}
-					})
+			return;
+		} 
+		// Found user. Validate password.
+		const userDoc = results[0];
+		const passwordMatches = await bcrypt.compare(pwd, userDoc.pwd);
+		if (passwordMatches) {
+			// Password matches, create session
+			req.session.isAdmin = userDoc.admin;
+			req.session.loggedIn = true;
+			req.session.name = userDoc.name;
+			req.session.email = req.body.email;
+			req.session.save(err => {
+				if(err) {
+					console.log(err);
+					res.status(500).send("couldNotSaveSession");
 				} else {
-					// Password does not match
-					res.status(401).send("passwordMismatch");
+					if (userDoc.admin) {
+						res.send("loginSuccessfulAdmin");
+					} else {
+						res.send("loginSuccessful");
+					}
 				}
 			});
+		} else {
+			// Password does not match
+			res.status(401).send("passwordMismatch");
 		}
 	} catch(e) {
-		console.log(e);
 		res.status(500).send("serverIssue");
 	}
 })
