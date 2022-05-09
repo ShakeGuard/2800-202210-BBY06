@@ -5,6 +5,7 @@ import express from 'express';
 import session from 'express-session';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
+import { JSDOM } from 'JSDOM';
 
 // Use `yargs` to parse command-line arguments.
 import yargs from 'yargs'
@@ -180,7 +181,27 @@ app.get('/profile', function (req, res) {
 		return;
 	}
 	let doc = fs.readFileSync("./html/profile.html", "utf8");
-	res.send(doc);
+	const profile = new JSDOM(doc);
+	const document = profile.window.document;
+	// Add the header 
+	const headerPlaceholder = document.querySelector("header");
+	const headerHtml = fs.readFileSync("./html/header.html", "utf8");
+	const headerDOM = new JSDOM(headerHtml);
+	headerPlaceholder.innerHTML = headerDOM.window.document.querySelector("header").innerHTML;
+
+	// Add the profile component
+	const profilePlaceholder = document.querySelector("#Base-Container");
+	const profileComponentHtml = fs.readFileSync("./html/profile-component.html", "utf-8");
+	const profileComponentDOM = new JSDOM(profileComponentHtml);
+	profilePlaceholder.innerHTML = profileComponentDOM.window.document.querySelector("div").innerHTML;
+
+	// Add the footer
+	const footerPlaceholder = document.querySelector("footer");
+	const footerHtml = fs.readFileSync("./html/footer.html", "utf8");
+	const footerDOM = new JSDOM(footerHtml);
+	footerPlaceholder.innerHTML = footerDOM.window.document.querySelector("footer").innerHTML;
+
+	res.send(profile.serialize());
 });
 
 app.get('/login', function (req, res) {
