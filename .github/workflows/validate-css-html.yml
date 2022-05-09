@@ -1,11 +1,11 @@
-name: HTML Check
+name: HTML & CSS Check
 
 on:
   push:
 
 # Example from https://github.com/Cyb3r-Jak3/html5validator-action/wiki/Getting-Started
 jobs:
-  build:
+  html-css-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2 # Required with all actions
