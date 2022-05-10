@@ -422,7 +422,6 @@ app.get('/profiles', async function (req, res) {
 		return user;
 	});
 
-	cursorsStore[req.sessionID] = usersCursor;
 	res.json(
 		{
 			page: 0,
