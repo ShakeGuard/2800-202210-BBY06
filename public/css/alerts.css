@@ -1,0 +1,37 @@
+.alert {
+    position: sticky;
+    top: 10vh;
+    background-color: #17A5BA;
+    color: white;
+    text-align: center;
+    font-weight: 700;
+    width: 100%;
+    height: auto;
+    padding: 4% 0;
+    filter: drop-shadow(0 0 0.4em rgba(0, 0, 0, 0.1));
+    z-index: 2000;
+}
+
+.alert > span {
+    position: relative;
+    float: right;
+    right: 5%;
+    cursor: default;
+}
+
+
+/* For medium screens */
+@media only screen and (min-width: 768px) {
+    .alert {
+        font-size: 1.2em;
+        padding: 3% 0;
+    }
+}
+
+
+/* For larger screens */
+@media only screen and (min-width: 1200px) {
+    .alert {
+        padding: 2% 0;
+    }
+}
