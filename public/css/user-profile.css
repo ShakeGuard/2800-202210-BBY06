@@ -35,19 +35,37 @@ body{
     display: grid;
     padding-top: 25px;
     padding-bottom: 25px;
-
 }
 
-#FullName{
+#FullName, #Email, #Password{
     font-size: 23px;
 }
 
-#Email, #Password{
-    font-size: 23px;
+#FullName:disabled, #Email:disabled, #Password:disabled{
+    opacity: 50%;
 }
+#FullName:enabled, #Email:enabled, #Password:enabled{
+    opacity: 100%;
+}
+
+::placeholder{
+    color: #000000;
+}
+
 
 #Base-Container-Email-Container{
     align-items: flex-end;
+}
+
+#Pen-1, #Pen-2, #Pen-3{
+    user-select: none;
+    -moz-user-select: none;    
+    -ms-user-select: none;  
+    -webkit-user-select: none;      
+}
+
+#Pen-1:hover, #Pen-2:hover, #Pen-3:hover{
+    color: #929292;
 }
 
 #Pen-2, #Pen-3{
@@ -62,18 +80,18 @@ body{
     grid-row: 1/ span 1;
 }
 
+.Form-Input{
+    border: 0px solid #000000;
+    background: transparent;
+    border-bottom-width: 1px;
+}
+
 .Container{
     display: grid;
     padding-top: 25px;
     padding-bottom: 25px;
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr;
-}
-
-.Form-Input{
-    border: 0px solid #000000;
-    background: transparent;
-    border-bottom-width: 1px;
 }
 
 .Container-Form{
@@ -113,6 +131,10 @@ body{
     text-align: center;
 }
 
+#Update-Button:hover{
+    background-color: #ffbd4a;
+}
+
 #Centering-Container-BackToKit{
     display: grid;
     grid-template-columns: 1fr;
@@ -145,6 +167,11 @@ body{
     font-weight: bold;
     text-align: left;
 }
+
+#Base-Container-BackToKit:hover > span, #Base-Container-BackToKit:hover > p{
+    color: #2dc7df;
+}
+
 
 @media only screen and (min-width: 768px) {
     #Base-Container{
