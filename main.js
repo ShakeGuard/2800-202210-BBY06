@@ -201,22 +201,99 @@ app.get('/', function (req, res) {
 
 	res.send(index.serialize());
 });
+app.get('/profile-details', async(req, res) => {
+	const filterQuery = {emailAddress: req.session.email};
 
-app.get('/profile', function (req, res) {
+	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
+	if(userResults.length === 0) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	} else {
+		res.setHeader("Content-Type", "application/json");
+		res.status(200).send({
+			name: req.session.name,
+			email: req.session.email
+		})
+	}
+
+})
+app.get('/profile', async (req, res) => {
 	if (!req.session.loggedIn) {
 		res.redirect("/login");
 		return;
 	}
-	let doc = fs.readFileSync("./html/profile.html", "utf8");
+	let doc = fs.readFileSync("./html/user-profile.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let profile = loadHeaderFooter(baseDOM);
 
-	const document = profile.window.document;
-
 	profile = loadHTMLComponent(profile, "#Base-Container", "div", "./html/profile-component.html");
-
+    profile.window.document.getElementById("FullName").defaultValue = req.session.name;
+	profile.window.document.getElementById("Email").defaultValue = req.session.email;
 	res.send(profile.serialize());
 });
+
+app.patch('/profile', async(req, res) => {
+	
+
+	// if the request is not coming from a logged in user, reject.
+	if (!req.session || !req.session.loggedIn) {
+		res.status(401).send("invalidSession");
+		return;
+	} 
+	
+	// get user from db
+	const filterQuery = {emailAddress: req.session.email};
+	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
+	if(userResults.length === 0) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	} 
+	
+	// based on what is present in the update query, 
+	const updateQuery = {};
+	if (req.body.email) {
+		// email to be changed
+		updateQuery['emailAddress'] = req.body.email;
+	} 
+	if (req.body.name) {
+		// name to be changed
+		updateQuery['name'] = req.body.name;
+	} 
+	if (req.body.pwd) {
+		// password to be changed
+		const pwd = await bcrypt.hash(req.body.pwd, 10);	
+		updateQuery['pwd'] = pwd;				
+	} 
+	 
+	if(updateQuery === {}){
+		// invalid body, reject request
+		res.status(400).send("missingBodyArgument(s)");
+		return;
+	}
+
+	try {
+		const results = await db.collection('BBY-6_users').updateOne(filterQuery, { $set: updateQuery});
+		if(results.matchedCount === 0) {
+			// Couldn't find the user
+			res.status(404).send("userNotFound");
+		} else {
+			req.session.name = req.body.name ?? req.session.name;
+			req.session.email = req.body.email ?? req.session.email;
+			res.status(200).send("userUpdated");
+		}
+	} catch(e) {
+		console.log(e);
+		// Email addresses have a unique index so mongo will give error code 11000 if the email is already in use
+		if(e.code === 11000) {
+			res.status(403).send("emailInUse");
+		} else {
+			res.status(500).send("serverIssue");
+		}
+	}
+
+})
 
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf8");
@@ -241,6 +318,8 @@ app.post("/login", async (req, res) => {
 				if(result) {
 					// Password matches, create session
 					req.session.loggedIn = true;
+					req.session.name = results[0].name;
+					req.session.email = req.body.email;
 					req.session.save(err => {
 						if(err) {
 							console.log(err);
@@ -278,7 +357,6 @@ app.post("/signup", async (req, res) => {
 	// TODO: Should probably sanitize some of these before sticking them in the database
 	const name = req.body.name;
 	const emailAddress = req.body.email;
-	const pwd = req.body.password;
 	const avatarURL = req.body.avatarURL;
 	const date = new Date().toISOString();
 	const achievements = [];
@@ -288,13 +366,15 @@ app.post("/signup", async (req, res) => {
 		order: [],
 		items: []
 	};
-
+	
 	// Set response header regardless of success/failure
 	res.setHeader("Content-Type", "application/json");
 
 	try {
-		await db.collection('BBY-6_users')
-			.insertOne({name, emailAddress, pwd, avatarURL, date, achievements, admin, kit});
+		bcrypt.hashSync(req.body.password, 10, async(err, pwd) => {
+			await db.collection('BBY-6_users')
+				.insertOne({name, emailAddress, pwd, avatarURL, date, achievements, admin, kit});
+		});
 	
 		res.redirect(200, "/");
 	} catch(e) {

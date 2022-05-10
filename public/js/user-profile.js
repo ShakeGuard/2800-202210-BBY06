@@ -8,21 +8,40 @@ const Pen1 = document.getElementById("Pen-1");
 const Pen2 = document.getElementById("Pen-2");
 const Pen3 = document.getElementById("Pen-3");
 
+let userName = FullNameInput.value;
+let userEmail = EmailInput.value
+
+const getProfileDetails = async() => {
+	const response = await fetch('/profile-details');
+	const responseJson = await response.json();
+	FullNameInput.value = responseJson.name;
+	EmailInput.value = responseJson.email;
+	userName = FullNameInput.value;
+	userEmail = EmailInput.value;
+}
+
 async function executeUpdate(){
-    console.log("Updating!");
+	const payload = {};
+	if(!FullNameInput.disabled && FullNameInput.value.length !== 0) {
+		payload['name'] = FullNameInput.value;
+	}
+	if(!EmailInput.disabled) {
+		payload['email'] = EmailInput.value;
+	}
+	if(!PasswordInput.disabled) {
+		payload['pwd'] = PasswordInput.value;
+	}
+
 
     const response = await fetch("/profile", {
         method: "PATCH",
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({email:EmailInput.value})
+        body: JSON.stringify(payload)
     })
 
     const ResponseText = await response.text(); 
 
     switch(ResponseText){
-        case "passwordMismatch":
-            // Old Password not correct
-            break;
         case "userUpdated":
             // Successfully updated
             break;
@@ -40,7 +59,7 @@ async function executeUpdate(){
         default:
             console.log(ResponseText);
     }
-
+	getProfileDetails();
 }
 
 function clearInput(x){
@@ -50,11 +69,11 @@ function clearInput(x){
 function editFullName(){
     if (FullNameInput.disabled){
         FullNameInput.disabled= false; 
-        FullNameInput.focus();;
+        FullNameInput.focus();
         FullNameInput.onfocus = clearInput(FullNameInput);
     } else {
         FullNameInput.disabled= true; 
-        FullNameInput.value = "FirstName LastName"
+        FullNameInput.value = userName;
     }
 }
 function editEmail(){
@@ -64,7 +83,7 @@ function editEmail(){
         EmailInput.onfocus = clearInput(EmailInput);
     } else {
         EmailInput.disabled= true;
-        EmailInput.value = "Email Address" 
+        EmailInput.value = userEmail;
     }
 }
 function editPasswordInput(){
@@ -78,6 +97,7 @@ function editPasswordInput(){
     }
 }
 
+getProfileDetails();
 UpdateButton.addEventListener("click", executeUpdate, false);
 Pen1.addEventListener("click",editFullName,false);
 Pen2.addEventListener("click",editEmail,false);
