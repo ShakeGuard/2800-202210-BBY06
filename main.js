@@ -142,6 +142,32 @@ const initDatabase = async(db) => {
 	}
 }
 
+// Uses loadHTMLComponent to load header and footer into their respective tags given a JSDOM object
+const loadHeaderFooter = (baseDOM) => {
+	
+	// Add the header 
+	baseDOM = loadHTMLComponent(baseDOM, "header", "header", "./html/header.html");
+
+	// Add the footer
+	baseDOM = loadHTMLComponent(baseDOM, "footer", "footer", "./html/footer.html");
+
+	return baseDOM;
+}
+
+// Load a HTML component 
+// baseDOM is the return value of `new JSDOM(htmlFile)` 
+// Selectors should be formatted as they would with `querySelector()`
+// componentLocation example: ./html/header.html
+const loadHTMLComponent = (baseDOM, placeholderSelector, componentSelector, componentLocation) => {
+	const document = baseDOM.window.document;
+	const placeholder = document.querySelector(placeholderSelector);
+	const html = fs.readFileSync(componentLocation, "utf8");
+	const componentDOM = new JSDOM(html);
+	placeholder.innerHTML = componentDOM.window.document.querySelector(componentSelector).innerHTML;
+
+	return baseDOM;
+}
+
 console.log("Connecting to MongoDB instance…");
 try {
 	[mongo, db] = await connectMongo(url, dbName);
@@ -166,13 +192,14 @@ app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
 
 app.get('/', function (req, res) {
-	if (req.session.loggedIn) {
-		res.redirect('/profile');
-		console.log("User logged in!");
-		return;
-	}
+	
 	let doc = fs.readFileSync("./html/index.html", "utf8");
-	res.send(doc);
+	let index = new JSDOM(doc);
+
+	// Add the footer
+	index = loadHTMLComponent(index, "footer", "footer", "./html/footer.html");
+
+	res.send(index.serialize());
 });
 
 app.get('/profile', function (req, res) {
@@ -181,32 +208,21 @@ app.get('/profile', function (req, res) {
 		return;
 	}
 	let doc = fs.readFileSync("./html/profile.html", "utf8");
-	const profile = new JSDOM(doc);
+	const baseDOM = new JSDOM(doc);
+	let profile = loadHeaderFooter(baseDOM);
+
 	const document = profile.window.document;
-	// Add the header 
-	const headerPlaceholder = document.querySelector("header");
-	const headerHtml = fs.readFileSync("./html/header.html", "utf8");
-	const headerDOM = new JSDOM(headerHtml);
-	headerPlaceholder.innerHTML = headerDOM.window.document.querySelector("header").innerHTML;
 
-	// Add the profile component
-	const profilePlaceholder = document.querySelector("#Base-Container");
-	const profileComponentHtml = fs.readFileSync("./html/profile-component.html", "utf-8");
-	const profileComponentDOM = new JSDOM(profileComponentHtml);
-	profilePlaceholder.innerHTML = profileComponentDOM.window.document.querySelector("div").innerHTML;
-
-	// Add the footer
-	const footerPlaceholder = document.querySelector("footer");
-	const footerHtml = fs.readFileSync("./html/footer.html", "utf8");
-	const footerDOM = new JSDOM(footerHtml);
-	footerPlaceholder.innerHTML = footerDOM.window.document.querySelector("footer").innerHTML;
+	profile = loadHTMLComponent(profile, "#Base-Container", "div", "./html/profile-component.html");
 
 	res.send(profile.serialize());
 });
 
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf8");
-	res.send(doc);
+	const baseDOM = new JSDOM(doc);
+	let login = loadHeaderFooter(baseDOM);
+	res.send(login.serialize());
 });
 
 app.post("/login", async (req, res) => {
