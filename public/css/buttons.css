@@ -53,6 +53,19 @@
     background-color: rgba(196, 196, 196, 0.25);
 }
 
+.button-secondary-teal {
+    border: 2px solid rgba(23, 165, 186, 1);
+    background-color: transparent;
+    color: rgba(23, 165, 186, 1);
+}
+
+.button-secondary-teal:hover,
+.button-secondary-teal:active,
+.button-secondary-teal:focus {
+    background-color: rgba(23, 165, 186, 0.25);
+}
+
+
 .button-nav {
     margin: 0;
     padding: 0.8em 0.8em 0.6em 0.8em;
