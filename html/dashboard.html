@@ -4,9 +4,60 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link href="/images/comp2800_logo_favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Dashboard</title>
+
+    <link href="/css/buttons.css" rel="stylesheet" />
+    <link href="/css/profile.css" rel="stylesheet" />
+    <link href="/css/admin-dashboard.css" rel="stylesheet" />
+    
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
 <body>
-    
+    <div id="grid">
+        <div id="user-details">
+            <form action="" id="user-details-form">
+                <input disabled type="email" name="email" id="email-input">
+                <input disabled type="password" name="password" id="password">
+                <!-- maybe a button el instead -->
+                <input id="update-button" class="button button-primary" type="button" value="Update Profile">
+            </form>
+        </div>
+        <div id="user-list-panel">
+            <h1>Admins</h1>
+            <button class="button button-round" id="add-admin-button">
+                <span class="material-icons">
+                    add
+                </span>
+                Add admin
+            </button>
+            <ul id="user-list">
+                <!-- Users Go Here -->
+            </ul>
+            <template id="user-row">
+                <li id="admin-item-placeholder">
+                    <div id="admin-details-wrapper">
+                        <img src="/" class="profile-picture small" alt="admin-profile-pic" />
+                        <p id="admin-name">FirstName LastName</p>
+                    </div>
+                    <div class="edit-button-group">
+                        <button class="edit-button">
+                            <span class="material-icons">
+                                edit
+                            </span>
+                        </button>
+                        <button class="delete-button">
+                            <span class="material-icons">
+                                delete
+                            </span>
+                        </button>
+                    </div>
+                </li>
+            </template>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

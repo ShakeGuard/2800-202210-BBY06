@@ -384,15 +384,26 @@ app.get('/login', async function (req, res) {
 
 app.get('/dashboard', function (req, res) {
 	if (req.session.isAdmin) {
-		const doc = fs.readFileSync("./html/profile.html", "utf-8");
+		const doc = fs.readFileSync("./html/dashboard.html", "utf-8");
 		// TODO: templating
-		const newDoc = doc.replace('hidden', '');
-		res.send(newDoc);
+		// const newDoc = doc.replace('hidden', '');
+		res.send(doc);
 	} else {
 		// Unauthorized TODO: test
 		res.redirect('/profile');
 	}
 });
+
+app.get('/users', async function (req, res) { 
+	if (!req.session.isAdmin) {
+		res.sendStatus(401).send('notAnAdmin');
+		// TODO log unauthorized access?
+		return;
+	}
+	// TODO: really, we should do pagination for this kind of request.
+	const users = [];
+
+})
 
 app.post("/login", async (req, res) => {
 	const email = req.body.email;
