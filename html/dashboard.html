@@ -15,7 +15,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
 <body>
-    <div id="grid">
+    <!-- Header / navigation goes here -->
+    <div id="nav-placeholder"></div>
+
+    <!-- Dashboard content -->
+    <div id="dashboard-grid">
+
+        <!-- Profile template goes here -->
         <div id="user-details">
             <form action="" id="user-details-form">
                 <input disabled type="email" name="email" id="email-input">
@@ -24,30 +30,30 @@
                 <input id="update-button" class="button button-primary" type="button" value="Update Profile">
             </form>
         </div>
+
+        <!-- Specific to Admins -->
         <div id="user-list-panel">
             <h1>Admins</h1>
-            <button class="button button-round" id="add-admin-button">
-                <span class="material-icons">
-                    add
-                </span>
-                Add admin
+            <button class="button button-secondary-grey block" id="add-admin-button">
+                + Add admin
             </button>
             <ul id="user-list">
                 <!-- Users Go Here -->
             </ul>
+            <!-- Template for user items -->
             <template id="user-row">
-                <li id="admin-item-placeholder">
-                    <div id="admin-details-wrapper">
-                        <img src="/" class="profile-picture small" alt="admin-profile-pic" />
-                        <p id="admin-name">FirstName LastName</p>
+                <li class="user-item">
+                    <div class="user-item-name-pic">
+                        <img src="/images/user-pic_Tracy.svg" class="profile-picture" alt="admin-profile-pic" />
+                        <p class="user-item-name" id="admin-name">FirstName LastName</p>
                     </div>
                     <div class="edit-button-group">
-                        <button class="edit-button">
+                        <button class="button button-secondary-grey small transparent">
                             <span class="material-icons">
                                 edit
                             </span>
                         </button>
-                        <button class="delete-button">
+                        <button class="button button-secondary-grey small transparent">
                             <span class="material-icons">
                                 delete
                             </span>

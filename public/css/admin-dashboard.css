@@ -1,0 +1,94 @@
+body {
+    margin: 0;
+}
+
+
+p {
+    color: black;
+}
+
+#dashboard-grid {
+    display: grid;
+    grid-template-columns: 10% auto 10%;
+}
+
+#user-details {
+    grid-column: 2 / span 1;
+}
+
+#user-list-panel {
+    grid-column: 2 / span 1;
+}
+
+#user-list {
+    list-style-type: none;
+    padding: 0;
+    
+}
+
+
+.user-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-bottom: 2px solid rgba(196, 196, 196, 1);
+}
+
+.user-item-name-pic {
+    display: flex;
+    align-items: center;
+    gap: 10%;
+}
+
+.user-item-name {
+    font-weight: 700;
+    font-size: 1.4em;
+}
+
+.profile-picture {
+    min-width: 72px;
+    width: 15%;
+    height: auto;
+    border-radius: 50%;
+}
+
+.edit-button-group button {
+    color: black;
+    margin: 0;
+}
+
+
+
+/* User details form */
+form {
+    background-color: rgba(253,241,189, 1);
+    min-height: 30vh;
+    
+}
+
+
+/* For medium screens */
+@media only screen and (min-width: 768px) {
+    .user-item-name-pic {
+        gap: 5%;
+    }
+    .user-item-name {
+        font-size: 1.6em;
+    }
+}
+
+/* For larger screens */
+@media only screen and (min-width: 1200px) {
+    .user-item-name-pic {
+        gap: 3%;
+    }
+    .user-item-name {
+        font-size: 2em;
+    }
+    .profile-picture {
+        max-width: 10%;
+    }
+    
+}

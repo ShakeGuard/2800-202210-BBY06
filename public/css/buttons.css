@@ -32,7 +32,7 @@
 
 .button-secondary {
     border: 2px solid #FBB33B;
-    background-color: white;
+    background-color: transparent;
 }
 
 .button-secondary:hover, 
@@ -41,12 +41,17 @@
     background-color: #FBB33B;
 }
 
-.button-round {
+.button-secondary-grey {
     border: 2px solid rgba(196, 196, 196, 1);
-    background-color: white;
+    background-color: transparent;
     color: rgba(196, 196, 196, 1);
 }
 
+.button-secondary-grey:hover,
+.button-secondary-grey:active,
+.button-secondary-grey:focus {
+    background-color: rgba(196, 196, 196, 0.25);
+}
 
 .button-nav {
     margin: 0;
@@ -66,4 +71,15 @@ a.button {
 
 .block {
     display: block;
+}
+
+.small {
+    padding: 0;
+    width: 50px;
+    height: 50px;
+}
+
+.transparent {
+    background-color: transparent;
+    border-color: transparent;
 }
