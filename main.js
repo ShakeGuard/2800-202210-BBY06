@@ -296,6 +296,12 @@ app.patch('/profile', async(req, res) => {
 })
 
 app.get('/login', function (req, res) {
+	// Redirect to profile page if logged in
+	if (req.session.loggedIn) {
+		res.redirect("/profile");
+		return;
+	} 
+	
 	let doc = fs.readFileSync("./html/login.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let login = loadHeaderFooter(baseDOM);
