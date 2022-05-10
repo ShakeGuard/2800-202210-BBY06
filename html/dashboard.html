@@ -10,22 +10,25 @@
     <link href="/css/buttons.css" rel="stylesheet" />
     <link href="/css/profile.css" rel="stylesheet" />
     <link href="/css/admin-dashboard.css" rel="stylesheet" />
-    
+
     <!-- Google Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
 <body>
-    <!-- Header / navigation goes here -->
-    <div id="nav-placeholder"></div>
+    <!-- Dynamically inserted -->
+    <header></header>
 
     <!-- Dashboard content -->
     <div id="dashboard-grid">
 
         <!-- Profile template goes here -->
         <div id="user-details">
-            <form action="" id="user-details-form">
-                <input disabled type="email" name="email" id="email-input">
-                <input disabled type="password" name="password" id="password">
+            <form action="post" id="user-details-form">
+                <img src="/images/user-pic_Tracy.svg" class="profile-picture" id="profile-picture-placeholder"
+                    alt="admin-profile-pic" />
+                <input disabled type="text" name="user-name" id="name-input" value="FirstName LastName">
+                <input disabled type="email" name="email" id="email-input" value="Email">
+                <input disabled type="password" name="password" id="password" value="Password">
                 <!-- maybe a button el instead -->
                 <input id="update-button" class="button button-primary" type="button" value="Update Profile">
             </form>
@@ -33,10 +36,13 @@
 
         <!-- Specific to Admins -->
         <div id="user-list-panel">
-            <h1>Admins</h1>
-            <button class="button button-secondary-grey block" id="add-admin-button">
-                + Add admin
-            </button>
+            <div id="user-list-header">
+                <h1>Admins</h1>
+                <button class="button button-secondary-teal block" id="add-admin-button">
+                    + Add admin
+                </button>
+            </div>
+
             <ul id="user-list">
                 <!-- Users Go Here -->
             </ul>
@@ -48,13 +54,13 @@
                         <p class="user-item-name" id="admin-name">FirstName LastName</p>
                     </div>
                     <div class="edit-button-group">
-                        <button class="button button-secondary-grey small transparent">
-                            <span class="material-icons">
+                        <button class="button button-secondary-teal small transparent">
+                            <span class="material-icons teal">
                                 edit
                             </span>
                         </button>
-                        <button class="button button-secondary-grey small transparent">
-                            <span class="material-icons">
+                        <button class="button button-secondary-teal small transparent">
+                            <span class="material-icons teal">
                                 delete
                             </span>
                         </button>
@@ -63,6 +69,9 @@
             </template>
         </div>
     </div>
+
+    <!-- Dynamically inserted -->
+    <footer></footer>
 
     <script src="js/dashboard.js"></script>
 </body>

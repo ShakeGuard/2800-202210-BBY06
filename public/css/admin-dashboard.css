@@ -1,7 +1,10 @@
+/* Modified Google Icons styles */
+.material-icons.md-dark { color: rgba(0, 0, 0, 1); }
+.material-icons.teal { color: rgba(23, 165, 186, 1); }
+
 body {
     margin: 0;
 }
-
 
 h1, p {
     color: black;
@@ -13,29 +16,36 @@ h1, p {
     margin-bottom: 10%;
 }
 
-#user-details {
-    grid-column: 2 / span 1;
-}
+
 
 #user-list-panel {
     margin-top: 10%;
+    margin-bottom: 5%;
     grid-column: 2 / span 1;
 }
 
 #user-list {
     list-style-type: none;
     padding: 0;
-    
+    display: grid;
+    gap: 5%;
 }
 
+#user-list-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
 .user-item {
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    border-bottom: 2px solid rgba(196, 196, 196, 1);
+    padding: 5%;
+    /* border-bottom: 2px solid rgba(196, 196, 196, 1); */
+    border-radius: 1.5em;
+    background-color: white;
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
 }
 
 .user-item-name-pic {
@@ -46,7 +56,7 @@ h1, p {
 
 .user-item-name {
     font-weight: 700;
-    font-size: 1.4em;
+    font-size: 1.2em;
 }
 
 .profile-picture {
@@ -63,21 +73,71 @@ h1, p {
 
 
 
-/* User details form */
+/* Holds placeholder for the profile form */
+#user-details {
+    grid-column: 2 / span 1;
+    margin-top: 10vh;
+}
+
 form {
-    background-color: rgba(253,241,189, 1);
+    width: 100%;
+    background-color: rgba(253,241,189, 0.25);
     min-height: 30vh;
-    
+    border-radius: 1.5em;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5% 0;
+    padding-bottom: 25%;
+    justify-items: center;
+    margin-top: 20%;
+}
+
+form > * {
+    width: 80%;
+    grid-column: 1 / span 1;
+    border-style: none;
+    border-bottom: 2px solid #c4c4c4;
+}
+form > input {
+    padding: 0.5em;
+    font-size: 1.1em;
+}
+form > input:first-of-type {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.4em;
+    border: none;
+}
+
+#profile-picture-placeholder {
+    margin-top: -5%;
+    width: 20%;
+    max-width: 240px;
 }
 
 
 /* For medium screens */
 @media only screen and (min-width: 768px) {
+    #user-list {
+        grid-template-columns: auto auto;
+    }
+
+    #user-list-header {
+        flex-direction: row;
+    }
+
     .user-item-name-pic {
         gap: 5%;
     }
     .user-item-name {
-        font-size: 1.6em;
+        font-size: 1.4em;
+    }
+
+    form > input:first-of-type {
+        text-align: center;
+        font-weight: 700;
+        font-size: 2em;
+        border: none;
     }
 }
 
@@ -85,9 +145,6 @@ form {
 @media only screen and (min-width: 1200px) {
     .user-item-name-pic {
         gap: 3%;
-    }
-    .user-item-name {
-        font-size: 2em;
     }
     .profile-picture {
         max-width: 10%;
