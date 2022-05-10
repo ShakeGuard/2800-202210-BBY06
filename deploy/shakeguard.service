@@ -2,6 +2,8 @@
 Description=ShakeGuard
 
 [Service]
+# Copy .secrets directory from the reference location.
+ExecStartPre=cp -r /home/shakeguard/.secrets/ /var/www/shakeguard/.secrets/
 ExecStart=/var/www/shakeguard/main.js -i localhost -p 27017 --db shakeguard --auth true
 Restart=always
 User=nobody
