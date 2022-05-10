@@ -1,6 +1,7 @@
 #!/usr/bin/node
 "use strict";
 
+import * as mdb from 'mongodb';
 import { MongoClient } from 'mongodb';
 import express from 'express';
 import session from 'express-session';
@@ -11,11 +12,11 @@ import { JSDOM } from 'JSDOM';
 import multer from 'multer';
 
 // Use `yargs` to parse command-line arguments.
-import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 // Grab secrets file
-import { readSecrets } from './shakeguardSecrets.mjs'
+import { readSecrets } from './shakeguardSecrets.mjs';
 
 console.log = () => {};
 console.dir = () => {};
@@ -59,9 +60,13 @@ const url = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePor
 
 const dbName = argv.dbName ?? "COMP2800";
 
-// The MongoDB connection and Database objects.
+// The MongoDB Connection object.
+/** @type {?MongoClient} */
+let mongo = null;
+// The MongoDB Database object.
 // Populated by the connectMongo(…) function.
-let mongo, db;
+/** @type {?mdb.Db} */
+let db = null;
 
 // Establishes connection and returns necessary objects to interact with database
 // Caller is resonsible for closing the connection
@@ -120,10 +125,16 @@ const connectMongo = async (url, dbName) => {
 
 // If db does not contain collections we need, add them.
 // Else do nothing
-const initDatabase = async(db) => {
+/**
+ * Initializes the given [database]{@link Db} with values from JSON files in the `./data/` directory.
+ * If the database already contains all needed collections, this function is a no-op.
+ * @param  {mdb.Db} db - The database to initialize.
+ */
+async function initDatabase(db){
+	const usersCollection = db.collection("BBY-6_users");
 	// There are no collections in this database so we need to add ours.
-	const users = await db.collection("BBY-6_users").find({}).toArray();
-	if(users.length === 0 ) {
+	const users = await usersCollection.find({}).toArray();
+	if(users.length === 0) {
 		const usersJson = JSON.parse(await readFile('./data/users.json', 'utf-8'));
 		await db.collection("BBY-6_users").insertMany(usersJson);
 		// Create a unique index on the emailAddress field in the users collection.
@@ -394,15 +405,31 @@ app.get('/dashboard', function (req, res) {
 	}
 });
 
-app.get('/users', async function (req, res) { 
+app.get('/profiles', async function (req, res) { 
 	if (!req.session.isAdmin) {
-		res.sendStatus(401).send('notAnAdmin');
-		// TODO log unauthorized access?
+		res.status(401).send('notAnAdmin');
+		// TODO: log unauthorized access?
 		return;
 	}
-	// TODO: really, we should do pagination for this kind of request.
-	const users = [];
 
+	// TODO: error handling
+	// TODO: really, we should do pagination for this kind of request.
+	const usersCursor = db.collection('BBY-6_users').find()
+	// Omit password hashes! 
+	// There is probably a better way of doing this; any suggestions?
+	.map(user => {
+		delete user.pwd;
+		return user;
+	});
+
+	cursorsStore[req.sessionID] = usersCursor;
+	res.json(
+		{
+			page: 0,
+			pageSize: null,
+			result: await usersCursor.toArray()
+		}
+	);
 })
 
 app.post("/login", async (req, res) => {
