@@ -21,6 +21,11 @@ console.error = () => {};
 const secrets = await readSecrets();
 
 const argv = yargs(hideBin(process.argv))
+  .option('port', {
+	  alias: 'P',
+	  description: "The port that the app should listen on.",
+	  type: 'number'
+  })
   .option('instanceAddress', {
     alias: 'i',
     description: "The IP address or hostname of the MongoDB instance to connect the app to. Defaults to `localhost`.",
@@ -272,7 +277,7 @@ app.post("/signup", async (req, res) => {
 })
 
 // RUN SERVER
-let port = 8000;
+const port = argv.port ?? 8000;
 app.listen(port, function () {
   console.log(`Server listening on http://localhost:${port}`);
 })
