@@ -42,8 +42,7 @@ a:visited{
     background-image: 
         linear-gradient(rgba(23,165,186,0.8),rgba(23,165,186,0.8)),
         url(../images/mountain1.jpg);
-    filter: blur(8px);
-    -webkit-filter: blur(1.5px);
+    /* Apply Filter here */
     margin-left: 20px;
     margin-right: 20px;
     margin-top: 20px;
@@ -103,11 +102,17 @@ a:visited{
     margin: 10px;
 }
 
+#Button-Login:hover{
+    background-color: #ffbd4a;
+}
+
 #Footer-Links {
     display: flex;
 }
 
 #Footer-Copyright {
+    margin-bottom: 2px;
+    place-self: center;
     margin-right: 1em;
 }
 
