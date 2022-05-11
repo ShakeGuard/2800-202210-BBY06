@@ -2,6 +2,12 @@
 .material-icons.md-dark { color: rgba(0, 0, 0, 1); }
 .material-icons.teal { color: rgba(23, 165, 186, 1); }
 
+:root {
+    --color-primary: rgb(23, 165, 186);
+    --color-secondary: rgb(251, 179, 59);
+    --color-error: rgb(235, 65, 13); /*TODO ask tracy what colour this should actually be*/
+}
+
 body {
     margin: 0;
 }
@@ -16,8 +22,48 @@ h1, p {
     margin-bottom: 10%;
 }
 
+#overlay-grid {
+	display: grid;
+	position: fixed;
+	grid-template-columns: 100vw;
+	grid-template-rows: 90vh 10vh;
+	height: 100vh;
+	width: 100vw;
+	z-index: 100;
+    grid-template-areas: "_"
+                         "toastbox";
+}
+
+#dashboard-toasts {
+    grid-area: toastbox;
+    z-index: 99;
+}
+
+.toast {
+    height: 100%;
+    width: 100%;
+    transition-property: transform;
+    transition: 200ms all ease-in-out;
+    transform: translateY(100%);
+}
 
 /* Admin user list */
+.toast-slideup {
+    transform: translateY(0);
+}
+
+.toast-info {
+    background-color: var(--color-primary);
+}
+
+.toast-warning {
+    background-color: var(--color-secondary);
+}
+
+.toast-error {
+    background-color: var(--color-error);
+}
+
 #user-list-panel {
     margin-top: 10%;
     margin-bottom: 5%;
