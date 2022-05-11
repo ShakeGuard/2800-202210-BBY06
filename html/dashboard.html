@@ -9,6 +9,7 @@
 
     <link href="/css/buttons.css" rel="stylesheet" />
     <link href="/css/profile.css" rel="stylesheet" />
+    <link href="/css/alerts.css" rel="stylesheet" />
     <link href="/css/admin-dashboard.css" rel="stylesheet" />
 
     <!-- Google Material Icons -->
@@ -46,20 +47,25 @@
             <ul id="user-list">
                 <!-- Users Go Here -->
             </ul>
+
+            <!-- Clone profile form with modified css and place here -->
+            <div id="create-admin-form-container"></div>
+
             <!-- Template for user items -->
             <template id="user-row">
                 <li class="user-item">
                     <div class="user-item-name-pic">
-                        <img src="/images/user-pic_Tracy.svg" class="profile-picture" alt="admin-profile-pic" />
-                        <p class="user-item-name" id="admin-name">FirstName LastName</p>
+                        <img src="/images/user-pic_Tracy.svg" id="admin-profile-pic" class="profile-picture" alt="admin-profile-pic" />
+                        <!-- <p class="user-item-name" id="admin-name">FirstName LastName</p> -->
+                        <input disabled type="text" name="admin-name" class="admin-name" placeholder="FirstName LastName">
                     </div>
                     <div class="edit-button-group">
-                        <button class="button button-secondary-teal small transparent">
+                        <button class="button button-secondary-teal small transparent edit-button">
                             <span class="material-icons teal">
                                 edit
                             </span>
                         </button>
-                        <button class="button button-secondary-teal small transparent">
+                        <button class="button button-secondary-teal small transparent delete-button">
                             <span class="material-icons teal">
                                 delete
                             </span>
