@@ -18,9 +18,9 @@ import { hideBin } from 'yargs/helpers';
 // Grab secrets file
 import { readSecrets } from './shakeguardSecrets.mjs';
 
-console.log = () => {};
-console.dir = () => {};
-console.error = () => {};
+// console.log = () => {};
+// console.dir = () => {};
+// console.error = () => {};
 
 const secrets = await readSecrets();
 
@@ -430,6 +430,77 @@ app.get('/profiles', async function (req, res) {
 		}
 	);
 })
+
+/** 
+ * @typedef { {
+ *      _id: ?mdb.ObjectId,
+ *      name: string,
+ *      emailAddress: string,
+ *      pwd: string,
+ *      admin: boolean,
+ *      avatarURL: ?string,
+ *      dateJoined: ?Date,
+ * 	    achievements: ?string[]
+ * } } UserDoc
+ * */
+
+app.post('/create-user', async function (req, res) {
+	if (!req.session.isAdmin) {
+		res.status(401).send('notAnAdmin');
+		return;
+	}
+
+	try {
+		/** @type {UserDoc} */
+		const newUserDoc = {
+			_id: req.body?._id ?? undefined,
+			name: req.body?.name ?? undefined,
+			emailAddress: req.body?.emailAddress ?? undefined,
+			pwd: req.body?.pwd ?? undefined,
+			admin: req.body?.admin ?? false,
+			avatarURL: req.body?.avatarURL ?? undefined,
+			dateJoined: req.body?.dateJoined ?? undefined,
+			achievements: req.body?.achievements ?? undefined,
+		};
+
+		const requiredFields = ["name", "emailAddress", "pwd"];
+		const acceptable = requiredFields.reduce(
+			(validSoFar, current) => validSoFar && (newUserDoc[current] !== undefined), true
+		);
+
+		if (!acceptable) {
+			const missingFields = requiredFields.filter(field => newUserDoc[field] === undefined);
+			throw new Error(`"Create user" request missing required fields: ${missingFields.join(', ')}`);
+		}
+
+		// All required fields present, time to convert the data into a good format.
+		const hashPassword = bcrypt.hash(newUserDoc.pwd, 10);
+		let convertedDate = new Date(newUserDoc.dateJoined);
+		if (convertedDate.valueOf() === NaN) {
+			convertedDate = new Date();
+		}
+		try {
+			await db.collection('BBY-6_users').insertOne({
+				name: newUserDoc.name,
+				email: newUserDoc.emailAddress,
+				pwd: await hashPassword,
+				admin: newUserDoc.admin,
+				dateJoined: convertedDate,
+			});
+		} catch(err) {
+			// Error inserting into database!
+			// Later on, log. For now, just rethrow.
+			throw (err);
+		}
+	} catch(err) {
+		// Can catch the error and display it here, but Arron says console.log is not allowd
+		if (err.code === 11000) {
+			res.status(500).send("duplicateKey");
+			return;
+		}
+		res.status(500).send("serverIssue");
+	}
+});
 
 // Update the admin's name
 // TODO: fix response text 
