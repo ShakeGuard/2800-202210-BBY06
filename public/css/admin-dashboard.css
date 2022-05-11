@@ -32,6 +32,8 @@ h1, p {
 	z-index: 100;
     grid-template-areas: "_"
                          "toastbox";
+    pointer-events: none; 
+    touch-action: none;
 }
 
 #dashboard-toasts {
