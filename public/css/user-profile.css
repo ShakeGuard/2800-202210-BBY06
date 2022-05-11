@@ -37,6 +37,10 @@ body{
     padding-bottom: 25px;
 }
 
+#FullName{
+    margin-right: 20px;
+}
+
 #FullName, #Email, #Password{
     font-size: 23px;
 }
