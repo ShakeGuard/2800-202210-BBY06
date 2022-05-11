@@ -442,7 +442,7 @@ app.post('/edit-admin', async function (req, res) {
 
 	// The next few chunks of code was copied/adapted from jay/alex's work on the profile page
 	// Get user from db
-	const filterQuery = {'_id': req.body._id};
+	const filterQuery = {'_id': new mdb.ObjectId(req.body._id)};
 	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
 	if(userResults.length === 0) {
 		// Could not find user
