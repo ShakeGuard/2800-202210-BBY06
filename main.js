@@ -6,6 +6,7 @@ import session from 'express-session';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
 import { JSDOM } from 'JSDOM';
+import multer from 'multer';
 
 // Use `yargs` to parse command-line arguments.
 import yargs from 'yargs'
@@ -45,7 +46,7 @@ const argv = yargs(hideBin(process.argv))
   .alias('help', 'h').parse();
 
 const app = express();
-
+const upload = multer();
 // Defaults for address and port:
 const url = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
 
@@ -295,13 +296,42 @@ app.patch('/profile', async(req, res) => {
 
 })
 
+app.get('/avatar', async(req, res) => {
+	//if the request is not coming from a logged in user, reject.
+	if (!req.session || !req.session.loggedIn) {
+		res.status(401).send("invalidSession");
+		return;
+	} 
+	const results = await db.collection('BBY-6_users').findOne({emailAddress:req.session.email});
+	res.status(200).send({
+		mimeType: results.avatarURL.contentType,
+		data: results.avatarURL.data
+	})
+})
+
+app.post('/avatar', upload.single("avatar"), async(req, res) => {
+	//if the request is not coming from a logged in user, reject.
+	if (!req.session || !req.session.loggedIn) {
+		res.status(401).send("invalidSession");
+		return;
+	} 
+	const results = await db.collection('BBY-6_users').updateOne({emailAddress:req.session.email}, {
+		$set: {
+			avatarURL: {
+				data: req.file.buffer,
+				contentType: req.file.mimetype
+			}
+		}
+	})
+	res.status(200).send("avatarUploaded");
+})
+
 app.get('/login', function (req, res) {
 	// Redirect to profile page if logged in
 	if (req.session.loggedIn) {
 		res.redirect("/profile");
 		return;
 	} 
-	
 	let doc = fs.readFileSync("./html/login.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let login = loadHeaderFooter(baseDOM);

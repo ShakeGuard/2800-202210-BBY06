@@ -114,3 +114,7 @@ a:visited{
 #Footer-Logo {
     width: 3em;
 }
+
+.error {
+	color: red;
+}
