@@ -24,15 +24,6 @@
 
         <!-- Profile template goes here -->
         <div id="user-details">
-            <form action="post" id="user-details-form">
-                <img src="/images/user-pic_Tracy.svg" class="profile-picture" id="profile-picture-placeholder"
-                    alt="admin-profile-pic" />
-                <input disabled type="text" name="user-name" id="name-input" value="FirstName LastName">
-                <input disabled type="email" name="email" id="email-input" value="Email">
-                <input disabled type="password" name="password" id="password" value="Password">
-                <!-- maybe a button el instead -->
-                <input id="update-button" class="button button-primary" type="button" value="Update Profile">
-            </form>
         </div>
 
         <!-- Specific to Admins -->
@@ -56,7 +47,6 @@
                 <li class="user-item">
                     <div class="user-item-name-pic">
                         <img src="/images/user-pic_Tracy.svg" id="admin-profile-pic" class="profile-picture" alt="admin-profile-pic" />
-                        <!-- <p class="user-item-name" id="admin-name">FirstName LastName</p> -->
                         <input disabled type="text" name="admin-name" class="admin-name" placeholder="FirstName LastName">
                     </div>
                     <div class="edit-button-group">
@@ -72,6 +62,23 @@
                         </button>
                     </div>
                 </li>
+            </template>
+
+            <!-- Template for add admin form -->
+            <template id="new-admin">
+                <form action="post" id="add-admin-form">
+                    <h2>Create a new admin</h2>
+                    <img src="/images/user-pic_Tracy.svg" class="profile-picture"
+                        alt="admin-profile-pic" 
+                        id="admin-form-input-pic"/>
+                    <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" />
+                    <input id="admin-form-input-email" type="email" name="email" placeholder="Email" />
+                    <input id="admin-form-input-password" type="password" name="password" placeholder="Password" />
+                    <div class="button-group">
+                        <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
+                        <button id="admin-form-submit-button" class="button button-primary" type="button">Create Admin</button>
+                    </div>
+                </form>
             </template>
         </div>
     </div>

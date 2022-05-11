@@ -12,12 +12,12 @@ h1, p {
 
 #dashboard-grid {
     display: grid;
-    grid-template-columns: 10% auto 10%;
+    grid-template-columns: 10% minmax(0, 1fr) 10%;
     margin-bottom: 10%;
 }
 
 
-
+/* Admin user list */
 #user-list-panel {
     margin-top: 10%;
     margin-bottom: 5%;
@@ -28,6 +28,7 @@ h1, p {
     list-style-type: none;
     padding: 0;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 5%;
 }
 
@@ -39,28 +40,37 @@ h1, p {
 
 .user-item {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) 10%;
     align-items: center;
+    gap: 1rem;
     padding: 5%;
-    /* border-bottom: 2px solid rgba(196, 196, 196, 1); */
-    border-radius: 1.5em;
+    border-radius: 1.5rem;
     background-color: white;
-    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
 }
 
 .user-item-name-pic {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(3rem, 4rem) minmax(0, 1fr);
     align-items: center;
-    gap: 10%;
+    gap: 0.5rem;
 }
 
-.user-item-name {
+.admin-name {
+    font-size: 1rem;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.admin-name:focus {
     font-weight: 700;
-    font-size: 1.2em;
+    color: rgba(0, 0, 0, 1);
 }
 
 .profile-picture {
-    min-width: 72px;
+    min-width: 3rem;
     width: 15%;
     height: auto;
     border-radius: 50%;
@@ -72,54 +82,74 @@ h1, p {
 }
 
 
-
-/* Holds placeholder for the profile form */
 #user-details {
     grid-column: 2 / span 1;
     margin-top: 10vh;
 }
 
-form {
-    width: 100%;
-    background-color: rgba(253,241,189, 0.25);
-    min-height: 30vh;
-    border-radius: 1.5em;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 5% 0;
-    padding-bottom: 25%;
-    justify-items: center;
-    margin-top: 20%;
-}
 
-form > * {
-    width: 80%;
+/* Admin form */
+
+#add-admin-form {
+    color: black;
+    background-color: white;
+    filter: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    border-radius: 1.5rem;
+    padding: 2rem;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 1rem;
+
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    bottom: 10%;
+    left: 10%;
+
+    overflow-y: auto;
+}
+#add-admin-form h2 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+#add-admin-form > input {
+    width: 100%;
     grid-column: 1 / span 1;
     border-style: none;
+
+    padding: 0.2rem 0.5rem;
+    font-size: 1.1rem;
     border-bottom: 2px solid #c4c4c4;
 }
-form > input {
-    padding: 0.5em;
-    font-size: 1.1em;
-}
-form > input:first-of-type {
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.4em;
-    border: none;
+
+.button-group {
+    display: flex;
+    flex-direction: column-reverse;
 }
 
-#profile-picture-placeholder {
-    margin-top: -5%;
-    width: 20%;
-    max-width: 240px;
+#add-admin-form img {
+    width: 6rem;
 }
 
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+
+/*************** Media queries *******************/
 
 /* For medium screens */
 @media only screen and (min-width: 768px) {
     #user-list {
-        grid-template-columns: auto auto;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 
     #user-list-header {
@@ -133,11 +163,16 @@ form > input:first-of-type {
         font-size: 1.4em;
     }
 
-    form > input:first-of-type {
-        text-align: center;
-        font-weight: 700;
-        font-size: 2em;
-        border: none;
+    /* Admin form */
+    .button-group {
+        flex-direction: row;
+        height: 6rem;
+        gap: 3rem;
+    }
+
+    #add-admin-form h2 {
+        margin-top: 1rem;
+        font-size: 2.4rem;
     }
 }
 

@@ -515,6 +515,10 @@ app.post('/delete-admin', async function(req, res) {
 });
 
 
+app.post('/create-admin', async function(req, res) {
+	
+});
+
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf-8");
 	res.send(doc);

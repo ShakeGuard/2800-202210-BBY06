@@ -6,6 +6,13 @@ const userListEl = document.getElementById("user-list");
 /** @type HTMLTemplateElement */
 const userRowTemplate = document.getElementById("user-row");
 
+/** @type HTMLTemplateElement */
+const addAdminButton = document.querySelector('#add-admin-button');
+
+/** @type HTMLTemplateElement */
+const adminFormTemplate = document.querySelector('#new-admin');
+
+
 // Some JSDoc Record Types:
 /**
  * @typedef {
@@ -108,14 +115,37 @@ function editAction(userID) {
 
 // TODO: add "add admin" functionality
 // Load form for admin to fill out, create a new admin in db
-function addAction() {
-    const addButton = document.querySelector('#add-admin-button');
-    addButton.addEventListener('click', function() {
-        // Load a copy of the profile form, but with styling changes
-        // Append to document.getElementById('#create-admin-form-container');
+function makeAdminForm() {
+    // Clone the contents of the add-admin-form template
+    const form = adminFormTemplate.content.cloneNode(true).firstElementChild;
+    const cancelButton = form.querySelector('#admin-form-cancel-button');
+    const submitButton = form.querySelector('#admin-form-submit-button');
 
+    // Create the overlay to darken the contents of the screen
+    const overlay = document.createElement('div');
+    overlay.setAttribute('class', 'overlay');
+
+    // Make the buttons do things
+    submitButton.addEventListener('click', submitAdminForm);
+    cancelButton.addEventListener('click', function closeForm() {
+        form.remove();
+        overlay.remove();
     });
+
+    document.body.appendChild(form);
+    document.body.insertBefore(overlay, form);
 }
+
+// Should send the contents of the form to server
+// TODO: connect to /create-admin
+// TODO: make image uploadable
+// 
+function submitAdminForm() {
+    console.log("submit button clicks");
+    
+}
+addAdminButton.addEventListener('click', makeAdminForm);
+
 
 
 // TODO: Pagination?
