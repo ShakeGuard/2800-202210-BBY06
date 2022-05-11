@@ -37,10 +37,6 @@ body{
     padding-bottom: 25px;
 }
 
-#FullName{
-    margin-right: 20px;
-}
-
 #FullName, #Email, #Password{
     font-size: 23px;
 }
@@ -153,6 +149,7 @@ body{
     grid-template-rows: 1fr;
     justify-content: center;
     align-items: center;
+    margin-bottom: 25px;
 }
 
 #Back-Button-Arrow{
@@ -175,7 +172,11 @@ body{
 #Base-Container-BackToKit:hover > span, #Base-Container-BackToKit:hover > p{
     color: #2dc7df;
 }
-
+@media only screen and (max-width: 768px) {
+    #Base-Container{
+        width: 370px;
+    }
+}
 
 @media only screen and (min-width: 768px) {
     #Base-Container{
