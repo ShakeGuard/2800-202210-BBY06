@@ -431,6 +431,95 @@ app.get('/profiles', async function (req, res) {
 	);
 })
 
+// Update the admin's name
+// TODO: fix response text 
+app.post('/edit-admin', async function (req, res) {
+	if (!req.session.isAdmin) {
+		res.status(401).send('notAnAdmin');
+		// TODO: log unauthorized access?
+		return;
+	}
+
+	// The next few chunks of code was copied/adapted from jay/alex's work on the profile page
+	// Get user from db
+	const filterQuery = {'_id': req.body._id};
+	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
+	if(userResults.length === 0) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	} 
+
+	// based on what is present in the update query, 
+	const updateQuery = {};
+	if (req.body.name) {
+		// name to be changed
+		updateQuery['name'] = req.body.name;
+	} 
+
+	if(updateQuery === {}){
+		// invalid body, reject request
+		res.status(400).send("missingBodyArgument(s)");
+		return;
+	}
+
+	try {
+		const results = await db.collection('BBY-6_users').updateOne(filterQuery, { $set: updateQuery});
+		if(results.matchedCount === 0) {
+			// Couldn't find the user
+			res.status(404).send("userNotFound");
+		} else {
+			req.session.name = req.body.name ?? req.session.name;
+			res.status(200).send("userUpdated");
+		}
+	} catch(e) {
+		res.status(500).send("serverIssue");
+	}
+
+});
+
+// Delete admin users
+// TODO: fix response text, review and test this.......
+app.post('/delete-admin', async function(req, res) {
+	if (!req.session.isAdmin) {
+		res.status(401).send('notAnAdmin');
+		// TODO: log unauthorized access?
+		return;
+	}
+
+	// Get user from db
+	const filterQuery = {'_id': req.body._id};
+	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
+	if(userResults.length === 0) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	}
+
+	try {
+		if (req.body._id) {
+			// Delete the admin record
+			// but not yourself if you're an admin and logged in
+			// Using email address from db and session to compare
+			if (userResults.emailAddress === req.session.emailAddress) {
+				// TODO: review/revise the response text
+				// 405 = method not allowed
+				res.status(405).send("deleteAdminFailed");
+			} else {
+				// db.collection('BBY-6_users').deleteOne(filterQuery);
+			}
+		}
+	} catch (e) {
+		res.status(500).send("serverIssue");
+	}
+});
+
+
+app.get('/login', function (req, res) {
+	let doc = fs.readFileSync("./html/login.html", "utf-8");
+	res.send(doc);
+});
+
 app.post("/login", async (req, res) => {
 	const email = req.body.email;
 	const pwd = req.body.password;
