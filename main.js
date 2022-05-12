@@ -482,11 +482,14 @@ app.post('/create-user', async function (req, res) {
 		try {
 			await db.collection('BBY-6_users').insertOne({
 				name: newUserDoc.name,
-				email: newUserDoc.emailAddress,
+				emailAddress: newUserDoc.emailAddress,
 				pwd: await hashPassword,
-				admin: newUserDoc.admin,
+				avatarURL: newUserDoc.avatarURL,
 				dateJoined: convertedDate,
+				achievements: newUserDoc.achievements,
+				admin: newUserDoc.admin
 			});
+			res.status(200).send("createdUserSuccess");
 		} catch(err) {
 			// Error inserting into database!
 			// Later on, log. For now, just rethrow.
@@ -559,7 +562,7 @@ app.post('/delete-admin', async function(req, res) {
 	}
 
 	// Get user from db
-	const filterQuery = {'_id': req.body._id};
+	const filterQuery = {'_id': new mdb.ObjectId(req.body._id)};
 	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
 	if(userResults.length === 0) {
 		// Could not find user
@@ -568,26 +571,16 @@ app.post('/delete-admin', async function(req, res) {
 	}
 
 	try {
-		if (req.body._id) {
-			// Delete the admin record
-			// but not yourself if you're an admin and logged in
-			// Using email address from db and session to compare
-			if (userResults.emailAddress === req.session.emailAddress) {
-				// TODO: review/revise the response text
-				// 405 = method not allowed
-				res.status(405).send("deleteAdminFailed");
-			} else {
-				// db.collection('BBY-6_users').deleteOne(filterQuery);
-			}
+		if (req.session._id === req.body._id) {
+			// TODO: review/revise the response text
+			res.status(405).send("deleteAdminFailed");
+		} else {
+			db.collection('BBY-6_users').deleteOne(filterQuery);
+			res.status(200).send("deleteAdminSuccessful");
 		}
 	} catch (e) {
 		res.status(500).send("serverIssue");
 	}
-});
-
-
-app.post('/create-admin', async function(req, res) {
-	
 });
 
 app.get('/login', function (req, res) {
@@ -607,27 +600,19 @@ app.post("/login", async (req, res) => {
 			res.status(401).send("userNotFound");
 			return;
 		} 
-		// Found user. Validate password.
-		const userDoc = results[0];
-		const passwordMatches = await bcrypt.compare(pwd, userDoc.pwd);
+		// found user. validate password
+		const user = results[0];
+		const passwordMatches = await bcrypt.compare(pwd, user.pwd);
 		if (passwordMatches) {
 			// Password matches, create session
-			req.session.isAdmin = userDoc.admin;
 			req.session.loggedIn = true;
-			req.session.name = userDoc.name;
-			req.session.email = req.body.email;
-			req.session.save(err => {
-				if(err) {
-					console.log(err);
-					res.status(500).send("couldNotSaveSession");
-				} else {
-					if (userDoc.admin) {
-						res.send("loginSuccessfulAdmin");
-					} else {
-						res.send("loginSuccessful");
-					}
-				}
-			});
+			req.session.isAdmin = user.admin;
+			req.session._id = user._id;
+			if (user.admin) {
+				res.send("loginSuccessfulAdmin")
+			} else {
+				res.send("loginSuccessful");
+			}
 		} else {
 			// Password does not match
 			res.status(401).send("passwordMismatch");

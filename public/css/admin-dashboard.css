@@ -5,7 +5,8 @@
 :root {
     --color-primary: rgb(23, 165, 186);
     --color-secondary: rgb(251, 179, 59);
-    --color-error: rgb(235, 65, 13); /*TODO ask tracy what colour this should actually be*/
+    --color-error: rgb(235, 65, 13);
+    --color-success: rgb(18, 210, 164);
 }
 
 body {
@@ -47,6 +48,10 @@ h1, p {
     transition-property: transform;
     transition: 200ms all ease-in-out;
     transform: translateY(100%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Admin user list */
@@ -64,6 +69,10 @@ h1, p {
 
 .toast-error {
     background-color: var(--color-error);
+}
+
+.toast-success {
+    background-color: var(--color-success);
 }
 
 #user-list-panel {
@@ -181,16 +190,44 @@ h1, p {
     width: 6rem;
 }
 
-.overlay {
+.form-overlay {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
+
+
+/* Upload image style */
+.upload-image-container {
+    width: 100%;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.upload-image-container .profile-picture {
+    padding: 0;
+    margin: 1.2rem;
+}
+.upload-button-group {
+    display: flex;
+    flex-direction: column;
+    font: inherit;
+}
+.upload-button-group > label {
+    font-weight: 700;
+}
 
 /*************** Media queries *******************/
 

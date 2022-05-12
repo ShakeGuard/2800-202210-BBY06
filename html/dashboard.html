@@ -67,14 +67,10 @@
                     </div>
                     <div class="edit-button-group">
                         <button class="button button-secondary-teal small transparent edit-button">
-                            <span class="material-icons teal">
-                                edit
-                            </span>
+                            <span class="material-icons teal">edit</span>
                         </button>
                         <button class="button button-secondary-teal small transparent delete-button">
-                            <span class="material-icons teal">
-                                delete
-                            </span>
+                            <span class="material-icons teal">delete</span>
                         </button>
                     </div>
                 </li>
@@ -82,17 +78,23 @@
 
             <!-- Template for add admin form -->
             <template id="new-admin">
-                <form action="post" id="add-admin-form">
+                <form action="/create-user" id="add-admin-form">
                     <h2>Create a new admin</h2>
-                    <img src="/images/user-pic_Tracy.svg" class="profile-picture"
-                        alt="admin-profile-pic" 
-                        id="admin-form-input-pic"/>
-                    <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" />
-                    <input id="admin-form-input-email" type="email" name="email" placeholder="Email" />
-                    <input id="admin-form-input-password" type="password" name="password" placeholder="Password" />
+
+                    <div class="upload-image-container">
+                        <img src="/images/user-pic_Tracy.svg" class="profile-picture" alt="admin-profile-pic" 
+                            id="admin-form-input-pic"/>
+                        <div class="upload-button-group">
+                            <label for="Upload-Avatar">Upload an avatar (JPG, PNG)</label>
+                            <input id="Upload-Avatar" class="upload" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
+                        </div>
+                    </div>
+                    <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
+                    <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
+                    <input id="admin-form-input-password" type="password" name="password" placeholder="Password" required />
                     <div class="button-group">
                         <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
-                        <button id="admin-form-submit-button" class="button button-primary" type="button">Create Admin</button>
+                        <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
                     </div>
                 </form>
             </template>

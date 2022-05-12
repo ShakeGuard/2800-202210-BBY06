@@ -47,11 +47,11 @@ function makeUserRow(userDoc) {
     // Fill in other stuff, too?
     // TODO: Profile pictures!
 
-    /** @type = HTMLButtonElement */
+    /** @type HTMLButtonElement */
     const deleteButton = row.getElementsByClassName('delete-button').item(0);
     deleteButton.addEventListener("click", deleteAction(userDoc._id));
 
-    /** @type = HTMLButtonElement */
+    /** @type HTMLButtonElement */
     const editButton = row.getElementsByClassName('edit-button').item(0);
     editButton.addEventListener("click", editAction(userDoc._id));
 
@@ -69,23 +69,24 @@ function deleteAction(userID) {
         let data = {
             '_id': userID
         };
-        await fetch('/delete-admin', {
+        const response = await fetch('/delete-admin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         });
-        // UI confirmation code etc... goes here
+        const status = await response.text();
+        serverMessages(status);
     }
 }
 
 // Click on edit button to enable the editing on admin name input
 // Pencil icon changes to checkmark icon
-// TODO: responses and UI confirmations
+// TODO: add limits to form??
 function editAction(userID) {
     return async function() {
-        /** @type = HTMLButtonElement */
+        /** @type HTMLButtonElement */
         const userListItem = document.querySelector(`[data-user-id="${userID}"]`);
         const userInput = userListItem.querySelector('.admin-name');
         const editButton = userListItem.querySelector('.edit-button');
@@ -95,7 +96,15 @@ function editAction(userID) {
             userInput.disabled = false;
             userInput.focus();
             editButton.innerHTML = `<span class="material-icons teal">done</span>`;
+            // Implementing Katy's cool toast queue feature
+            toastQueue.queueToasts([
+                { message: `Editing "${userInput.value}"`, classes: ["toast-info"] }
+            ]);
         } else {
+            toastQueue.queueToasts([
+                { message: `Saved "${userInput.value}"`, classes: ["toast-success"] }
+            ]);
+
             userInput.disabled = true;
             editButton.innerHTML = `<span class="material-icons teal">edit</span>`;
             let data = {
@@ -113,38 +122,110 @@ function editAction(userID) {
     }
 }
 
-// TODO: add "add admin" functionality
+
+function closeForm() {
+    document.querySelector('#add-admin-form').remove();
+    document.querySelector('.form-overlay').remove();
+}
+
+
 // Load form for admin to fill out, create a new admin in db
 function makeAdminForm() {
     // Clone the contents of the add-admin-form template
     const form = adminFormTemplate.content.cloneNode(true).firstElementChild;
     const cancelButton = form.querySelector('#admin-form-cancel-button');
-    const submitButton = form.querySelector('#admin-form-submit-button');
 
     // Create the overlay to darken the contents of the screen
     const overlay = document.createElement('div');
-    overlay.setAttribute('class', 'overlay');
+    overlay.setAttribute('class', 'form-overlay');
 
     // Make the buttons do things
-    submitButton.addEventListener('click', submitAdminForm);
-    cancelButton.addEventListener('click', function closeForm() {
-        form.remove();
-        overlay.remove();
+    form.addEventListener('submit', submitAdminForm);
+    cancelButton.addEventListener('click', () => {
+        toastQueue.queueToasts([
+            { message: `Admin was not created`, classes: ["toast-warning"] }
+        ]);
+        closeForm();
     });
 
     document.body.appendChild(form);
     document.body.insertBefore(overlay, form);
 }
 
-// Should send the contents of the form to server
-// TODO: connect to /create-admin
+// Submit form contents
 // TODO: make image uploadable
 // 
-function submitAdminForm() {
-    console.log("submit button clicks");
-    
+async function submitAdminForm(event) {
+    event.preventDefault();
+    const adminForm = event.currentTarget;
+    const formInputName = adminForm.querySelector('#admin-form-input-name');
+    const formInputEmail = adminForm.querySelector('#admin-form-input-email');
+    const formInputPassword = adminForm.querySelector('#admin-form-input-password');
+
+    const data = {
+        'name': formInputName.value.trim() || 'New Admin',
+        'emailAddress': formInputEmail.value,
+        'pwd': formInputPassword.value,
+        'avatarURL': '/avatar/<filename>.png',
+        'dateJoined': new Date(),
+        'achievements': [ 'gettingStarted', 'planKit', 'finishKit' ],
+        'admin': true
+    };
+    const response = await fetch('/create-user', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    });
+
+    const status = await response.text();
+    serverMessages(status);
+
 }
+
 addAdminButton.addEventListener('click', makeAdminForm);
+
+
+// Compiling messages here
+function serverMessages(status) {
+    switch (status) {
+        case 'deleteAdminSuccessful':
+            toastQueue.queueToasts([
+                { message: "Successfully deleted admin", classes: ["toast-success"] }
+            ]);
+            refreshUsers(fetch('profiles'));
+            break;
+        case 'deleteAdminFailed':
+            
+            toastQueue.queueToasts([
+                { message: "Cannot delete yourself", classes: ["toast-error"] }
+            ]);
+            break;
+        case 'createdUserSuccess':
+            toastQueue.queueToasts([
+                { message: `Successfully added admin`, classes: ["toast-success"] }
+            ]);
+            refreshUsers(fetch('profiles'));
+            closeForm();
+            break;
+        case 'duplicateKey':
+            toastQueue.queueToasts([
+                { message: "That email is already in use", classes: ["toast-error"] }
+            ]);
+            break;
+        case 'serverIssue':
+            toastQueue.queueToasts([
+                { message: "Server error", classes: ["toast-error"] }
+            ]);
+            break;
+        default:
+            toastQueue.queueToasts([
+                { message: "Unknown error", classes: ["toast-error"] }
+            ]);
+            break;
+    }
+}
 
 
 /**
@@ -290,15 +371,15 @@ class ToastQueue {
  */
 const toastQueue = new ToastQueue();
 
-setTimeout(
-    () => {
-        toastQueue.queueToasts([
-            { message: "Info: Test message!", classes: ["toast-info"] },
-            { message: "Warning: Do you really want to do this?", classes: ["toast-warning"] },
-            { message: "Error: Something went wrong!", classes: ["toast-error"] },
-        ]);
-    }, 100
-)
+// setTimeout(
+//     () => {
+//         toastQueue.queueToasts([
+//             // { message: "Info: Test message!", classes: ["toast-info"] },
+//             // { message: "Warning: Do you really want to do this?", classes: ["toast-warning"] },
+//             // { message: "Error: Something went wrong!", classes: ["toast-error"] },
+//         ]);
+//     }, 100
+// )
 
 // TODO: Pagination?
 /**
