@@ -7,17 +7,20 @@ body{
 
 #Base-Container{
     justify-items: center;
-    padding-top: 10vh;
-    margin: 10vw;
+    padding-top: 50px;
+    margin: 50px;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(5, auto);
-    font-size: 4vw;
+    font-size: 25px;
 }
 
 #Continue-Link{
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
+    place-self: center;
+    font-size: 25px;
+    padding-bottom: 5px;
 }
 
 .Arrow-CSS{
@@ -26,8 +29,12 @@ body{
     place-self: center;
 }
 
+#Checkmark{
+    color: #17A5BA;
+}
+
 .material-symbols-outlined {
-  font-size: 10vw !important;
+  font-size: 75px !important;
   font-variation-settings:
   'FILL' 0,
   'wght' 400,
@@ -36,8 +43,43 @@ body{
 }
 
 #Base-Container-Continue-Link{
-    margin-top: 10vh;
+    margin-top: 50px;
     display: grid;
     grid-template-columns: 1fr .5fr;
     grid-template-rows: 1fr;
 }
+
+@media only screen and (max-width: 768px) {
+    #Base-Container{
+        padding-top: 50px;
+        font-size: 10px;
+        width: 200px;
+    }
+    
+    .material-symbols-outlined {
+        font-size: 35px !important;
+    }
+
+    #Continue-Link{
+        font-size: 10px;
+        padding-bottom: 5px;
+    }
+
+}
+
+@media only screen and (min-width: 1200px) {
+    #Base-Container{
+        padding-top: 80px;
+        font-size: 30px;
+        width: 600px;
+    }
+    
+    .material-symbols-outlined {
+        font-size: 75px !important;
+    }
+
+    #Continue-Link{
+        font-size: 30px;
+        padding-bottom: 5px;
+    }
+} 
