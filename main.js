@@ -5,6 +5,8 @@ import * as mdb from 'mongodb';
 import { MongoClient } from 'mongodb';
 import express from 'express';
 import session from 'express-session';
+import { WebSocketServer } from 'ws';
+import { createServer, Server } from 'http';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
 import { readFile } from 'node:fs/promises';
@@ -197,15 +199,15 @@ try {
 }
 
 app.use(express.json());
-app.use(session(
-	{
-	  secret: "shhhh...secret",
-	  name: "ShakeGuardSessionID",
-	  resave: false,
-	  // create a unique identifier for that client
-	  saveUninitialized: true
-	})
-  );
+const sessionParser = session({
+	secret: "shhhh...secret",
+	name: "ShakeGuardSessionID",
+	resave: false,
+	// create a unique identifier for that client
+	saveUninitialized: true
+});
+
+app.use(sessionParser);
 // static path mappings
 app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
@@ -636,7 +638,33 @@ app.post("/logout", (req, res) => {
 })
 
 // RUN SERVER
-const port = argv.port ?? 8000;
-app.listen(port, function () {
+let port = 8000;
+const server = createServer(app);
+const wss = new WebSocketServer({ server });
+wss.on('connection', function connection(ws, request, client) {
+	
+});
+  
+server.on('upgrade', function upgrade(request, socket, head) {
+	// Parse session and check if the user requesting the upgrade has an active admin session
+	sessionParser(request, {}, () => {
+		// Only respond to upgrades at the `/changes` URI
+		if (new URL(request.url, `http://${request.headers.host}`).pathname === '/changes') {
+			if (!request.session.isAdmin) {
+				socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+				socket.destroy();
+				return;
+			}
+			// wss.handleUpgrade(request, socket, head, function (ws) {
+			// 	wss.emit('connection', ws, request);
+			// })
+		} else {
+			socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+			socket.destroy();
+			return;
+		}
+	})
+});
+server.listen(port, function () {
   console.log(`Server listening on http://localhost:${port}`);
 })

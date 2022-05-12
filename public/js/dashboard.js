@@ -179,10 +179,8 @@ async function submitAdminForm(event) {
         },
         body: JSON.stringify(data)
     });
-
     const status = await response.text();
     serverMessages(status);
-
 }
 
 addAdminButton.addEventListener('click', makeAdminForm);
@@ -250,5 +248,13 @@ async function refreshUsers(toFetch) {
 
     return results.length;
 }
+
+async function subscribeToChanges() {
+    // In production, use `wss://`.
+    const socket = new WebSocket(`ws://${location.hostname}:8000/changes`, 'profileChanges');
+    socket.onmessage = console.dir;
+}
+
+subscribeToChanges();
 
 refreshUsers(fetch('profiles'));

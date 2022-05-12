@@ -6,11 +6,11 @@ import { constants } from 'node:fs';
 
 // Appeases Arron?
 // TODO: maybe give this a flag later?
-console.log = () => {};
-console.warn = () => {};
-console.error = () => {};
-console.dir = () => {};
-console.debug = () => {};
+// console.log = () => {};
+// console.warn = () => {};
+// console.error = () => {};
+// console.dir = () => {};
+// console.debug = () => {};
 
 // .secrets path – this is assuming that the script is launched from the base of the npm package/git repo
 const secretsPath = process.cwd() + path.sep + '.secrets';
