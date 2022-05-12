@@ -12,6 +12,14 @@ const Pen3 = document.getElementById("Pen-3");
 let userName = FullNameInput.value;
 let userEmail = EmailInput.value
 
+let errors = 0;
+const errorFlags = {
+	FullName: 1,
+	Email: 2,
+	Password: 4,
+	Avatar: 8
+}
+
 const getProfileDetails = async() => {
 	const response = await fetch('/profile-details');
 	const responseJson = await response.json();
@@ -26,7 +34,6 @@ const getAvatar = async() => {
 	try {
 		const responseJson = await response.json();
 		let base64 = responseJson.data;
-		// TODO: Fix the weird stretching of the image
 		base64 = `data:${responseJson.mimeType};base64,${base64}`;
 		document.getElementById("Base-Container-ProfilePicture").src = base64;
 	} catch(e) {
@@ -35,8 +42,21 @@ const getAvatar = async() => {
 }
 
 async function executeUpdate(){
+	checkForInvalidInput(FullNameInput);
+	checkForInvalidInput(PasswordInput);
+	checkForInvalidInput(EmailInput);
+
+	const error = document.getElementById("Update-Error");
+	if(errors) {
+		error.innerText = "Please address above errors.";
+		error.style.color = "red";
+		return;
+	} else {
+		error.innerText = "";
+	}
+
 	const payload = {};
-	if(!FullNameInput.disabled && FullNameInput.value.length !== 0) {
+	if(!FullNameInput.disabled) {
 		payload['name'] = FullNameInput.value;
 	}
 	if(!EmailInput.disabled) {
@@ -45,7 +65,7 @@ async function executeUpdate(){
 	if(!PasswordInput.disabled) {
 		payload['pwd'] = PasswordInput.value;
 	}
-	if(AvatarInput.files[0].size <= 8 * 1024 * 1024) {
+	if(AvatarInput.files[0]) {
 		// Make the POST call seperatly
 		const formData = new FormData();
 		formData.append('avatar', AvatarInput.files[0])
@@ -65,24 +85,21 @@ async function executeUpdate(){
     })
 
     const ResponseText = await response.text(); 
-
+	const feedback = document.getElementById("Update-Error");
     switch(ResponseText){
         case "userUpdated":
             // Successfully updated
+			feedback.innerText = "Successfully Updated Profile";
+			feedback.style.color = "green";
             break;
         case "emailInUse":
             // Email already in use.
+			feedback.innerText = "That email is already in use";
+			feedback.style.color = "red";
             break;
-        // case "invalidSession":
-        //     break;
-        // case "userNotFound":
-        //     break;
-        // case "missingBodyArgument(s)":
-        //     break;
-        // case "serverIssue":
-        //     break;
         default:
-            console.log(ResponseText);
+            feedback.innerText = "There was an issue on the server";
+			feedback.style.color = "red";
     }
 	getAvatar();
 	getProfileDetails();
@@ -121,20 +138,33 @@ function editPasswordInput(){
         PasswordInput.disabled= true; 
         PasswordInput.value = "12345" 
     }
+	checkForInvalidInput();
+}
+
+function checkForInvalidInput(input) {
+	const error = document.getElementById(input.id + "-Error");
+	if(input.value.length === 0) {
+		error.innerText = "Can't be empty"
+		errors = errors | errorFlags[input.id];
+	} else if (input.value.length > 50) {
+		error.innerText = "Can't be over 50 characters"
+		errors = errors | errorFlags[input.id];
+	} else {
+		error.innerText = "";
+		errors = errors & ~(errorFlags[input.id]);
+	}
 }
 
 AvatarInput.addEventListener("change", function(e) {
 	const file = this.files[0];
 	const error = document.getElementById("Avatar-Error");
-	if(file) {
+	if(file && file.size > 8 * 1024 * 1024) {
 		// Don't allow files larger than 8MB
-		if(file.size > 8 * 1024 * 1024) {
-			error.innerText = "Max file size is 8MB";
-		} else {
-			error.innerText = "";
-		}		
+		error.innerText = "Max file size is 8MB";
+		errors = errors | errorFlags.Avatar;
 	} else {
 		error.innerText = "";
+		errors = errors & ~(errorFlags.Avatar);
 	}	
 })
 getAvatar();
@@ -143,4 +173,3 @@ UpdateButton.addEventListener("click", executeUpdate, false);
 Pen1.addEventListener("click",editFullName,false);
 Pen2.addEventListener("click",editEmail,false);
 Pen3.addEventListener("click",editPasswordInput,false);
-

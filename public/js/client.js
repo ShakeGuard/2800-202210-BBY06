@@ -27,13 +27,17 @@ document.querySelector("#Button-Login").addEventListener("click", async function
 
     const status = await response.text();
 
-    switch (status) {
-        case 'loginSuccessful':
-            window.location.href = "./profile";
-            break;
-        default:
-            break;
-    }
+        switch (status) {
+            case 'loginSuccessful':
+                window.location.href = "./profile";
+                break;
+			case 'userNotFound':
+			case 'passwordMismatch':
+				document.getElementById("Error-Msg").innerText = "Invalid Email/Password";
+				break;
+            default:
+                break;
+        }
 
 });
 
