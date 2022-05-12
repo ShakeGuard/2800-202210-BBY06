@@ -228,18 +228,6 @@ function serverMessages(status) {
     }
 }
 
-
-
-// setTimeout(
-//     () => {
-//         toastQueue.queueToasts([
-//             // { message: "Info: Test message!", classes: ["toast-info"] },
-//             // { message: "Warning: Do you really want to do this?", classes: ["toast-warning"] },
-//             // { message: "Error: Something went wrong!", classes: ["toast-error"] },
-//         ]);
-//     }, 100
-// )
-
 // TODO: Pagination?
 /**
  * Replace the children of the input user list with a fresh batch of <li> elements 
