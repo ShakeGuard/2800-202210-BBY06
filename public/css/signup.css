@@ -29,3 +29,9 @@
         width: 768px;
     }
 }
+
+@media only screen and (min-width: 1200px) {
+    #Grid-Container-Form{
+        width: 1000px;
+    }
+} 
