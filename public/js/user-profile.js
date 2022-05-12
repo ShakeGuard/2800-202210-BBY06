@@ -8,6 +8,7 @@ const AvatarInput = document.getElementById("Upload-Avatar");
 const Pen1 = document.getElementById("Pen-1");
 const Pen2 = document.getElementById("Pen-2");
 const Pen3 = document.getElementById("Pen-3");
+const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName");
 
 let userName = FullNameInput.value;
 let userEmail = EmailInput.value
@@ -101,6 +102,9 @@ async function executeUpdate(){
             feedback.innerText = "There was an issue on the server";
 			feedback.style.color = "red";
     }
+
+	UserFeedbackFile.innerHTML = '';
+
 	getAvatar();
 	getProfileDetails();
 }
@@ -138,7 +142,6 @@ function editPasswordInput(){
         PasswordInput.disabled= true; 
         PasswordInput.value = "12345" 
     }
-	checkForInvalidInput();
 }
 
 function checkForInvalidInput(input) {
@@ -155,7 +158,7 @@ function checkForInvalidInput(input) {
 	}
 }
 
-AvatarInput.addEventListener("change", function(e) {
+AvatarInput.addEventListener("input", function(e) {
 	const file = this.files[0];
 	const error = document.getElementById("Avatar-Error");
 	if(file && file.size > 8 * 1024 * 1024) {
@@ -166,6 +169,9 @@ AvatarInput.addEventListener("change", function(e) {
 		error.innerText = "";
 		errors = errors & ~(errorFlags.Avatar);
 	}	
+
+	UserFeedbackFile.innerHTML = file ? file.name : '';
+
 })
 getAvatar();
 getProfileDetails();

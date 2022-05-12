@@ -4,52 +4,62 @@
   <meta charset="utf-8">
 </head>
 <div>
+
 	<!-- Profile Picture -->
 	<div id="Base-Container-ProfilePicture-Container">
-        <img src="images/Default-Profile-Picture.jpg" alt="" id="Base-Container-ProfilePicture"/>
-      </div>
-	  <!-- Edit Profile Picture "Button" -->
+    <img src="images/Default-Profile-Picture.jpg" alt="" id="Base-Container-ProfilePicture"/>
+  </div>
+
+	<!-- Edit Profile Picture "Button" -->
 	<label for="Upload-Avatar" id="Edit-ProfilePicture-Button">
 		<span id="Pen-4" class="material-symbols-outlined">edit</span>
 	</label>
-	<input id="Upload-Avatar" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
-      <!-- Full Name -->
-      <div id="Base-Container-FullName-Container">
-        <form class="Container-Form">
-          <input disabled="disabled" type="text" id="FullName" class="Form-Input" value="FirstName LastName"/>
-          <span id="Pen-1" class="material-symbols-outlined">edit</span>
-		  <p class="error" id="FullName-Error"></p>
-        </form>
-      </div>
-      <!-- Email -->
-      <div id="Base-Container-Email-Container" class="Container">
-        <!-- Label -->
-        <p class="Form-Label">Email</p>
-        <!-- Container -->
-        <form class="Container-Form">
-          <input disabled="disabled" type="email" class="Form-Input" id="Email" value="Email Address"/>
-          <span id="Pen-2" class="material-symbols-outlined">edit</span>
-		  <p class="error" id="Email-Error"></p>
-        </form>
-      </div>
-      <!-- Password -->
-      <div id="Base-Container-Password-Container" class="Container">
-        <!-- Label -->
-        <p class="Form-Label">Password</p>
-        <!-- Container -->
-        <form class="Container-Form">
-          <input disabled="disabled" type="password" class="Form-Input" id="Password" value="Password"/>
-          <span id="Pen-3" class="material-symbols-outlined">edit</span>
-		  <p class="error" id="Password-Error"></p>
-        </form>
-      </div>
-	  <!-- Upload Profile Picture -->
-	  <label class="button" for="Upload-Avatar">Choose file to update avatar (JPG, PNG)</label>
-	  <input id="Upload-Avatar" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
-	  <p class="error" id="Avatar-Error"></p>
-      <!-- Update Profile Button -->
-      <div id="Base-Container-Update-Container" class="button">
-        <p id="Update-Button">Update</p>
-      </div>
-	  <p id="Update-Error"></p>
+
+  <!-- Profile Picture User Feedback -->
+  <div id="Base-Container-Upload-Avatar-Centering-Container">
+    <p id="Upload-Avatar-FileName"></p>
+    <input id="Upload-Avatar" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
+  </div>
+
+  <!-- Full Name -->
+  <div id="Base-Container-FullName-Container">
+    <form class="Container-Form">
+      <input disabled="disabled" type="text" id="FullName" class="Form-Input" value="FirstName LastName"/>
+      <span id="Pen-1" class="material-symbols-outlined">edit</span>
+      <p class="error" id="FullName-Error"></p>
+    </form>
+  </div>
+
+  <!-- Email -->
+  <div id="Base-Container-Email-Container" class="Container">
+    <!-- Label -->
+    <p class="Form-Label">Email</p>
+    <!-- Container -->
+    <form class="Container-Form">
+      <input disabled="disabled" type="email" class="Form-Input" id="Email" value="Email Address"/>
+      <span id="Pen-2" class="material-symbols-outlined">edit</span>
+      <p class="error" id="Email-Error"></p>
+    </form>
+  </div>
+
+  <!-- Password -->
+  <div id="Base-Container-Password-Container" class="Container">
+    <!-- Label -->
+    <p class="Form-Label">Password</p>
+    <!-- Container -->
+    <form class="Container-Form">
+      <input disabled="disabled" type="password" class="Form-Input" id="Password" value="Password"/>
+      <span id="Pen-3" class="material-symbols-outlined">edit</span>
+      <p class="error" id="Password-Error"></p>
+    </form>
+  </div>
+
+  <!-- Upload Profile Picture -->
+  <p class="error" id="Avatar-Error"></p>
+    <!-- Update Profile Button -->
+    <div id="Base-Container-Update-Container" class="button">
+      <p id="Update-Button">Update</p>
+    </div>
+  <p id="Update-Error"></p>
+
 </div>
