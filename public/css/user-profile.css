@@ -231,6 +231,10 @@ body{
     color: #2dc7df;
 }
 
+#Update-Error{
+    padding-bottom: 25px;
+}
+
 ::-webkit-file-upload-button {
     display: none;
 }
