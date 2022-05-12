@@ -37,7 +37,6 @@ const adminFormTemplate = document.querySelector('#new-admin');
  * @param {UserDoc} userDoc 
  * @returns {HTMLLIElement}
  */
-
 function makeUserRow(userDoc) {
     /** @type HTMLLIElement */
     // Deep copy the contents of the template:
@@ -303,7 +302,7 @@ class ToastQueue {
     queueToast(toast, shouldStart) {
         this._queue.push(toast);
         // Start toasting, in case we aren't toasting already.
-        if (!this.toasting) { this.startToasting(); }
+        if (!this.toasting && shouldStart) { this.startToasting(); }
     }
     /**
      * Make an {@link HTMLDivElement} based on the given {@link ToastOptions}.
