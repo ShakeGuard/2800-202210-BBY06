@@ -1,5 +1,4 @@
 * {
-    margin: 0;
     font-family: 'Satoshi', sans-serif;
 }
 
@@ -17,10 +16,9 @@ body{
     place-self: center;
     justify-content: stretch;
     border-radius: 25px;
-    margin: 25px;
     margin-top: 50px;
-    width: 380px;
     text-align: center;
+    width: 95%;
 }
 
 #Base-Container-ProfilePicture-Container{
@@ -41,10 +39,9 @@ body{
 
 #Base-Container-FullName-Container{
     display: grid;
-    padding-top: 25px;
-    padding-bottom: 25px;
     grid-column: 1 / span 1;
     grid-row: 3 / span 1;
+    margin-left: 1em;
 }
 
 #Base-Container-Upload-Avatar-Centering-Container{
@@ -124,7 +121,8 @@ body{
 
 .Form-Label{
     justify-self: start;
-    align-self: center;
+    align-self: end;
+    margin-top: 0;
     grid-column: 1 / span 1;
     grid-row: 1/ span 1;
 }
@@ -137,15 +135,26 @@ body{
 
 .Container{
     display: grid;
-    padding-top: 25px;
-    padding-bottom: 25px;
-    grid-template-rows: 1fr 1fr;
+    margin-left: 1em;
     grid-template-columns: 1fr;
 }
 
 .Container-Form{
     grid-column: 1 / span 1;
     grid-row: 2 / span 1;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 3fr 1fr;
+    place-self: center;
+    justify-self: start;
+    font-size: 25px;
+    font-family: 'Satoshi', sans-serif;
+    align-items: end;
+}
+
+.Container-Form-FullName{
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 3fr 1fr;
@@ -180,9 +189,11 @@ body{
     padding-top: 10px;
     padding-bottom: 10px;
     height: auto;
-    margin: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     text-align: center;
     box-shadow: 1.5px 1.5px 2px rgb(202, 187, 144);
+    font-weight: 700;
 }
 
 #Update-Button:hover{
@@ -207,7 +218,6 @@ body{
     grid-template-rows: 1fr;
     justify-content: center;
     align-items: center;
-    margin-bottom: 25px;
 }
 
 #Back-Button-Arrow{
@@ -232,21 +242,22 @@ body{
 }
 
 #Update-Error{
-    padding-bottom: 25px;
+    padding-bottom: 10px;
 }
 
 ::-webkit-file-upload-button {
     display: none;
 }
 
-@media only screen and (max-width: 768px) {
-    #Base-Container{
-        width: 370px;
-    }
-}
-
 @media only screen and (min-width: 768px) {
     #Base-Container{
         width: 768px;
+    }
+
+    #Base-Container-FullName-Container{
+        margin-left: 0;
+    }
+    .Container{
+        margin-left: 0;
     }
 }

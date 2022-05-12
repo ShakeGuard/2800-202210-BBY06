@@ -111,7 +111,6 @@ a:visited{
 }
 
 #Footer-Copyright {
-    margin-bottom: 2px;
     place-self: center;
     margin-right: 1em;
 }
@@ -122,4 +121,5 @@ a:visited{
 
 .error {
 	color: red;
+    font-size: 15px;
 }
