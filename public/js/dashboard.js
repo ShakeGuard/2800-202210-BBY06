@@ -153,6 +153,21 @@ function makeAdminForm() {
     document.body.insertBefore(overlay, form);
 }
 
+// // Get avatar
+// // Copied from user-profile.js but changed the element id
+// async function getAvatar() {
+//     const response = await fetch('/avatar')
+// 	try {
+// 		const responseJson = await response.json();
+// 		let base64 = responseJson.data;
+// 		base64 = `data:${responseJson.mimeType};base64,${base64}`;
+// 		document.getElementById("admin-form-input-img").src = base64;
+// 	} catch(e) {
+// 		console.log(e);
+// 	}
+// }
+
+
 // Submit form contents
 // TODO: make image uploadable
 // 
@@ -162,12 +177,15 @@ async function submitAdminForm(event) {
     const formInputName = adminForm.querySelector('#admin-form-input-name');
     const formInputEmail = adminForm.querySelector('#admin-form-input-email');
     const formInputPassword = adminForm.querySelector('#admin-form-input-password');
+    /** @type HTMLInputElement */
+    const formImage = adminForm.querySelector('#Upload-Avatar');
+    const formData = new FormData();
+    formData.append('avatar', formImage.files[0]);
 
     const data = {
         'name': formInputName.value.trim() || 'New Admin',
         'emailAddress': formInputEmail.value,
         'pwd': formInputPassword.value,
-        'avatarURL': '/avatar/<filename>.png',
         'dateJoined': new Date(),
         'achievements': [ 'gettingStarted', 'planKit', 'finishKit' ],
         'admin': true
@@ -181,10 +199,25 @@ async function submitAdminForm(event) {
     });
     const status = await response.text();
     serverMessages(status);
+
+    if (!response.ok) {
+        return;
+    }
+
+    // Account creation was successful, now upload avatar!
+    // formData.append('emailAddress', data.emailAddress);
+    const reqURL = new URL(location.href);
+    reqURL.searchParams.set('targetEmail', data.emailAddress);
+    reqURL.pathname = '/upload-avatar-new-admin';
+    const responseAvatar = await fetch(reqURL, {
+        method: 'POST',
+        body: formData
+    });
+
 }
 
 addAdminButton.addEventListener('click', makeAdminForm);
-
+// getAvatar();
 
 // Compiling messages here
 function serverMessages(status) {

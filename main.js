@@ -398,8 +398,6 @@ app.get('/login', async function (req, res) {
 app.get('/dashboard', function (req, res) {
 	if (req.session.isAdmin) {
 		const doc = fs.readFileSync("./html/dashboard.html", "utf-8");
-		// TODO: templating
-		// const newDoc = doc.replace('hidden', '');
 		res.send(doc);
 	} else {
 		// Unauthorized TODO: test
@@ -432,6 +430,39 @@ app.get('/profiles', async function (req, res) {
 		}
 	);
 })
+
+// When an admin wants to create a new admin, 
+// a form is created with an option for the admin to upload 
+// an image file for the new admin
+app.post('/upload-avatar-new-admin', upload.single('avatar'), async (req, res) => {
+	const targetEmail = req.query.targetEmail ?? null;
+
+	//if the request is not coming from a logged in *admin* user, reject.
+	if (!req.session || !req.session.loggedIn || !req.session.isAdmin) {
+		res.status(401).send("invalidSession");
+		return;
+	} 
+	
+	// Don't do anything if the user specifies a bad email!
+	const emailFilter = {emailAddress: targetEmail}
+	if (targetEmail === null || (await db.collection('BBY-6_users').find(emailFilter).toArray()).length != 1) {
+		// TODO: split into two separate errors.
+		res.status(500).send("badEmail");
+		return;
+	}
+	
+	const results = db.collection('BBY-6_users').updateOne(emailFilter, {
+		$set: {
+			avatarURL: {
+				data: req.file.buffer,
+				contentType: req.file.mimetype
+			}
+		}
+	});
+	const data = req.file.buffer;
+	res.status(200).send('avatarUpdated');
+});
+
 
 /** 
  * @typedef { {

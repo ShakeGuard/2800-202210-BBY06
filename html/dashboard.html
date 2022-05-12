@@ -8,8 +8,7 @@
     <title>Dashboard</title>
 
     <link href="/css/buttons.css" rel="stylesheet" />
-    <link href="/css/profile.css" rel="stylesheet" />
-    <link href="/css/alerts.css" rel="stylesheet" />
+    <!-- <link href="/css/alerts.css" rel="stylesheet" /> -->
     <link href="/css/admin-dashboard.css" rel="stylesheet" />
 
     <!-- Google Material Icons -->
@@ -82,11 +81,13 @@
                     <h2>Create a new admin</h2>
 
                     <div class="upload-image-container">
-                        <img src="/images/user-pic_Tracy.svg" class="profile-picture" alt="admin-profile-pic" 
-                            id="admin-form-input-pic"/>
-                        <div class="upload-button-group">
-                            <label for="Upload-Avatar">Upload an avatar (JPG, PNG)</label>
-                            <input id="Upload-Avatar" class="upload" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
+                        <div class="upload-image-group">
+                            <img src="/images/user-pic_Tracy.svg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
+                            <div class="upload-button-group">
+                                <!-- Label will be overlaid on top and hide the default file button -->
+                                <label for="Upload-Avatar" class="custom-upload-button">+</label>
+                                <input id="Upload-Avatar" class="default-upload-button" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
+                            </div>
                         </div>
                     </div>
                     <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
