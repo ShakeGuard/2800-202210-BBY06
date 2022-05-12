@@ -137,6 +137,7 @@
 }
 
 /** 
+ * @type ToastQueue
  * @global The ToastQueue {@link https://en.wikipedia.org/wiki/Singleton_pattern singleton} instance. 
  */
 export default new ToastQueue();
