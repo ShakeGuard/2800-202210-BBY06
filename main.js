@@ -399,10 +399,20 @@ app.get('/login', async function (req, res) {
 	res.send(login.serialize());
 });
 
-app.get('/dashboard', function (req, res) {
+app.get('/dashboard', async function (req, res) {
 	if (req.session.isAdmin) {
-		const doc = fs.readFileSync("./html/dashboard.html", "utf-8");
-		res.send(doc);
+
+		let dashboardDoc = fs.readFileSync("./html/dashboard.html", "utf-8");
+		const baseDOM = new JSDOM(dashboardDoc);
+		let dashboard = await loadHeaderFooter(baseDOM);
+		let profileDetails = await loadHTMLComponent(dashboard, "#Base-Container", "div", "./templates/profile.html");
+	    profileDetails.window.document.getElementById("FullName").defaultValue = req.session.name;
+		profileDetails.window.document.getElementById("Email").defaultValue = req.session.email;
+		res.send(dashboard.serialize());
+
+
+
+		return;
 	} else {
 		// Unauthorized TODO: test
 		res.redirect('/profile');
