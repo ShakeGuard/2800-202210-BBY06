@@ -5,6 +5,7 @@ import express from 'express';
 import session from 'express-session';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
+import { readFile } from 'node:fs/promises';
 import { JSDOM } from 'JSDOM';
 import multer from 'multer';
 
@@ -114,11 +115,10 @@ const connectMongo = async (url, dbName) => {
 // If db does not contain collections we need, add them.
 // Else do nothing
 const initDatabase = async(db) => {
-
 	// There are no collections in this database so we need to add ours.
 	const users = await db.collection("BBY-6_users").find({}).toArray();
-	if(users.length === 0 ){
-		const usersJson = JSON.parse(fs.readFileSync('./data/users.json', 'utf-8'))
+	if(users.length === 0 ) {
+		const usersJson = JSON.parse(await readFile('./data/users.json', 'utf-8'));
 		await db.collection("BBY-6_users").insertMany(usersJson);
 		// Create a unique index on the emailAddress field in the users collection.
 		await db.collection("BBY-6_users").createIndex({ emailAddress: 1 }, { unique: true });
@@ -126,19 +126,19 @@ const initDatabase = async(db) => {
 	
 	const items = await db.collection("BBY-6_items").find({}).toArray();
 	if(items.length === 0 ){
-		const itemsJson = JSON.parse(fs.readFileSync('./data/items.json', 'utf-8'))
+		const itemsJson = JSON.parse(await readFile('./data/items.json', 'utf-8'))
 		await db.collection("BBY-6_items").insertMany(itemsJson);
 	}
 
 	const categories = await db.collection("BBY-6_categories").find({}).toArray();
 	if(categories.length === 0 ){
-		const categoriesJson = JSON.parse(fs.readFileSync('./data/categories.json', 'utf-8'))
+		const categoriesJson = JSON.parse(await readFile('./data/categories.json', 'utf-8'))
 		await db.collection("BBY-6_categories").insertMany(categoriesJson);
 	}
 
 	const articles = await db.collection("BBY-6_articles").find({}).toArray();
 	if(articles.length === 0 ){
-		const articlesJson = JSON.parse(fs.readFileSync('./data/articles.json', 'utf-8'))
+		const articlesJson = JSON.parse(await readFile('./data/articles.json', 'utf-8'))
 		await db.collection("BBY-6_articles").insertMany(articlesJson);
 	}
 }
@@ -148,12 +148,13 @@ const initDatabase = async(db) => {
  * @param {jsdom.JSDOM} baseDOM - the DOM object to template onto.
  * @returns {jsdom.JSDOM} The original DOM object, with header and footer attached.
  */
-function loadHeaderFooter(baseDOM) {
+const loadHeaderFooter = async (baseDOM) => {
+	
 	// Add the header 
-	baseDOM = loadHTMLComponent(baseDOM, "header", "header", "./html/header.html");
+	baseDOM = await loadHTMLComponent(baseDOM, "header", "header", "./templates/header.html");
 
 	// Add the footer
-	baseDOM = loadHTMLComponent(baseDOM, "footer", "footer", "./html/footer.html");
+	baseDOM = await loadHTMLComponent(baseDOM, "footer", "footer", "./templates/footer.html");
 
 	return baseDOM;
 }
@@ -162,13 +163,12 @@ function loadHeaderFooter(baseDOM) {
 // baseDOM is the return value of `new JSDOM(htmlFile)` 
 // Selectors should be formatted as they would with `querySelector()`
 // componentLocation example: ./html/header.html
-const loadHTMLComponent = (baseDOM, placeholderSelector, componentSelector, componentLocation) => {
+const loadHTMLComponent = async (baseDOM, placeholderSelector, componentSelector, componentLocation) => {
 	const document = baseDOM.window.document;
 	const placeholder = document.querySelector(placeholderSelector);
-	const html = fs.readFileSync(componentLocation, "utf8");
+	const html = await readFile(componentLocation, "utf8");
 	const componentDOM = new JSDOM(html);
 	placeholder.innerHTML = componentDOM.window.document.querySelector(componentSelector).innerHTML;
-
 	return baseDOM;
 }
 
@@ -195,17 +195,19 @@ app.use("/css", express.static("public/css"));
 app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
 
-app.get('/', function (req, res) {
+app.get('/', async function (req, res) {
 	
-	let doc = fs.readFileSync("./html/index.html", "utf8");
+	let doc = await readFile("./html/index.html", "utf8");
 	let index = new JSDOM(doc);
 
 	// Add the footer
-	index = loadHTMLComponent(index, "footer", "footer", "./html/footer.html");
+	index = await loadHTMLComponent(index, "footer", "footer", "./templates/footer.html");
 
 	res.send(index.serialize());
 });
 app.get('/profile-details', async(req, res) => {
+	// Check that the user is logged in.
+
 	const filterQuery = {emailAddress: req.session.email};
 
 	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
@@ -222,29 +224,48 @@ app.get('/profile-details', async(req, res) => {
 	}
 
 })
-app.get('/profile', async (req, res) => {
-	if (!req.session.loggedIn) {
+
+/**
+ * Redirects non-logged-in users to the `'/login'` route.
+ * @param {Response} res - Response object, may get redirected
+ * @returns `true` if the user was redirected, `false` otherwise.
+ */
+function redirectToLogin(req, res) {
+	if (!req.session || !req.session.loggedIn) {
 		res.redirect("/login");
+	}
+}
+
+/**
+ * Checks if the user is logged in, if they aren't, sends a 401 error.
+ * @param {Response} res - Response object to send errors to; may get sent.
+ * @returns `true` if the user was sent an error, `false` otherwise.
+ */
+function checkLoginError(req, res) {
+	if (!req.session || !req.session.loggedIn) {
+		res.status(401).send("invalidSession");
+	} 
+}
+
+app.get('/profile', async (req, res) => {
+	if (redirectToLogin(req, res)) {
 		return;
 	}
-	let doc = fs.readFileSync("./html/user-profile.html", "utf8");
+	let doc = await readFile("./html/user-profile.html", "utf8");
 	const baseDOM = new JSDOM(doc);
-	let profile = loadHeaderFooter(baseDOM);
+	let profile = await loadHeaderFooter(baseDOM);
 
-	profile = loadHTMLComponent(profile, "#Base-Container", "div", "./html/profile-component.html");
+	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
     profile.window.document.getElementById("FullName").defaultValue = req.session.name;
 	profile.window.document.getElementById("Email").defaultValue = req.session.email;
 	res.send(profile.serialize());
 });
 
 app.patch('/profile', async(req, res) => {
-	
-
 	// if the request is not coming from a logged in user, reject.
-	if (!req.session || !req.session.loggedIn) {
-		res.status(401).send("invalidSession");
+	if (checkLoginError(req, res)) {
 		return;
-	} 
+	}
 	
 	// get user from db
 	const filterQuery = {emailAddress: req.session.email};
@@ -301,10 +322,10 @@ app.patch('/profile', async(req, res) => {
 
 app.get('/avatar', async(req, res) => {
 	//if the request is not coming from a logged in user, reject.
-	if (!req.session || !req.session.loggedIn) {
-		res.status(401).send("invalidSession");
+	if (checkLoginError(req, res)) {
 		return;
-	} 
+	}
+
 	const results = await db.collection('BBY-6_users').findOne({emailAddress:req.session.email});
 	res.status(200).send({
 		mimeType: results.avatarURL.contentType,
@@ -314,10 +335,10 @@ app.get('/avatar', async(req, res) => {
 
 app.post('/avatar', upload.single("avatar"), async(req, res) => {
 	//if the request is not coming from a logged in user, reject.
-	if (!req.session || !req.session.loggedIn) {
-		res.status(401).send("invalidSession");
+	if (checkLoginError(req, res)) {
 		return;
-	} 
+	}
+
 	const results = await db.collection('BBY-6_users').updateOne({emailAddress:req.session.email}, {
 		$set: {
 			avatarURL: {
@@ -329,15 +350,15 @@ app.post('/avatar', upload.single("avatar"), async(req, res) => {
 	res.status(200).send("avatarUploaded");
 })
 
-app.get('/login', function (req, res) {
+app.get('/login', async function (req, res) {
 	// Redirect to profile page if logged in
 	if (req.session.loggedIn) {
 		res.redirect("/profile");
 		return;
 	} 
-	let doc = fs.readFileSync("./html/login.html", "utf8");
+	let doc = await readFile("./html/login.html", "utf8");
 	const baseDOM = new JSDOM(doc);
-	let login = loadHeaderFooter(baseDOM);
+	let login = await loadHeaderFooter(baseDOM);
 	res.send(login.serialize());
 });
 
@@ -390,40 +411,6 @@ app.post("/logout", (req, res) => {
 			}
 		})
 	} 
-})
-
-app.post("/signup", async (req, res) => {
-	// TODO: Should probably sanitize some of these before sticking them in the database
-	const name = req.body.name;
-	const emailAddress = req.body.email;
-	const avatarURL = req.body.avatarURL;
-	const date = new Date().toISOString();
-	const achievements = [];
-	const admin = false;
-	const kit = {
-		description: "",
-		order: [],
-		items: []
-	};
-	
-	// Set response header regardless of success/failure
-	res.setHeader("Content-Type", "application/json");
-
-	try {
-		bcrypt.hashSync(req.body.password, 10, async(err, pwd) => {
-			await db.collection('BBY-6_users')
-				.insertOne({name, emailAddress, pwd, avatarURL, date, achievements, admin, kit});
-		});
-	
-		res.redirect(200, "/");
-	} catch(e) {
-		// Email addresses have a unique index so mongo will give error code 11000 if the email is already in use
-		if(e.code === 11000) {
-			res.status(403).send("emailInUse");
-		} else {			
-			res.status(500).send("serverIssue");
-		}
-	}
 })
 
 // RUN SERVER

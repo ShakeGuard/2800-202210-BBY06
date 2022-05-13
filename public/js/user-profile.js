@@ -32,14 +32,10 @@ const getProfileDetails = async() => {
 
 const getAvatar = async() => {
 	const response = await fetch('/avatar')
-	try {
-		const responseJson = await response.json();
-		let base64 = responseJson.data;
-		base64 = `data:${responseJson.mimeType};base64,${base64}`;
-		document.getElementById("Base-Container-ProfilePicture").src = base64;
-	} catch(e) {
-		console.log(e);
-	}
+	const responseJson = await response.json();
+	let base64 = responseJson.data;
+	base64 = `data:${responseJson.mimeType};base64,${base64}`;
+	document.getElementById("Base-Container-ProfilePicture").src = base64;
 }
 
 async function executeUpdate(){
@@ -74,8 +70,6 @@ async function executeUpdate(){
 			method: "POST",
 			body: formData
 		})
-		const responseText = await response.text();
-		console.log(responseText);
 	}
 
 

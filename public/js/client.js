@@ -1,13 +1,4 @@
 "use strict";
-// Client-Side
-
-function ready(callback) {
-    if (document.readyState != "loading") {
-        callback();
-    } else {
-        document.addEventListener("DOMContentLoaded", callback);
-    }
-}
 
 // Detect #LOGIN button click, Make POST request TO THE SERVER
 document.querySelector("#Button-Login").addEventListener("click", async function(e) {
@@ -38,7 +29,3 @@ document.querySelector("#Button-Login").addEventListener("click", async function
         }
 
 });
-
-ready(function(){
-    
-})
