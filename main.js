@@ -261,7 +261,9 @@ app.get('/profile-details', async(req, res) => {
 function redirectToLogin(req, res) {
 	if (!req.session || !req.session.loggedIn) {
 		res.redirect("/login");
+		return true;
 	}
+	return false;
 }
 
 /**
@@ -272,7 +274,9 @@ function redirectToLogin(req, res) {
 function checkLoginError(req, res) {
 	if (!req.session || !req.session.loggedIn) {
 		res.status(401).send("invalidSession");
+		return true;
 	} 
+	return false;
 }
 
 app.get('/profile', async (req, res) => {
@@ -638,6 +642,8 @@ app.post("/login", async (req, res) => {
 		const passwordMatches = await bcrypt.compare(pwd, user.pwd);
 		if (passwordMatches) {
 			// Password matches, create session
+			req.session.name = user.name;
+			req.session.email = email;
 			req.session.loggedIn = true;
 			req.session.isAdmin = user.admin;
 			req.session._id = user._id;
