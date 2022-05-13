@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/images/comp2800_logo_favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Dashboard</title>
+
+    <link href="/css/header-footer.css" rel="stylesheet" />
+    <link href="/css/admin-dashboard.css" rel="stylesheet" />
+
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body>
+    <!-- Dynamically inserted -->
+    <header></header>
+
+    <!-- Overlay grid – for toasts and such. -->
+    <div id="overlay-grid">
+        <!-- "Toasts" alert section. Maybe should go in the footer? -->
+        <div id="dashboard-toasts">
+            <!-- Template for popup toasts -->
+            <template id="toast">
+                <div class="toast">
+                    <i></i>
+                    <span class="toast-message">
+                        Developer left message empty!
+                    </span>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Dashboard content -->
+    <div id="dashboard-grid">
+
+        <!-- Profile template goes here -->
+        <div id="user-details">
+        </div>
+
+        <!-- Specific to Admins -->
+        <div id="user-list-panel">
+            <div id="user-list-header">
+                <h1>Admins</h1>
+                <button class="button button-secondary-teal block" id="add-admin-button">
+                    + Add admin
+                </button>
+            </div>
+
+            <ul id="user-list">
+                <!-- Users Go Here -->
+            </ul>
+
+            <!-- Clone profile form with modified css and place here -->
+            <div id="create-admin-form-container"></div>
+
+            <!-- Template for user items -->
+            <template id="user-row">
+                <li class="user-item">
+                    <div class="user-item-name-pic">
+                        <img src="/images/user-pic_Tracy.svg" id="admin-profile-pic" class="profile-picture" alt="admin-profile-pic" />
+                        <input disabled type="text" name="admin-name" class="admin-name" placeholder="FirstName LastName" required />
+                    </div>
+                    <div class="edit-button-group">
+                        <button class="button button-secondary-teal small transparent edit-button">
+                            <span class="material-icons teal">edit</span>
+                        </button>
+                        <button class="button button-secondary-teal small transparent delete-button">
+                            <span class="material-icons teal">delete</span>
+                        </button>
+                    </div>
+                </li>
+            </template>
+
+            <!-- Template for add admin form -->
+            <template id="new-admin">
+                <form action="/create-user" id="add-admin-form">
+                    <h2>Create a new admin</h2>
+
+                    <div class="upload-image-container">
+                        <div class="upload-image-group">
+                            <img src="/images/user-pic_Tracy.svg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
+                            <div class="upload-button-group">
+                                <!-- Label will be overlaid on top and hide the default file button -->
+                                <label for="Upload-Avatar" class="custom-upload-button">+</label>
+                                <input id="Upload-Avatar" class="default-upload-button" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
+                            </div>
+                        </div>
+                    </div>
+                    <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
+                    <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
+                    <input id="admin-form-input-password" type="password" name="password" placeholder="Password" required />
+                    <div class="button-group">
+                        <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
+                        <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
+                    </div>
+                </form>
+            </template>
+        </div>
+    </div>
+
+    <!-- Dynamically inserted -->
+    <footer></footer>
+
+    <script type="module" src="js/toasts.mjs"></script>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

@@ -123,3 +123,6 @@ a:visited{
 	color: red;
     font-size: 15px;
 }
+.hidden {
+    display: none;
+}

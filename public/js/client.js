@@ -15,7 +15,6 @@ document.querySelector("#Button-Login").addEventListener("click", async function
     
 
     const status = await response.text();
-
         switch (status) {
             case 'loginSuccessful':
                 window.location.href = "./profile";
@@ -24,6 +23,9 @@ document.querySelector("#Button-Login").addEventListener("click", async function
 			case 'passwordMismatch':
 				document.getElementById("Error-Msg").innerText = "Invalid Email/Password";
 				break;
+            case 'loginSuccessfulAdmin':
+                window.location.href = "./dashboard";
+                break;
             default:
                 break;
         }

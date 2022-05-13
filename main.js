@@ -1,9 +1,12 @@
 #!/usr/bin/node
 "use strict";
 
+import * as mdb from 'mongodb';
 import { MongoClient } from 'mongodb';
 import express from 'express';
 import session from 'express-session';
+import { WebSocketServer } from 'ws';
+import { createServer, Server } from 'http';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
 import { readFile } from 'node:fs/promises';
@@ -11,15 +14,15 @@ import { JSDOM } from 'JSDOM';
 import multer from 'multer';
 
 // Use `yargs` to parse command-line arguments.
-import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 // Grab secrets file
-import { readSecrets } from './shakeguardSecrets.mjs'
+import { readSecrets } from './shakeguardSecrets.mjs';
 
-console.log = () => {};
-console.dir = () => {};
-console.error = () => {};
+// console.log = () => {};
+// console.dir = () => {};
+// console.error = () => {};
 
 const secrets = await readSecrets();
 
@@ -59,9 +62,13 @@ const url = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePor
 
 const dbName = argv.dbName ?? "COMP2800";
 
-// The MongoDB connection and Database objects.
+// The MongoDB Connection object.
+/** @type {?MongoClient} */
+let mongo = null;
+// The MongoDB Database object.
 // Populated by the connectMongo(…) function.
-let mongo, db;
+/** @type {?mdb.Db} */
+let db = null;
 
 // Establishes connection and returns necessary objects to interact with database
 // Caller is resonsible for closing the connection
@@ -120,10 +127,16 @@ const connectMongo = async (url, dbName) => {
 
 // If db does not contain collections we need, add them.
 // Else do nothing
-const initDatabase = async(db) => {
+/**
+ * Initializes the given [database]{@link Db} with values from JSON files in the `./data/` directory.
+ * If the database already contains all needed collections, this function is a no-op.
+ * @param  {mdb.Db} db - The database to initialize.
+ */
+async function initDatabase(db){
+	const usersCollection = db.collection("BBY-6_users");
 	// There are no collections in this database so we need to add ours.
-	const users = await db.collection("BBY-6_users").find({}).toArray();
-	if(users.length === 0 ) {
+	const users = await usersCollection.find({}).toArray();
+	if(users.length === 0) {
 		const usersJson = JSON.parse(await readFile('./data/users.json', 'utf-8'));
 		await db.collection("BBY-6_users").insertMany(usersJson);
 		// Create a unique index on the emailAddress field in the users collection.
@@ -186,15 +199,15 @@ try {
 }
 
 app.use(express.json());
-app.use(session(
-	{
-	  secret: "shhhh...secret",
-	  name: "ShakeGuardSessionID",
-	  resave: false,
-	  // create a unique identifier for that client
-	  saveUninitialized: true
-	})
-  );
+const sessionParser = session({
+	secret: "shhhh...secret",
+	name: "ShakeGuardSessionID",
+	resave: false,
+	// create a unique identifier for that client
+	saveUninitialized: true
+});
+
+app.use(sessionParser);
 // static path mappings
 app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
@@ -202,8 +215,16 @@ app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
 
 app.get('/', async function (req, res) {
-	
-	let doc = await readFile("./html/index.html", "utf8");
+	if (req.session.loggedIn) {
+		if (req.session.isAdmin) {
+			res.redirect('/dashboard');
+		} else {
+			res.redirect('/profile');
+		}
+		console.log("User logged in!");
+	}
+
+	const doc = await readFile("./html/index.html", "utf8");
 	let index = new JSDOM(doc);
 
 	// Add the footer
@@ -211,6 +232,7 @@ app.get('/', async function (req, res) {
 
 	res.send(index.serialize());
 });
+
 app.get('/profile-details', async(req, res) => {
 	// Check that the user is logged in.
 
@@ -222,7 +244,7 @@ app.get('/profile-details', async(req, res) => {
 		res.status(500).send("userNotFound");
 		return;
 	} else {
-		res.setHeader("Content-Type", "application/json");
+		// res.setHeader("Content-Type", "application/json");
 		res.status(200).send({
 			name: req.session.name,
 			email: req.session.email
@@ -239,7 +261,9 @@ app.get('/profile-details', async(req, res) => {
 function redirectToLogin(req, res) {
 	if (!req.session || !req.session.loggedIn) {
 		res.redirect("/login");
+		return true;
 	}
+	return false;
 }
 
 /**
@@ -250,13 +274,20 @@ function redirectToLogin(req, res) {
 function checkLoginError(req, res) {
 	if (!req.session || !req.session.loggedIn) {
 		res.status(401).send("invalidSession");
+		return true;
 	} 
+	return false;
 }
 
 app.get('/profile', async (req, res) => {
 	if (redirectToLogin(req, res)) {
 		return;
 	}
+	if (req.session.isAdmin) {
+		res.redirect('/dashboard');
+		return;
+	}
+
 	let doc = await readFile("./html/user-profile.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let profile = await loadHeaderFooter(baseDOM);
@@ -368,6 +399,232 @@ app.get('/login', async function (req, res) {
 	res.send(login.serialize());
 });
 
+app.get('/dashboard', function (req, res) {
+	if (req.session.isAdmin) {
+		const doc = fs.readFileSync("./html/dashboard.html", "utf-8");
+		res.send(doc);
+	} else {
+		// Unauthorized TODO: test
+		res.redirect('/profile');
+	}
+});
+
+app.get('/profiles', async function (req, res) { 
+	if (!req.session.isAdmin) {
+		res.status(401).send('notAnAdmin');
+		// TODO: log unauthorized access?
+		return;
+	}
+
+	// TODO: error handling
+	// TODO: really, we should do pagination for this kind of request.
+	const usersCursor = db.collection('BBY-6_users').find()
+	// Omit password hashes! 
+	// There is probably a better way of doing this; any suggestions?
+	.map(user => {
+		delete user.pwd;
+		return user;
+	});
+
+	res.json(
+		{
+			page: 0,
+			pageSize: null,
+			result: await usersCursor.toArray()
+		}
+	);
+})
+
+// When an admin wants to create a new admin, 
+// a form is created with an option for the admin to upload 
+// an image file for the new admin
+app.post('/upload-avatar-new-admin', upload.single('avatar'), async (req, res) => {
+	const targetEmail = req.query.targetEmail ?? null;
+
+	//if the request is not coming from a logged in *admin* user, reject.
+	if (!req.session || !req.session.loggedIn || !req.session.isAdmin) {
+		res.status(401).send("invalidSession");
+		return;
+	} 
+	
+	// Don't do anything if the user specifies a bad email!
+	const emailFilter = {emailAddress: targetEmail}
+	if (targetEmail === null || (await db.collection('BBY-6_users').find(emailFilter).toArray()).length != 1) {
+		// TODO: split into two separate errors.
+		res.status(500).send("badEmail");
+		return;
+	}
+	
+	const results = db.collection('BBY-6_users').updateOne(emailFilter, {
+		$set: {
+			avatarURL: {
+				data: req.file.buffer,
+				contentType: req.file.mimetype
+			}
+		}
+	});
+	const data = req.file.buffer;
+	res.status(200).send('avatarUpdated');
+});
+
+
+/** 
+ * @typedef { {
+ *      _id: ?mdb.ObjectId,
+ *      name: string,
+ *      emailAddress: string,
+ *      pwd: string,
+ *      admin: boolean,
+ *      avatarURL: ?string,
+ *      dateJoined: ?Date,
+ * 	    achievements: ?string[]
+ * } } UserDoc
+ * */
+
+app.post('/create-user', async function (req, res) {
+	if (!req.session.isAdmin) {
+		res.status(401).send('notAnAdmin');
+		return;
+	}
+
+	try {
+		/** @type {UserDoc} */
+		const newUserDoc = {
+			_id: req.body?._id ?? undefined,
+			name: req.body?.name ?? undefined,
+			emailAddress: req.body?.emailAddress ?? undefined,
+			pwd: req.body?.pwd ?? undefined,
+			admin: req.body?.admin ?? false,
+			avatarURL: req.body?.avatarURL ?? undefined,
+			dateJoined: req.body?.dateJoined ?? undefined,
+			achievements: req.body?.achievements ?? undefined,
+		};
+
+		const requiredFields = ["name", "emailAddress", "pwd"];
+		const acceptable = requiredFields.reduce(
+			(validSoFar, current) => validSoFar && (newUserDoc[current] !== undefined), true
+		);
+
+		if (!acceptable) {
+			const missingFields = requiredFields.filter(field => newUserDoc[field] === undefined);
+			throw new Error(`"Create user" request missing required fields: ${missingFields.join(', ')}`);
+		}
+
+		// All required fields present, time to convert the data into a good format.
+		const hashPassword = bcrypt.hash(newUserDoc.pwd, 10);
+		let convertedDate = new Date(newUserDoc.dateJoined);
+		if (convertedDate.valueOf() === NaN) {
+			convertedDate = new Date();
+		}
+		try {
+			await db.collection('BBY-6_users').insertOne({
+				name: newUserDoc.name,
+				emailAddress: newUserDoc.emailAddress,
+				pwd: await hashPassword,
+				avatarURL: newUserDoc.avatarURL,
+				dateJoined: convertedDate,
+				achievements: newUserDoc.achievements,
+				admin: newUserDoc.admin
+			});
+			res.status(200).send("createdUserSuccess");
+		} catch(err) {
+			// Error inserting into database!
+			// Later on, log. For now, just rethrow.
+			throw (err);
+		}
+	} catch(err) {
+		// Can catch the error and display it here, but Arron says console.log is not allowd
+		if (err.code === 11000) {
+			res.status(500).send("duplicateKey");
+			return;
+		}
+		res.status(500).send("serverIssue");
+	}
+});
+
+// Update the admin's name
+// TODO: fix response text 
+app.post('/edit-admin', async function (req, res) {
+	if (!req.session.isAdmin) {
+		res.status(401).send('notAnAdmin');
+		// TODO: log unauthorized access?
+		return;
+	}
+
+	// The next few chunks of code was copied/adapted from jay/alex's work on the profile page
+	// Get user from db
+	const filterQuery = {'_id': new mdb.ObjectId(req.body._id)};
+	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
+	if(userResults.length === 0) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	} 
+
+	// based on what is present in the update query, 
+	const updateQuery = {};
+	if (req.body.name) {
+		// name to be changed
+		updateQuery['name'] = req.body.name;
+	} 
+
+	if(updateQuery === {}){
+		// invalid body, reject request
+		res.status(400).send("missingBodyArgument(s)");
+		return;
+	}
+
+	try {
+		const results = await db.collection('BBY-6_users').updateOne(filterQuery, { $set: updateQuery});
+		if(results.matchedCount === 0) {
+			// Couldn't find the user
+			res.status(404).send("userNotFound");
+		} else {
+			req.session.name = req.body.name ?? req.session.name;
+			res.status(200).send("userUpdated");
+		}
+	} catch(e) {
+		res.status(500).send("serverIssue");
+	}
+
+});
+
+// Delete admin users
+// TODO: fix response text, review and test this.......
+app.post('/delete-admin', async function(req, res) {
+	if (!req.session.isAdmin) {
+		res.status(401).send('notAnAdmin');
+		// TODO: log unauthorized access?
+		return;
+	}
+
+	// Get user from db
+	const filterQuery = {'_id': new mdb.ObjectId(req.body._id)};
+	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
+	if(userResults.length === 0) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	}
+
+	try {
+		if (req.session._id === req.body._id) {
+			// TODO: review/revise the response text
+			res.status(405).send("deleteAdminFailed");
+		} else {
+			db.collection('BBY-6_users').deleteOne(filterQuery);
+			res.status(200).send("deleteAdminSuccessful");
+		}
+	} catch (e) {
+		res.status(500).send("serverIssue");
+	}
+});
+
+app.get('/login', function (req, res) {
+	let doc = fs.readFileSync("./html/login.html", "utf-8");
+	res.send(doc);
+});
+
 app.post("/login", async (req, res) => {
 	const email = req.body.email;
 	const pwd = req.body.password;
@@ -378,30 +635,28 @@ app.post("/login", async (req, res) => {
 		if(results.length === 0) {
 			// Could not find user
 			res.status(401).send("userNotFound");
+			return;
+		} 
+		// found user. validate password
+		const user = results[0];
+		const passwordMatches = await bcrypt.compare(pwd, user.pwd);
+		if (passwordMatches) {
+			// Password matches, create session
+			req.session.name = user.name;
+			req.session.email = email;
+			req.session.loggedIn = true;
+			req.session.isAdmin = user.admin;
+			req.session._id = user._id;
+			if (user.admin) {
+				res.send("loginSuccessfulAdmin")
+			} else {
+				res.send("loginSuccessful");
+			}
 		} else {
-			// found user. validate password
-			bcrypt.compare(pwd, results[0].pwd, function(err, result) {
-				if(result) {
-					// Password matches, create session
-					req.session.loggedIn = true;
-					req.session.name = results[0].name;
-					req.session.email = req.body.email;
-					req.session.save(err => {
-						if(err) {
-							console.log(err);
-							res.status(500).send("couldNotSaveSession");
-						} else {
-							res.send("loginSuccessful");
-						}
-					})
-				} else {
-					// Password does not match
-					res.status(401).send("passwordMismatch");
-				}
-			});
+			// Password does not match
+			res.status(401).send("passwordMismatch");
 		}
 	} catch(e) {
-		console.log(e);
 		res.status(500).send("serverIssue");
 	}
 })
@@ -420,7 +675,33 @@ app.post("/logout", (req, res) => {
 })
 
 // RUN SERVER
-const port = argv.port ?? 8000;
-app.listen(port, function () {
+let port = 8000;
+const server = createServer(app);
+const wss = new WebSocketServer({ server });
+wss.on('connection', function connection(ws, request, client) {
+	
+});
+  
+server.on('upgrade', function upgrade(request, socket, head) {
+	// Parse session and check if the user requesting the upgrade has an active admin session
+	sessionParser(request, {}, () => {
+		// Only respond to upgrades at the `/changes` URI
+		if (new URL(request.url, `http://${request.headers.host}`).pathname === '/changes') {
+			if (!request.session.isAdmin) {
+				socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+				socket.destroy();
+				return;
+			}
+			// wss.handleUpgrade(request, socket, head, function (ws) {
+			// 	wss.emit('connection', ws, request);
+			// })
+		} else {
+			socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+			socket.destroy();
+			return;
+		}
+	})
+});
+server.listen(port, function () {
   console.log(`Server listening on http://localhost:${port}`);
 })
