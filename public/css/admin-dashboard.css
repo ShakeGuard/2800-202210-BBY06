@@ -262,6 +262,21 @@ h1, p {
     background-color: #f5f5f5;
 }
 
+.active-input {
+    font-weight: 700;
+    background-color: rgba(251, 179, 59, 0.2);
+    transition: background-color ease-in 0.2s;
+}
+.inactive-input {
+    font-weight: 400;
+    background-color: white;
+    transition: background-color ease-in 0.2s;
+}
+
+.disableScroll {
+    overflow-y: hidden;
+}
+
 /*************** Media queries *******************/
 
 /* For medium screens */

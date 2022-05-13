@@ -82,6 +82,14 @@ function deleteAction(userID) {
     }
 }
 
+function validInput(input) {
+    const checkInput = input.value;
+    if (checkInput == undefined || checkInput == null || checkInput.trim().length == 0) {
+        return false;
+    }
+    return true;
+}
+
 // Click on edit button to enable the editing on admin name input
 // Pencil icon changes to checkmark icon
 // TODO: add limits to form??
@@ -92,22 +100,28 @@ function editAction(userID) {
         const userInput = userListItem.querySelector('.admin-name');
         const editButton = userListItem.querySelector('.edit-button');
 
-        // Check if input is disabled...
         if (userInput.disabled) {
             userInput.disabled = false;
             userInput.focus();
+            userListItem.classList.remove('inactive-input');
+            userListItem.classList.add('active-input');
+            // Change the button's icon to editing mode
             editButton.innerHTML = `<span class="material-icons teal">done</span>`;
             // Implementing Katy's cool toast queue feature
             toastQueue.queueToasts([
                 { message: `Editing "${userInput.value}"`, classes: ["toast-info"] }
             ]);
-        } else {
+            return;
+        }
+        
+        if (validInput(userInput)) {
+            userInput.disabled = true;
+            userListItem.classList.remove('active-input');
+            userListItem.classList.add('inactive-input');
+            editButton.innerHTML = `<span class="material-icons teal">edit</span>`;
             toastQueue.queueToasts([
                 { message: `Saved "${userInput.value}"`, classes: ["toast-success"] }
             ]);
-
-            userInput.disabled = true;
-            editButton.innerHTML = `<span class="material-icons teal">edit</span>`;
             let data = {
                 '_id': userID,
                 'name': userInput.value
@@ -119,6 +133,14 @@ function editAction(userID) {
                 },
                 body: JSON.stringify(data)
             });
+            return;
+        }
+
+        if (!validInput(userInput)) {
+            toastQueue.queueToasts([
+                { message: `Please enter a valid name`, classes: ["toast-error"] }
+            ]);
+            return;
         }
     }
 }
@@ -127,45 +149,57 @@ function editAction(userID) {
 function closeForm() {
     document.querySelector('#add-admin-form').remove();
     document.querySelector('.form-overlay').remove();
+    document.body.classList.remove('disableScroll');
 }
 
+function cancelCreateAdmin() {
+    toastQueue.queueToasts([
+        { message: `Admin was not created`, classes: ["toast-warning"] }
+    ]);
+    closeForm();
+}
+
+function uploadFileFeedback() {
+    if (validFileType(this.files)) {
+        toastQueue.queueToasts([
+            { message: "File selected", classes: ["toast-info"] }
+        ]);
+    }
+}
+
+// Code snippet from Mozilla
+// https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+const fileTypes = [
+    "image/jpeg",
+    "image/png",
+];
+async function validFileType(file) {
+    return fileTypes.includes(file.type);
+}
 
 // Load form for admin to fill out, create a new admin in db
 function makeAdminForm() {
     // Clone the contents of the add-admin-form template
     const form = adminFormTemplate.content.cloneNode(true).firstElementChild;
     const cancelButton = form.querySelector('#admin-form-cancel-button');
+    const formImage = form.querySelector('#Upload-Avatar');
 
     // Create the overlay to darken the contents of the screen
     const overlay = document.createElement('div');
     overlay.setAttribute('class', 'form-overlay');
 
     // Make the buttons do things
+    formImage.addEventListener('change', uploadFileFeedback);
     form.addEventListener('submit', submitAdminForm);
-    cancelButton.addEventListener('click', () => {
-        toastQueue.queueToasts([
-            { message: `Admin was not created`, classes: ["toast-warning"] }
-        ]);
-        closeForm();
-    });
+    cancelButton.addEventListener('click', cancelCreateAdmin);
 
     document.body.appendChild(form);
     document.body.insertBefore(overlay, form);
+
+    document.body.classList.add('disableScroll');
 }
 
-// // Get avatar
-// // Copied from user-profile.js but changed the element id
-// async function getAvatar() {
-//     const response = await fetch('/avatar')
-// 	try {
-// 		const responseJson = await response.json();
-// 		let base64 = responseJson.data;
-// 		base64 = `data:${responseJson.mimeType};base64,${base64}`;
-// 		document.getElementById("admin-form-input-img").src = base64;
-// 	} catch(e) {
-// 		console.log(e);
-// 	}
-// }
+addAdminButton.addEventListener('click', makeAdminForm);
 
 
 // Submit form contents
@@ -213,11 +247,10 @@ async function submitAdminForm(event) {
         method: 'POST',
         body: formData
     });
-
+    const avatarStatus = await responseAvatar.text()
+    serverMessages(avatarStatus);
 }
 
-addAdminButton.addEventListener('click', makeAdminForm);
-// getAvatar();
 
 // Compiling messages here
 function serverMessages(status) {
