@@ -143,9 +143,12 @@ const initDatabase = async(db) => {
 	}
 }
 
-// Uses loadHTMLComponent to load header and footer into their respective tags given a JSDOM object
-const loadHeaderFooter = (baseDOM) => {
-	
+/** 
+ * Uses {@link loadHTMLComponent} to load header and footer into their respective tags given a JSDOM object.
+ * @param {jsdom.JSDOM} baseDOM - the DOM object to template onto.
+ * @returns {jsdom.JSDOM} The original DOM object, with header and footer attached.
+ */
+function loadHeaderFooter(baseDOM) {
 	// Add the header 
 	baseDOM = loadHTMLComponent(baseDOM, "header", "header", "./html/header.html");
 
