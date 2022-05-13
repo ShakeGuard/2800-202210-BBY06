@@ -1,0 +1,264 @@
+* {
+    font-family: 'Satoshi', sans-serif;
+}
+
+body{
+    display: grid;
+    justify-content: center;
+}
+
+#Base-Container{
+    display: grid;
+    grid-template-rows: repeat(6, auto);
+    grid-template-columns: 1fr;
+    background-color: #FDF1BD;
+    place-items: center;
+    place-self: center;
+    justify-content: stretch;
+    border-radius: 25px;
+    margin-top: 50px;
+    text-align: center;
+    width: 95%;
+}
+
+#Base-Container-ProfilePicture-Container{
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+#Base-Container-ProfilePicture{
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    border-radius: 55px;
+    background-color: #FFFFFF;
+    padding: 15px;
+    margin-top: -45px;
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+#Base-Container-FullName-Container{
+    display: grid;
+    grid-column: 1 / span 1;
+    grid-row: 3 / span 1;
+    margin-left: 1em;
+}
+
+#Base-Container-Upload-Avatar-Centering-Container{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+    padding: 5px;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+#Upload-Avatar{
+    display: none;
+    text-align-last: center;
+    place-self: center;
+}
+
+#Base-Container-Email-Container{
+    align-items: flex-end;
+    grid-column: 1 / span 1;
+    grid-row: 4 / span 1;
+}
+
+#Base-Container-Password-Container{
+    grid-column: 1 / span 1;
+    grid-row: 5 / span 1;
+}
+
+#Base-Container-Update-Container{
+    grid-column: 1 / span 1;
+    grid-row: 6 / span 1;
+}
+
+#FullName, #Email, #Password{
+    font-size: 23px;
+}
+
+#FullName:disabled, #Email:disabled, #Password:disabled{
+    opacity: 50%;
+}
+#FullName:enabled, #Email:enabled, #Password:enabled{
+    opacity: 100%;
+}
+
+#Pen-1, #Pen-2, #Pen-3, #Pen-4{
+    user-select: none;
+    -moz-user-select: none;    
+    -ms-user-select: none;  
+    -webkit-user-select: none;   
+    background-color: #FFFFFF;  
+    box-shadow: 1.5px 1.5px 2px rgb(202, 187, 144);
+    border-radius: 25px;
+    padding: 5px;
+}
+
+#Pen-1:hover, #Pen-2:hover, #Pen-3:hover, #Pen-4:hover{
+    color: #c7c7c7;
+}
+
+#Pen-2, #Pen-3{
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 1;
+}
+
+#Edit-ProfilePicture-Button{
+    margin-top: -60px;
+    margin-bottom: -70px;
+    margin-right: -70px;
+    padding: 8px;
+    border-radius: 25px;
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+.Form-Label{
+    justify-self: start;
+    align-self: end;
+    margin-top: 0;
+    grid-column: 1 / span 1;
+    grid-row: 1/ span 1;
+}
+
+.Form-Input{
+    border: 0px solid #000000;
+    background: transparent;
+    border-bottom-width: 1px;
+}
+
+.Container{
+    display: grid;
+    margin-left: 1em;
+    grid-template-columns: 1fr;
+}
+
+.Container-Form{
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 3fr 1fr;
+    place-self: center;
+    justify-self: start;
+    font-size: 25px;
+    font-family: 'Satoshi', sans-serif;
+    align-items: end;
+}
+
+.Container-Form-FullName{
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 3fr 1fr;
+    place-self: center;
+    justify-self: start;
+    font-size: 25px;
+    font-family: 'Satoshi', sans-serif;
+    align-items: end;
+}
+
+.material-symbols-outlined {
+    place-self: center;
+    font-size: 25px !important;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48
+  }
+
+#Update-Button{
+    user-select: none;
+    -moz-user-select: none;    
+    -ms-user-select: none;  
+    -webkit-user-select: none; 
+    border: none;    
+    border-radius: 25px;
+    background-color: #FBB33B;
+    max-width: 300px;
+    padding-left: 35px;
+    padding-right: 35px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    box-shadow: 1.5px 1.5px 2px rgb(202, 187, 144);
+    font-weight: 700;
+}
+
+#Update-Button:hover{
+    background-color: #ffbd4a;
+}
+
+#Centering-Container-BackToKit{
+    user-select: none;
+    -moz-user-select: none;    
+    -ms-user-select: none;  
+    -webkit-user-select: none; 
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    place-items: center;
+}
+
+#Base-Container-BackToKit{
+    display: grid;
+    padding-right: 50px;
+    grid-template-columns: 1fr 1.40fr;
+    grid-template-rows: 1fr;
+    justify-content: center;
+    align-items: center;
+}
+
+#Back-Button-Arrow{
+    font-size: 45px !important;
+    color: #17A5BA;
+    justify-self: end;
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+#Back-Button{
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 1;
+    color: #17A5BA;
+    font-size: 25px;
+    font-weight: bold;
+    text-align: left;
+}
+
+#Base-Container-BackToKit:hover > span, #Base-Container-BackToKit:hover > p{
+    color: #2dc7df;
+}
+
+#Update-Error{
+    padding-bottom: 10px;
+}
+
+::-webkit-file-upload-button {
+    display: none;
+}
+
+@media only screen and (min-width: 768px) {
+    #Base-Container{
+        width: 768px;
+    }
+
+    #Base-Container-FullName-Container{
+        margin-left: 0;
+    }
+    .Container{
+        margin-left: 0;
+    }
+}

@@ -7,6 +7,12 @@ body {
     font-weight: 400;
 }
 
+footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 /* Google Material icons */
 .material-icons.md-36 { font-size: 36px; }
 
@@ -121,6 +127,17 @@ body {
 	color: red;
 }
 
+#Footer-Links {
+    display: flex;
+}
+
+#Footer-Copyright {
+    margin-right: 1em;
+}
+
+#Footer-Logo {
+    width: 3em;
+}
 
 /* For medium screens */
 @media only screen and (min-width: 768px) {

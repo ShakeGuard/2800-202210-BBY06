@@ -9,16 +9,18 @@
     <link href="css/style.css" rel="stylesheet"/>
   </head>
   <body>
+    <header>
 
+    </header>
     <div id="Base-Container">
         <div id="Base-Container-Image"></div>
         <div id="Form-Container">
-            <form id="Grid-Container-Form">
+            <form id="Grid-Container-Form" method="POST">
                 <img src="../images/ShakeGuard.png" alt="" class="ShakeGuard-Logo">
                 <input class="Form-Item Grid-Container-Form-Input" id="Email" type="text" required="required" placeholder="Username" value=""/>
                 <input class="Form-Item Grid-Container-Form-Input" id="Password" type="password" required="required" placeholder="Password" value=""/>
-                <input class="Form-Item" type="button" value="Login" id="Button-Login"/>
-                <p class="Form-Item" id="Error-Msg">&nbsp;</p>
+                <input class="Form-Item" type="submit" value="Login" id="Button-Login"/>
+                <p class="Form-Item error" id="Error-Msg">&nbsp;</p>
                 <p><span class="Form-Item" id="Server-Msg"></span></p>
                 <h4 class="Form-Item Bottom-Text">Don't have a account?</h4>
                 <h4 class="Form-Item Bottom-Text" id="Sign-up-Link"><a href="#">Sign up now!</a></h4>
@@ -26,7 +28,9 @@
         </div>
 
     </div>
+    <footer>
 
+    </footer>
     <script src="js/client.js"></script>
     </body>
 </html>
