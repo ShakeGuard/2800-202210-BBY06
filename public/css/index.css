@@ -29,6 +29,7 @@ footer {
     display: grid;
     grid-template-columns: auto;
     grid-template-rows: auto 1fr;
+    justify-items: center;
 }
 
 /* Navbar styles */
@@ -66,7 +67,7 @@ footer {
 }
 
 #hero-message {
-    min-height: 20vh;
+    min-height: 10vh;
     padding: 30% 10% 15% 10%;
     color: white;
 
@@ -136,4 +137,42 @@ footer {
 
 #Footer-Logo {
     width: 3em;
+}
+
+/* For medium screens */
+@media only screen and (min-width: 768px) {
+
+    h1 {
+        font-size: 3.6em;
+    }
+    #hero-message {
+        padding: 20% 10% 15% 10%;
+    }
+
+    #hero-button-start {
+        display: inline-block;
+    }
+
+    #hero-message-paragraph {
+        font-size: 1.6em;
+    }
+
+    #navbar-logo-white img {
+        height: 15vh;
+        margin: 0 2vw;
+    }
+
+    #section-button-resources-checklist,
+    #section-button-resources {
+        width: 30vw;
+    }
+
+}
+
+/* For larger screens */
+@media only screen and (min-width: 1200px) {
+    #hero-message-paragraph {
+        font-size: 2em;
+    }
+
 }

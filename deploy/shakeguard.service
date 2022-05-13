@@ -1,0 +1,17 @@
+[Unit]
+Description=ShakeGuard
+
+[Service]
+# Copy .secrets directory from the reference location.
+ExecStartPre=rm -rf /var/www/shakeguard/.secrets
+ExecStartPre=cp -r /home/shakeguard/.secrets /var/www/shakeguard/.secrets
+WorkingDirectory=/var/www/shakeguard
+ExecStart=/var/www/shakeguard/main.js -i localhost -p 27017 --db shakeguard --auth true --port 8082
+Restart=always
+User=shakeguard
+Group=shakeguard
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
