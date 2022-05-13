@@ -1,10 +1,5 @@
-@import url('https://api.fontshare.com/css?f[]=satoshi@400,401,700,701&display=swap');
-@import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
-
 body {
     margin: 0;
-    font-family: 'Satoshi', sans-serif;
-    font-weight: 400;
 }
 
 footer {
@@ -22,6 +17,10 @@ footer {
 .material-icons.md-light { color: rgba(255, 255, 255, 1); }
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
+/* Make the logo and hamburger menu icon white instead of black */
+nav img {
+    filter: invert(100%);
+}
 
 /* Page contents */
 #grid-container-main {
@@ -31,30 +30,6 @@ footer {
     grid-template-rows: auto 1fr;
     justify-items: center;
 }
-
-/* Navbar styles */
-#nav-container {
-    width: 100%;
-    height: auto;
-    position: fixed;
-    grid-row: 1 / span 1;
-}
-#navbar {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-#navbar-logo-white img {
-    height: 10vh;
-    margin: 0 2vw;
-}
-
-#menu-button-icon {
-    margin: 0 2vw;
-}
-
 
 #hero-container {
     grid-row: 2 / span 1;
@@ -155,11 +130,6 @@ footer {
 
     #hero-message-paragraph {
         font-size: 1.6em;
-    }
-
-    #navbar-logo-white img {
-        height: 15vh;
-        margin: 0 2vw;
     }
 
     #section-button-resources-checklist,
