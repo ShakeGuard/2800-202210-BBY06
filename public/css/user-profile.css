@@ -29,6 +29,7 @@ body{
 #Base-Container-ProfilePicture{
     width: 75px;
     height: 75px;
+    object-fit: contain;
     border-radius: 55px;
     background-color: #FFFFFF;
     padding: 15px;
