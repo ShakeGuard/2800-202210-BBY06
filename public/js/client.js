@@ -22,8 +22,6 @@ document.querySelector("#Button-Login").addEventListener("click", async function
         "body": JSON.stringify({email, password})
     });
     
-    // alexkonghockey@gmail.com
-    // not_bacon
 
     const status = await response.text();
 
