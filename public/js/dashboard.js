@@ -119,21 +119,32 @@ function editAction(userID) {
             userListItem.classList.remove('active-input');
             userListItem.classList.add('inactive-input');
             editButton.innerHTML = `<span class="material-icons teal">edit</span>`;
-            toastQueue.queueToasts([
-                { message: `Saved "${userInput.value}"`, classes: ["toast-success"] }
-            ]);
+
             let data = {
                 '_id': userID,
                 'name': userInput.value
             };
-            await fetch('/edit-admin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            return;
+
+            try {
+                await fetch('/edit-admin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                toastQueue.queueToasts([
+                    { message: `Saved "${userInput.value}"`, classes: ["toast-success"] }
+                ]);
+                return;
+                
+            } catch (err) {
+                toastQueue.queueToasts([
+                    { message: `Network error!`, classes: ["toast-error"] }
+                ]);
+                throw err;
+            }
         }
 
         if (!validInput(userInput)) {
@@ -255,6 +266,12 @@ async function submitAdminForm(event) {
 // Compiling messages here
 function serverMessages(status) {
     switch (status) {
+        case 'userUpdated':
+            toastQueue.queueToasts([
+                { message: "Saved changes", classes: ["toast-success"] }
+            ]);
+            refreshUsers(fetch('profiles'));
+            break;
         case 'deleteAdminSuccessful':
             toastQueue.queueToasts([
                 { message: "Successfully deleted admin", classes: ["toast-success"] }
