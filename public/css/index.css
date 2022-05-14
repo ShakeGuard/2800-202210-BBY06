@@ -1,11 +1,7 @@
-@import url('https://api.fontshare.com/css?f[]=satoshi@400,401,700,701&display=swap');
-@import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
-
 body {
     margin: 0;
-    font-family: 'Satoshi', sans-serif;
-    font-weight: 400;
 }
+
 
 /* Google Material icons */
 .material-icons.md-36 { font-size: 36px; }
@@ -17,37 +13,15 @@ body {
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 
+
 /* Page contents */
 #grid-container-main {
     text-align: center;
     display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(0 1fr);
+    justify-items: center;
+    margin-top: -10vh;
 }
-
-/* Navbar styles */
-#nav-container {
-    width: 100%;
-    height: auto;
-    position: fixed;
-    grid-row: 1 / span 1;
-}
-#navbar {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-#navbar-logo-white img {
-    height: 10vh;
-    margin: 0 2vw;
-}
-
-#menu-button-icon {
-    margin: 0 2vw;
-}
-
 
 #hero-container {
     grid-row: 2 / span 1;
@@ -60,7 +34,7 @@ body {
 }
 
 #hero-message {
-    min-height: 20vh;
+    min-height: 10vh;
     padding: 30% 10% 15% 10%;
     color: white;
 
@@ -118,4 +92,38 @@ body {
 
 .fail {
 	color: red;
+}
+
+
+/* For medium screens */
+@media only screen and (min-width: 768px) {
+
+    h1 {
+        font-size: 3.6em;
+    }
+    #hero-message {
+        padding: 20% 10% 15% 10%;
+    }
+
+    #hero-button-start {
+        display: inline-block;
+    }
+
+    #hero-message-paragraph {
+        font-size: 1.6em;
+    }
+
+    #section-button-resources-checklist,
+    #section-button-resources {
+        width: 30vw;
+    }
+
+}
+
+/* For larger screens */
+@media only screen and (min-width: 1200px) {
+    #hero-message-paragraph {
+        font-size: 2em;
+    }
+
 }

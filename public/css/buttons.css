@@ -1,3 +1,7 @@
+.material-icons {
+    vertical-align: -10%;
+}
+
 /* Universal button styles */
 .button {
     padding: 1em 2em;
@@ -7,7 +11,7 @@
     font: inherit;
     font-weight: 700;
     font-size: 1.2em;
-    color: inherit;
+    color: black;
     margin-top: 1em;
     transition: background-color 0.1s ease-in;
 }
@@ -32,13 +36,37 @@
 
 .button-secondary {
     border: 2px solid #FBB33B;
-    background-color: white;
+    background-color: transparent;
 }
 
 .button-secondary:hover, 
 .button-secondary:active, 
 .button-secondary:focus {
     background-color: #FBB33B;
+}
+
+.button-secondary-grey {
+    border: 2px solid rgba(196, 196, 196, 1);
+    background-color: transparent;
+    color: rgba(196, 196, 196, 1);
+}
+
+.button-secondary-grey:hover,
+.button-secondary-grey:active,
+.button-secondary-grey:focus {
+    background-color: rgba(196, 196, 196, 0.25);
+}
+
+.button-secondary-teal {
+    border: 2px solid rgba(23, 165, 186, 1);
+    background-color: transparent;
+    color: rgba(23, 165, 186, 1);
+}
+
+.button-secondary-teal:hover,
+.button-secondary-teal:active,
+.button-secondary-teal:focus {
+    background-color: rgba(23, 165, 186, 0.25);
 }
 
 
@@ -56,8 +84,33 @@
 
 a.button {
     text-decoration: none;
+    transition: all ease-in 0.1s;
 }
+
+a.button:hover,
+a.button:active,
+a.button:focus {
+    color: rgba(23, 165, 186, 1);
+    filter: none;
+}
+
 
 .block {
     display: block;
+}
+
+.small {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    max-height: 4em;
+    width: auto;
+    height: auto;
+    font-size: 1em;
+}
+
+.transparent {
+    background-color: transparent;
+    border-color: transparent;
 }

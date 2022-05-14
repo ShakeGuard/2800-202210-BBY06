@@ -2,7 +2,16 @@
 @import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
 
 body {
-    background-color: #dfdfdf;
+    display: grid;
+    justify-content: center;
+    background-color: #FFFFFF;
+    font-family: 'Satoshi', sans-serif;
+}
+
+footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 a{
@@ -14,8 +23,8 @@ a:visited{
 }
 
 .ShakeGuard-Logo{
-    margin-top: 5vh;
-    width: 50vw;
+    margin-top: 35px;
+    width: 200px;
     height: auto;
 }
 
@@ -33,12 +42,11 @@ a:visited{
     background-image: 
         linear-gradient(rgba(23,165,186,0.8),rgba(23,165,186,0.8)),
         url(../images/mountain1.jpg);
-    filter: blur(8px);
-    -webkit-filter: blur(1.5px);
-    margin-left: 5vw;
-    margin-right: 5vw;
-    margin-top: 5vh;
-    margin-bottom: 5vh;
+    /* Apply Filter here */
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     border-radius: 25px;
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
@@ -49,10 +57,7 @@ a:visited{
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    margin-left: 5vw;
-    margin-right: 5vw;
-    margin-top: 5vh;
-    margin-bottom: 5vh;
+    margin: 20px;
     border-radius: 25px;
     box-shadow: 5px 5px 10px rgb(179, 179, 179);
     grid-column: 1 / span 1;
@@ -61,37 +66,63 @@ a:visited{
 
 .Grid-Container-Form-Input{
     background-color: #FFFFFF;
-    text-indent: 10px;
+    text-indent: 15px;
+    font-size: 12px;
+    font-weight: 600;
     margin: 10px;
     border: none;  
+    width: 250px;
+    height:40px;
     border-radius: 25px;
-    width: 70vw;
-    height: auto;
 }
 
 .Form-Item{
-    font-family: 'Satoshi', sans-serif;
-    font-weight: 700;
     margin-left: 10px;
-    font-size: 5vw;
 }
 
 .Bottom-Text{
     color: #FFFFFF;
-    font-size: 5vw;
+    font-size: 20px;
 }
 
 #Sign-up-Link{
     color: #FFFFFF;
-    margin-top: -1vh;
-    margin-bottom: 5vh;
+    margin-top: -15px;
+    margin-bottom: 50px;
 }
 
 #Button-Login{
     border: none;    
     border-radius: 25px;
     background-color: #FBB33B;
-    width: 25vw;
-    height: auto;
+    width: 100px;
+    font-weight: 600;
+    font-family: 'Satoshi', sans-serif;
+    height: 40px;
     margin: 10px;
+}
+
+#Button-Login:hover{
+    background-color: #ffbd4a;
+}
+
+#Footer-Links {
+    display: flex;
+}
+
+#Footer-Copyright {
+    place-self: center;
+    margin-right: 1em;
+}
+
+#Footer-Logo {
+    width: 3em;
+}
+
+.error {
+	color: red;
+    font-size: 15px;
+}
+.hidden {
+    display: none;
 }
