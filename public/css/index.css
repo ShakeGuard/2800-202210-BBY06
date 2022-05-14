@@ -2,11 +2,6 @@ body {
     margin: 0;
 }
 
-footer {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
 
 /* Google Material icons */
 .material-icons.md-36 { font-size: 36px; }
@@ -17,18 +12,15 @@ footer {
 .material-icons.md-light { color: rgba(255, 255, 255, 1); }
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
-/* Make the logo and hamburger menu icon white instead of black */
-nav img {
-    filter: invert(100%);
-}
+
 
 /* Page contents */
 #grid-container-main {
     text-align: center;
     display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(0 1fr);
     justify-items: center;
+    margin-top: -10vh;
 }
 
 #hero-container {
@@ -102,17 +94,6 @@ nav img {
 	color: red;
 }
 
-#Footer-Links {
-    display: flex;
-}
-
-#Footer-Copyright {
-    margin-right: 1em;
-}
-
-#Footer-Logo {
-    width: 3em;
-}
 
 /* For medium screens */
 @media only screen and (min-width: 768px) {

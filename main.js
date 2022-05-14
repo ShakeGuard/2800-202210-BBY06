@@ -20,9 +20,9 @@ import { hideBin } from 'yargs/helpers';
 // Grab secrets file
 import { readSecrets } from './shakeguardSecrets.mjs';
 
-// console.log = () => {};
-// console.dir = () => {};
-// console.error = () => {};
+console.log = () => {};
+console.dir = () => {};
+console.error = () => {};
 
 const secrets = await readSecrets();
 
@@ -225,11 +225,9 @@ app.get('/', async function (req, res) {
 	}
 
 	const doc = await readFile("./html/index.html", "utf8");
-	let index = new JSDOM(doc);
-
-	// Add the footer
-	index = await loadHTMLComponent(index, "footer", "footer", "./templates/footer.html");
-
+	const baseDOM = new JSDOM(doc);
+	let index = await loadHeaderFooter(baseDOM);
+	index = changeLoginButton(index, req);
 	res.send(index.serialize());
 });
 
@@ -266,6 +264,17 @@ function redirectToLogin(req, res) {
 	return false;
 }
 
+function changeLoginButton(baseDOM, req) {
+	const document = baseDOM.window.document;
+	if(!req.session || !req.session.loggedIn) {
+		document.getElementById("Button-Logout").style.display = "none";
+	} else {
+		document.getElementById("Button-Login-Nav").style.display = "none";
+	}
+	return baseDOM;
+}
+
+
 /**
  * Checks if the user is logged in, if they aren't, sends a 401 error.
  * @param {Response} res - Response object to send errors to; may get sent.
@@ -291,6 +300,7 @@ app.get('/profile', async (req, res) => {
 	let doc = await readFile("./html/user-profile.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let profile = await loadHeaderFooter(baseDOM);
+	profile = changeLoginButton(profile, req);
 
 	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
     profile.window.document.getElementById("FullName").defaultValue = req.session.name;
@@ -392,10 +402,11 @@ app.get('/login', async function (req, res) {
 	if (req.session.loggedIn) {
 		res.redirect("/profile");
 		return;
-	} 
+	}
 	let doc = await readFile("./html/login.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let login = await loadHeaderFooter(baseDOM);
+	login = changeLoginButton(login, req);
 	res.send(login.serialize());
 });
 
@@ -405,6 +416,7 @@ app.get('/dashboard', async function (req, res) {
 		let dashboardDoc = fs.readFileSync("./html/dashboard.html", "utf-8");
 		const baseDOM = new JSDOM(dashboardDoc);
 		let dashboard = await loadHeaderFooter(baseDOM);
+		dashboard = changeLoginButton(dashboard, req);
 		let profileDetails = await loadHTMLComponent(dashboard, "#Base-Container", "div", "./templates/profile.html");
 	    profileDetails.window.document.getElementById("FullName").defaultValue = req.session.name;
 		profileDetails.window.document.getElementById("Email").defaultValue = req.session.email;
@@ -671,17 +683,17 @@ app.post("/login", async (req, res) => {
 	}
 })
 
-app.post("/logout", (req, res) => {
-	// TODO: Not sure how to do the error handling here
+// TODO: Changed to get to save 5 minutes of development time. Change back to POST when no immediate deadline
+app.get("/logout", (req, res) => {
 	if(req.session) {
 		req.session.destroy(err => {
 			if(err) {
 				res.status(422).send("logoutFailed");
 			} else {
-				res.status(200).send('logoutSuccessful');
+				res.redirect('/');
 			}
 		})
-	} 
+	}
 })
 
 // RUN SERVER
@@ -702,9 +714,6 @@ server.on('upgrade', function upgrade(request, socket, head) {
 				socket.destroy();
 				return;
 			}
-			// wss.handleUpgrade(request, socket, head, function (ws) {
-			// 	wss.emit('connection', ws, request);
-			// })
 		} else {
 			socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
 			socket.destroy();
