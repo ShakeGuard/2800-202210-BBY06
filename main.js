@@ -697,7 +697,7 @@ app.get("/logout", (req, res) => {
 })
 
 // RUN SERVER
-let port = 8000;
+const port = argv.port ?? 8000;
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
 wss.on('connection', function connection(ws, request, client) {
