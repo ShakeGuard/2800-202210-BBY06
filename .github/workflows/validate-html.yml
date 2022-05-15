@@ -1,4 +1,4 @@
-name: HTML & CSS Check
+name: Validate HTML
 
 on:
   push:
@@ -13,7 +13,3 @@ jobs:
       uses: Cyb3r-Jak3/html5validator-action@v7.1.1
       with:
         root: html/
-    - name: Validates CSS
-      uses: nok-ko/validate-css-action@main
-      with:
-        directory: public/css

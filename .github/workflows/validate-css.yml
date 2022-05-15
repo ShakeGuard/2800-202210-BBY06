@@ -1,0 +1,14 @@
+name: Validate CSS
+
+on:
+  push:
+
+jobs:
+  html-css-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Validates CSS
+      uses: nok-ko/validate-css-action@main
+      with:
+        directory: public/css
