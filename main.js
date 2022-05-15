@@ -10,7 +10,7 @@ import { createServer, Server } from 'http';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
 import { readFile } from 'node:fs/promises';
-import { JSDOM } from 'JSDOM';
+import { JSDOM } from 'jsdom';
 import multer from 'multer';
 
 // Use `yargs` to parse command-line arguments.
