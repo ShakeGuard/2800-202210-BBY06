@@ -670,6 +670,20 @@ app.post('/delete-admin', async function(req, res) {
 	}
 });
 
+app.get('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	const filterQuery = {'_id': new mdb.ObjectId(req.session._id)};
+	const user = await db.collection('BBY-6_users').findOne(filterQuery);
+	if(!user) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	}
+	res.status(200).send(user.kits);
+})
+
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf-8");
 	res.send(doc);
