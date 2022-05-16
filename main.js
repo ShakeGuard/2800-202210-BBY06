@@ -289,6 +289,7 @@ function checkLoginError(req, res) {
 	return false;
 }
 
+
 app.get('/profile', async (req, res) => {
 	if (redirectToLogin(req, res)) {
 		return;
@@ -430,6 +431,8 @@ app.get('/dashboard', async function (req, res) {
 	}
 });
 
+// This gets the admin profiles
+// May change endpoint name to be more descriptive, or not
 app.get('/profiles', async function (req, res) { 
 	if (!req.session.isAdmin) {
 		res.status(401).send('notAnAdmin');
@@ -658,7 +661,6 @@ app.post("/login", async (req, res) => {
 	}
 })
 
-// TODO: Changed to get to save 5 minutes of development time. Change back to POST when no immediate deadline
 app.post("/logout", (req, res) => {
 	if(req.session) {
 		req.session.destroy(err => {
