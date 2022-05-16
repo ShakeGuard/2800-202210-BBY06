@@ -995,6 +995,40 @@ app.post("/logout", (req, res) => {
 	}
 })
 
+app.get('/resource', async (req,res) =>{
+
+	/* Array here to determine how many cards to create*/
+	const CallAPI = [{
+		"{cardTitle}": "title1",
+		"{cardDesc}": "desc1",
+		"{cardAuthor}": "auth1"
+	}, {
+		"{cardTitle}": "title2",
+		"{cardDesc}": "desc2",
+		"{cardAuthor}": "auth2"
+	}]
+
+	let resourceDoc = await readFile("./html/resource.html","utf-8");
+	const baseDOM = new JSDOM(resourceDoc);
+	let resource = await loadHeaderFooter(baseDOM);
+
+	let cardDoc = await readFile("./templates/card.html", "utf-8");
+	const cardDOM = new JSDOM(cardDoc);
+	
+
+	CallAPI.forEach(element => {
+		cardDOM.window.document.getElementById("Card-Title").innerHTML = CallAPI["{cardTitle}"];
+		cardDOM.window.document.getElementById("Card-Description").innerHTML = CallAPI["{cardDesc}"];
+		cardDOM.window.document.getElementById("Description-Author").innerHTML = CallAPI["{cardAuthor}"];
+		resource.window.document.getElementById("Base-Container").innerHTML += cardDOM
+	});
+
+	// resource = await loadHTMLComponent(resource, "#Base-Container", "div", "./templates/card.html");
+	// resource.window.document.getElementById("Base-Container").innerHTML = 'Hello'
+
+	res.send(resource.serialize());
+});
+
 // RUN SERVER
 const port = argv.port ?? 8000;
 const server = createServer(app);
