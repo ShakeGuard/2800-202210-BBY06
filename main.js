@@ -63,7 +63,7 @@ const dbName = argv.dbName ?? "COMP2800";
 
 // Log in 'dev' format to stdout, if devLog option is set.
 // If devLog is not set, log errors only to stdout.
-await new Promise((resolve) => {
+const secrets = await new Promise((resolve) => {
 	if (argv.devLog) {
 		app.use(stdoutLog);
 		addDevLog(log);
