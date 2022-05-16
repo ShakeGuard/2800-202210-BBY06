@@ -312,8 +312,9 @@ function serverMessages(status) {
 /**
  * Replace the children of the input user list with a fresh batch of <li> elements 
  * generated from the result of the input fetch() Promise.
+ *
  * @param {Promise<Response>} toFetch - Promise, usually from fetch(…).
- * @returns {Number} - how many records were inserted into the list.
+ * @returns {number} - how many records were inserted into the list.
  */
 async function refreshUsers(toFetch) {
     // TODO: Error handling!

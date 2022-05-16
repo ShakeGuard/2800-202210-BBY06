@@ -1,4 +1,8 @@
 {
+    "plugins": [
+        "jsdoc"
+    ],
+
     "env": {
         "node": true,
         "es2022": true,
@@ -15,5 +19,5 @@
         }],
         "quotes": ["error", "double"]
     },
-    "extends": "eslint:recommended"
+    "extends": ["eslint:recommended", "plugin:jsdoc/recommended"]
 }
