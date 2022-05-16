@@ -20,5 +20,9 @@
     "start": "node main.js --devLog -i localhost -p 27017 --db COMP2800",
     "prod": "node main.j --devLog -i db.nokko.me -p 27017 --auth true --db shakeguard",
     "showlog": "jq -r '\"[\\(.level)]\t\\(.message)\"' logs/app.log"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-plugin-jsdoc": "^39.2.9"
   }
 }
