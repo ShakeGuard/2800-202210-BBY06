@@ -250,11 +250,11 @@ app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {
 		if (req.session.isAdmin) {
 			res.redirect('/dashboard');
-			return;
 		} else {
 			res.redirect('/profile');
-			return;
 		}
+		console.log("User logged in!");
+		return;
 	}
 	
 	const doc = await readFile("./html/index.html", "utf8");
