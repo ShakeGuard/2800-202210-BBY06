@@ -80,10 +80,20 @@ await new Promise((resolve) => {
 // The MongoDB Connection object.
 /** @type {?MongoClient} */
 let mongo = null;
-// The MongoDB Database object.
-// Populated by the connectMongo(…) function.
-/** @type {?mdb.Db} */
+/** The MongoDB Database object.
+  * Populated by the `{@link connectMongo()} function.
+  * @type {?mdb.Db} */
 let db = null;
+
+/** Connection options for MongoDB, also used for the session store. 
+ *  @type {mdb.MongoClientOptions} */
+const mongoConnectionOptions = {
+				auth: argv.auth ? {
+					...secrets['mongodb_auth.json']
+				} : undefined,
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+			};
 
 // Establishes connection and returns necessary objects to interact with database
 // Caller is responsible for closing the connection
@@ -93,13 +103,7 @@ const connectMongo = async (url, dbName) => {
 	try {
 		dotAnim = setInterval(() => process.stdout.write('…'), 1000);
 		mongo = await Promise.race([
-			MongoClient.connect(url, {
-				auth: argv.auth ? {
-					...secrets['mongodb_auth.json']
-				} : undefined,
-				useNewUrlParser: true,
-				useUnifiedTopology: true,
-			}),
+			MongoClient.connect(url, mongoConnectionOptions),
 			new Promise((res,rej) => {
 				setTimeout(() => rej("Timed out after 15 seconds."), 15000)
 			})
@@ -212,7 +216,8 @@ try {
 	sessionStore = new MongoDBStore({
 			uri: dbURL,
 			databaseName: dbName,
-			collection: "BBY-6_sessions"
+			collection: "BBY-6_sessions",
+			connectionOptions: mongoConnectionOptions
 		});
 } catch (err) {
 	log.error(`Could not connect to MongoDB instance at ${dbURL}/${dbName}!`);
