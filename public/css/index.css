@@ -7,7 +7,7 @@ body {
 #grid-container-main {
     text-align: center;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0 1fr);
     justify-items: center;
     margin-top: -10vh;
 }
