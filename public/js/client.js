@@ -7,7 +7,7 @@ document.querySelector("#Button-Login").addEventListener("click", async function
     const password = document.getElementById("Password").value;
     const response = await fetch("/login", {
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
         "method": "POST",
         "body": JSON.stringify({email, password})
@@ -16,14 +16,14 @@ document.querySelector("#Button-Login").addEventListener("click", async function
 
     const status = await response.text();
         switch (status) {
-            case 'loginSuccessful':
+            case "loginSuccessful":
                 window.location.href = "./profile";
                 break;
-			case 'userNotFound':
-			case 'passwordMismatch':
+			case "userNotFound":
+			case "passwordMismatch":
 				document.getElementById("Error-Msg").innerText = "Invalid Email/Password";
 				break;
-            case 'loginSuccessfulAdmin':
+            case "loginSuccessfulAdmin":
                 window.location.href = "./dashboard";
                 break;
             default:

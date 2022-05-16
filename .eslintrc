@@ -1,0 +1,19 @@
+{
+    "env": {
+        "node": true,
+        "es2022": true,
+        "browser": true
+    },
+
+    "parserOptions": {
+        "sourceType": "module"
+    },
+
+    "rules": {
+        "semi": ["error", "always", {
+            "omitLastInOneLineBlock": true
+        }],
+        "quotes": ["error", "double"]
+    },
+    "extends": "eslint:recommended"
+}
