@@ -176,6 +176,12 @@ async function initDatabase(db){
 		const articlesJson = JSON.parse(await readFile('./data/articles.json', 'utf-8'))
 		await db.collection("BBY-6_articles").insertMany(articlesJson);
 	}
+
+	const kits = await db.collection("BBY-6_kit-templates").find({}).toArray();
+	if(kits.length === 0 ){
+		const kitsJson = JSON.parse(await readFile('./data/kits.json', 'utf-8'))
+		await db.collection("BBY-6_kit-templates").insertMany(kitsJson);
+	}
 }
 
 /** 
