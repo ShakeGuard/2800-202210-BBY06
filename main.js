@@ -501,9 +501,10 @@ app.get('/profiles', async function (req, res) {
  *      emailAddress: string,
  *      pwd: string,
  *      admin: boolean,
- *      avatar: ?string,
+ *      avatar: ?object,
  *      dateJoined: ?Date,
- * 	    achievements: ?string[]
+ * 	    achievements: ?string[],
+ * 		kits: ?object[]
  * } } UserDoc
  * */
 app.post('/create-user', upload.single('avatar'), async function (req, res) {
@@ -516,17 +517,25 @@ app.post('/create-user', upload.single('avatar'), async function (req, res) {
 
 	try {
 		// Default values
-		const uploadedAvatar = {
+		const uploadedAvatar = req.file ? {
 			data: {
 				$binary: {
 					base64: req.file.buffer
 				}
 			},
 			contentType: req.file.mimetype
+		} : undefined;
+		const defaultProfilePicture = await readFile("./public/images/Default-Profile-Picture.txt", "utf-8");
+		const defaultAvatar = {
+			data: {
+				$binary: {
+					base64: defaultProfilePicture
+				}
+			},
+			contentType: 'image/jpeg'
 		}
-		const defaultAvatar = '/images/Default-Profile-Picture.jpg';
 		const defaultAchievements = ["gettingStarted", "planKit", "finishKit"];
-
+		const defaultKits = [];
 		/** @type {UserDoc} */
 		const newUserDoc = {
 			_id: req.body?._id ?? undefined,
@@ -536,7 +545,8 @@ app.post('/create-user', upload.single('avatar'), async function (req, res) {
 			admin: (req.body?.admin == 'true') ? true : false, // Doing this because formdata can't send booleans
 			avatar: uploadedAvatar ?? defaultAvatar,
 			dateJoined: req.body?.dateJoined ?? undefined,
-			achievements: req.body?.achievements ?? defaultAchievements
+			achievements: req.body?.achievements ?? defaultAchievements,
+			kits: req.body?.kits ?? defaultKits
 		};
 
 		const requiredFields = ["name", "emailAddress", "pwd"];
@@ -563,7 +573,8 @@ app.post('/create-user', upload.single('avatar'), async function (req, res) {
 				avatar: newUserDoc.avatar,
 				dateJoined: convertedDate,
 				achievements: newUserDoc.achievements,
-				admin: newUserDoc.admin
+				admin: newUserDoc.admin,
+				kits: newUserDoc.kits
 			});
 			res.status(200).send("createdUserSuccess");
 		} catch(err) {
