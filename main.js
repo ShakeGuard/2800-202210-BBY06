@@ -690,6 +690,41 @@ app.get('/kits', async (req, res) => {
 	res.status(200).send(user.kits);
 })
 
+app.post('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	try {
+		const filterQuery = {'name': req.body.name};
+		const kitTemplate = await db.collection('BBY-6_kit-templates').findOne(filterQuery);
+		if(!kitTemplate) {
+			res.status(500).send("kitTemplateNotFound");
+			return;
+		}
+		try {
+			const userFilterQuery = {'_id': new mdb.ObjectId(req.session._id)};
+			kitTemplate.kit = kitTemplate.kit.map(element => {
+				element.required = true;
+				element.completed = false;	
+				return element;
+			})
+			const user = await db.collection('BBY-6_users').updateOne(userFilterQuery, {$push: {kits: kitTemplate}});
+			if(!user) {
+				// Could not find user
+				res.status(500).send("userNotFound");
+				return;
+			}
+			res.status(200).send(kitTemplate);
+		} catch(e) {
+			console.log(e)
+			res.status(500).send("serverIssue");
+		}
+	} catch(e) {
+		console.log(e)
+		res.status(500).send("serverIssue");
+	}
+})
+
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf-8");
 	res.send(doc);
