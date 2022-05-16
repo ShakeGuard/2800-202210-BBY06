@@ -12,16 +12,14 @@ import fs from 'fs';
 import { readFile } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
 import multer from 'multer';
-import {accessLog, stdoutLog, errorLog} from './logging.mjs';
 
 // Use `yargs` to parse command-line arguments.
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-// Grab secrets file
-import { readSecrets } from './shakeguardSecrets.mjs';
+import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
+import {readSecrets} from './shakeguardSecrets.mjs';
 
-const secrets = await readSecrets();
 
 const argv = yargs(hideBin(process.argv))
   .option('port', {
@@ -62,6 +60,21 @@ const url = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePor
 
 const dbName = argv.dbName ?? "COMP2800";
 
+// Log in 'dev' format to stdout, if devLog option is set.
+// If devLog is not set, log errors only to stdout.
+await new Promise((resolve) => {
+	if (argv.devLog) {
+		app.use(stdoutLog);
+		addDevLog(log);
+	} else {
+		app.use(errorLog)
+	}
+	app.use(accessLog);
+	resolve();
+}).then(
+	async () => await readSecrets()
+);
+
 // The MongoDB Connection object.
 /** @type {?MongoClient} */
 let mongo = null;
@@ -95,17 +108,17 @@ const connectMongo = async (url, dbName) => {
 		]);
 		db = mongo.db(dbName);
 		initDatabase(db);
-		console.log(`Connected to "${url}", using database "${dbName}"`);
+		log.info(`Connected to "${url}", using database "${dbName}"`);
 	} catch (error) {
-		console.log(); // Newline!
-		console.error(`Tried connecting to ${url}, using database ${dbName}`);
-		console.error("Ran into an error while connecting to MongoDB!");
+		log.info(); // Newline!
+		log.error(`Tried connecting to ${url}, using database ${dbName}`);
+		log.error("Ran into an error while connecting to MongoDB!");
 		switch (error.message) {
 			case "credentials must be an object with 'username' and 'password' properties":
 				if (argv.auth) {
-					console.error("Error: --auth option was set, but secrets module could "
+					log.error("Error: --auth option was set, but secrets module could "
 								+ "not load username and password for MongoDB instance!");
-					console.error("Try redownloading .secrets or running without the --auth option.")
+					log.error("Try redownloading .secrets or running without the --auth option.")
 				}
 				break;
 		
@@ -113,10 +126,10 @@ const connectMongo = async (url, dbName) => {
 				break;
 		}
 
-		console.error('Error object details:');
-		console.dir(error);
+		log.error('Error object details:');
+		log.dir(error);
 
-		console.error('Exiting early due to errors!')
+		log.error('Exiting early due to errors!')
 		// TODO: consider any cleanup code before exiting: any open file handles?
 		process.exit();
 	} finally {
@@ -191,11 +204,11 @@ const loadHTMLComponent = async (baseDOM, placeholderSelector, componentSelector
 	return baseDOM;
 }
 
-console.log("Connecting to MongoDB instance…");
+log.info("Connecting to MongoDB instance…");
 try {
 	[mongo, db] = await connectMongo(url, dbName);
 } catch (err) {
-	console.error(`Could not connect to MongoDB instance at ${url}!`);
+	log.error(`Could not connect to MongoDB instance at ${url}!`);
 }
 
 app.use(express.json());
@@ -208,14 +221,8 @@ const sessionParser = session({
 });
 app.use(sessionParser);
 
-// Log in 'dev' format to stdout, if devLog option is set.
-// If devLog is not set, log errors only.
-if (argv.devLog) {
-	app.use(stdoutLog);
-} else {
-	app.use(errorLog)
-}
-app.use(accessLog);
+
+
 
 // static path mappings
 app.use("/js", express.static("public/js"));
@@ -367,7 +374,7 @@ app.patch('/profile', async(req, res) => {
 			res.status(200).send("userUpdated");
 		}
 	} catch(e) {
-		console.log(e);
+		log.info(e);
 		// Email addresses have a unique index so mongo will give error code 11000 if the email is already in use
 		if(e.code === 11000) {
 			res.status(403).send("emailInUse");
@@ -542,7 +549,7 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 			throw (err);
 		}
 	} catch(err) {
-		// Can catch the error and display it here, but Arron says console.log is not allowd
+		// Can catch the error and display it here, but Arron says log.info is not allowd
 		if (err.code === 11000) {
 			res.status(500).send("duplicateKey");
 			return;
@@ -708,5 +715,5 @@ server.on('upgrade', function upgrade(request, socket, head) {
 	})
 });
 server.listen(port, function () {
-    console.log(`Server listening on http://localhost:${port}`);
+    log.info(`Server listening on http://localhost:${port}`);
 })
