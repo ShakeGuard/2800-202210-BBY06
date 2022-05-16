@@ -1014,17 +1014,15 @@ app.get('/resource', async (req,res) =>{
 
 	let cardDoc = await readFile("./templates/card.html", "utf-8");
 	const cardDOM = new JSDOM(cardDoc);
+	const cardTemplate = cardDOM.window.document.getElementsByClassName("Card-Container").item(0);
 	
-
-	CallAPI.forEach(element => {
-		cardDOM.window.document.getElementById("Card-Title").innerHTML = CallAPI["{cardTitle}"];
-		cardDOM.window.document.getElementById("Card-Description").innerHTML = CallAPI["{cardDesc}"];
-		cardDOM.window.document.getElementById("Description-Author").innerHTML = CallAPI["{cardAuthor}"];
-		resource.window.document.getElementById("Base-Container").innerHTML += cardDOM
-	});
-
-	// resource = await loadHTMLComponent(resource, "#Base-Container", "div", "./templates/card.html");
-	// resource.window.document.getElementById("Base-Container").innerHTML = 'Hello'
+	for (const element of CallAPI) {
+		const cardEl = cardTemplate.cloneNode(true);
+		cardEl.querySelector("#Card-Title").textContent = element["{cardTitle}"];
+		cardEl.querySelector("#Card-Description").textContent = element["{cardDesc}"];
+		cardEl.querySelector("#Description-Author").textContent = element["{cardAuthor}"];
+		resource.window.document.getElementById("Base-Container").appendChild(cardEl);
+	}
 
 	res.send(resource.serialize());
 });
