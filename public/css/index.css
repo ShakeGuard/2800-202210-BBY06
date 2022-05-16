@@ -1,24 +1,13 @@
 body {
     margin: 0;
+    padding: 0;
 }
-
-
-/* Google Material icons */
-.material-icons.md-36 { font-size: 36px; }
-
-.material-icons.md-dark { color: rgba(0, 0, 0, 1); }
-.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
-
-.material-icons.md-light { color: rgba(255, 255, 255, 1); }
-.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
-
-
 
 /* Page contents */
 #grid-container-main {
     text-align: center;
     display: grid;
-    grid-template-columns: minmax(0 1fr);
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
     margin-top: -10vh;
 }
@@ -81,18 +70,6 @@ body {
 #section-heading2 {
     font-size: 1.3em;
 }
-.form-item{
-    margin: 10px;
-    font-size: 2vw;
-}
-
-.success {
-	color: green;
-}
-
-.fail {
-	color: red;
-}
 
 
 /* For medium screens */
@@ -125,5 +102,4 @@ body {
     #hero-message-paragraph {
         font-size: 2em;
     }
-
 }

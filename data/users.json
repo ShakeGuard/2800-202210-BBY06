@@ -3,7 +3,7 @@
   "name": "Katy Petrova",
   "emailAddress": "katy@nokko.me",
   "pwd": "$2b$10$GX5JjtF80O31HMkYiisPK.IJjxApqZMnpkGGK08wAsXbMum2R5e96",
-  "avatarURL": "/avatar/<filename>.png",
+  "avatarURL": "/images/Default-Profile-Picture.jpg",
   "dateJoined": {
     "$date": {
       "$numberLong": "1651619110000"
@@ -20,7 +20,7 @@
   "name": "Alex Kong",
   "emailAddress": "alexkonghockey@gmail.com",
   "pwd": "$2b$10$dpUs.qr.pi5kESAzC69AZunfR1PEPxM5i8P.ayS6K5fWnHzm0ux4m",
-  "avatarURL": "/avatar/<filename>.png",
+  "avatarURL": "/images/Default-Profile-Picture.jpg",
   "dateJoined": {
     "$date": {
       "$numberLong": "1651704348000"
