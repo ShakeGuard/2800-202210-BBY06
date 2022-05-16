@@ -18,6 +18,7 @@
     "preprod": "node downloadSecrets.mjs",
     "test": "echo \"No tests defined!\"",
     "start": "node main.js --devLog -i localhost -p 27017 --db COMP2800",
-    "prod": "node main.j --devLog -i db.nokko.me -p 27017 --auth true --db shakeguard"
+    "prod": "node main.j --devLog -i db.nokko.me -p 27017 --auth true --db shakeguard",
+    "showlog": "jq -r '\"[\\(.level)]\t\\(.message)\"' logs/app.log"
   }
 }

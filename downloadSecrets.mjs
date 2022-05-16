@@ -7,7 +7,9 @@ import {hideBin} from 'yargs/helpers';
 import path from 'node:path';
 import { open, access } from 'node:fs/promises';
 import { constants } from 'node:fs';
-import { log } from './logging.mjs';
+import { log, addDevLog } from './logging.mjs';
+
+addDevLog(log);
 
 const homeDirStr = (await import('os')).homedir();
 const homeDir = path.parse(homeDirStr);
