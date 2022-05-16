@@ -12,7 +12,6 @@
     <link href="/css/admin-dashboard.css" rel="stylesheet" />
 
     <!-- Google Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 </head>
@@ -53,22 +52,20 @@
                 <!-- Users Go Here -->
             </ul>
 
-            <!-- Clone profile form with modified css and place here -->
-            <div id="create-admin-form-container"></div>
 
             <!-- Template for user items -->
             <template id="user-row">
                 <li class="user-item">
                     <div class="user-item-name-pic">
-                        <img src="/images/user-pic_Tracy.svg" id="admin-profile-pic" class="profile-picture" alt="admin-profile-pic" />
+                        <img src="/images/Default-Profile-Picture.jpg" id="admin-profile-pic" class="profile-picture" alt="Admin Avatar" />
                         <input disabled type="text" name="admin-name" class="admin-name" placeholder="FirstName LastName" required />
                     </div>
                     <div class="edit-button-group">
                         <button class="button button-secondary-teal small transparent edit-button">
-                            <span class="material-icons teal">edit</span>
+                            <span class="material-symbols-outlined teal">edit</span>
                         </button>
                         <button class="button button-secondary-teal small transparent delete-button">
-                            <span class="material-icons teal">delete</span>
+                            <span class="material-symbols-outlined teal">delete</span>
                         </button>
                     </div>
                 </li>
@@ -76,18 +73,20 @@
 
             <!-- Template for add admin form -->
             <template id="new-admin">
-                <form action="/create-user" id="add-admin-form">
+                <form id="add-admin-form">
                     <h2>Create a new admin</h2>
 
                     <div class="upload-image-container">
                         <div class="upload-image-group">
-                            <img src="/images/user-pic_Tracy.svg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
+                            <img src="/images/Default-Profile-Picture.jpg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
                             <div class="upload-button-group">
                                 <!-- Label will be overlaid on top and hide the default file button -->
-                                <label for="Upload-Avatar" class="custom-upload-button">+</label>
-                                <input id="Upload-Avatar" class="default-upload-button" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
+                                <label for="Upload-Admin-Avatar" class="custom-upload-button">+</label>
+                                <input id="Upload-Admin-Avatar" class="default-upload-button" type="file" name="Upload-Admin-Avatar" accept=".jpg,.png,.jpeg"/>
                             </div>
                         </div>
+                        <!-- Profile Picture User Feedback -->
+                        <p id="Upload-Avatar-FileName">filename</p>
                     </div>
                     <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
                     <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
@@ -106,5 +105,6 @@
 
     <script type="module" src="js/toasts.mjs"></script>
     <script type="module" src="js/dashboard.js"></script>
+    <script src="js/user-profile.js"></script>
 </body>
 </html>

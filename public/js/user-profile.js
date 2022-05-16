@@ -21,6 +21,24 @@ const errorFlags = {
 	Avatar: 8
 }
 
+const logoutButton = document.getElementById("Button-Logout");
+
+logoutButton.addEventListener('click', async function() {
+    const response = await fetch('/logout', {
+        method: 'POST'
+    });
+
+    const status = await response.text();
+    switch (status) {
+        case 'logoutSuccessful':
+			window.location.href = "./";
+            break;
+        default:
+            break;
+    }
+});
+
+
 const getProfileDetails = async() => {
 	const response = await fetch('/profile-details');
 	const responseJson = await response.json();

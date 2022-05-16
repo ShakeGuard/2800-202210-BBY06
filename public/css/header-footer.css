@@ -13,6 +13,7 @@ nav {
     right: 0;
     max-width: 100vw;
     overflow: hidden;
+    color: black !important;
 }
 
 .logo {
@@ -23,7 +24,6 @@ nav {
 #menu-icon {
     height: 3rem;
 }
-
 
 /* 
     Collapsible menu tutorial referenced
@@ -60,21 +60,40 @@ input:checked ~ ul {
 .collapsible-content .content-inner {
     padding: .5rem 1rem;
     text-align: center;
-    background-color: #caeefa;
+    background-color: #9fe0ea;
 }
 .collapsible-content ul {
+    max-width: 100%;
     list-style: none;
     padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.content-inner li > * {
+    max-width: 100%;
 }
 
 .content-inner a {
     display: block;
+    color: black !important;
+}
+
+#Button-Logout {
+    width: 100%;
 }
 
 footer {
-    text-align: center;
+    max-width: 100%;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column;
 }
 
+footer > div {
+    justify-content: center;
+}
 footer img {
     width: 3rem;
 }

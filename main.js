@@ -218,12 +218,13 @@ app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {
 		if (req.session.isAdmin) {
 			res.redirect('/dashboard');
+			return;
 		} else {
 			res.redirect('/profile');
+			return;
 		}
-		console.log("User logged in!");
 	}
-
+	
 	const doc = await readFile("./html/index.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let index = await loadHeaderFooter(baseDOM);
@@ -287,6 +288,7 @@ function checkLoginError(req, res) {
 	} 
 	return false;
 }
+
 
 app.get('/profile', async (req, res) => {
 	if (redirectToLogin(req, res)) {
@@ -422,8 +424,6 @@ app.get('/dashboard', async function (req, res) {
 		profileDetails.window.document.getElementById("Email").defaultValue = req.session.email;
 		res.send(dashboard.serialize());
 
-
-
 		return;
 	} else {
 		// Unauthorized TODO: test
@@ -431,6 +431,8 @@ app.get('/dashboard', async function (req, res) {
 	}
 });
 
+// This gets the admin profiles
+// May change endpoint name to be more descriptive, or not
 app.get('/profiles', async function (req, res) { 
 	if (!req.session.isAdmin) {
 		res.status(401).send('notAnAdmin');
@@ -440,7 +442,7 @@ app.get('/profiles', async function (req, res) {
 
 	// TODO: error handling
 	// TODO: really, we should do pagination for this kind of request.
-	const usersCursor = db.collection('BBY-6_users').find()
+	const usersCursor = db.collection('BBY-6_users').find({'admin': true})
 	// Omit password hashes! 
 	// There is probably a better way of doing this; any suggestions?
 	.map(user => {
@@ -457,39 +459,6 @@ app.get('/profiles', async function (req, res) {
 	);
 })
 
-// When an admin wants to create a new admin, 
-// a form is created with an option for the admin to upload 
-// an image file for the new admin
-app.post('/upload-avatar-new-admin', upload.single('avatar'), async (req, res) => {
-	const targetEmail = req.query.targetEmail ?? null;
-
-	//if the request is not coming from a logged in *admin* user, reject.
-	if (!req.session || !req.session.loggedIn || !req.session.isAdmin) {
-		res.status(401).send("invalidSession");
-		return;
-	} 
-	
-	// Don't do anything if the user specifies a bad email!
-	const emailFilter = {emailAddress: targetEmail}
-	if (targetEmail === null || (await db.collection('BBY-6_users').find(emailFilter).toArray()).length != 1) {
-		// TODO: split into two separate errors.
-		res.status(500).send("badEmail");
-		return;
-	}
-	
-	const results = db.collection('BBY-6_users').updateOne(emailFilter, {
-		$set: {
-			avatarURL: {
-				data: req.file.buffer,
-				contentType: req.file.mimetype
-			}
-		}
-	});
-	const data = req.file.buffer;
-	res.status(200).send('avatarUpdated');
-});
-
-
 /** 
  * @typedef { {
  *      _id: ?mdb.ObjectId,
@@ -502,24 +471,33 @@ app.post('/upload-avatar-new-admin', upload.single('avatar'), async (req, res) =
  * 	    achievements: ?string[]
  * } } UserDoc
  * */
+app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
+	// req.file is the value of 'avatarURL' specified in the formData
 
-app.post('/create-user', async function (req, res) {
 	if (!req.session.isAdmin) {
 		res.status(401).send('notAnAdmin');
 		return;
 	}
 
 	try {
+		// Default values
+		const uploadedAvatar = {
+			data: req.file.buffer,
+			contentType: req.file.mimetype
+		}
+		const defaultAvatar = '/images/Default-Profile-Picture.jpg';
+		const defaultAchievements = ["gettingStarted", "planKit", "finishKit"];
+
 		/** @type {UserDoc} */
 		const newUserDoc = {
 			_id: req.body?._id ?? undefined,
 			name: req.body?.name ?? undefined,
 			emailAddress: req.body?.emailAddress ?? undefined,
 			pwd: req.body?.pwd ?? undefined,
-			admin: req.body?.admin ?? false,
-			avatarURL: req.body?.avatarURL ?? undefined,
+			admin: (req.body?.admin == 'true') ? true : false, // Doing this because formdata can't send booleans
+			avatarURL: uploadedAvatar ?? defaultAvatar,
 			dateJoined: req.body?.dateJoined ?? undefined,
-			achievements: req.body?.achievements ?? undefined,
+			achievements: req.body?.achievements ?? defaultAchievements
 		};
 
 		const requiredFields = ["name", "emailAddress", "pwd"];
@@ -683,14 +661,13 @@ app.post("/login", async (req, res) => {
 	}
 })
 
-// TODO: Changed to get to save 5 minutes of development time. Change back to POST when no immediate deadline
-app.get("/logout", (req, res) => {
+app.post("/logout", (req, res) => {
 	if(req.session) {
 		req.session.destroy(err => {
 			if(err) {
 				res.status(422).send("logoutFailed");
 			} else {
-				res.redirect('/');
+				res.status(200).send("logoutSuccessful");
 			}
 		})
 	}
@@ -722,5 +699,5 @@ server.on('upgrade', function upgrade(request, socket, head) {
 	})
 });
 server.listen(port, function () {
-  console.log(`Server listening on http://localhost:${port}`);
+    console.log(`Server listening on http://localhost:${port}`);
 })
