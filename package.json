@@ -6,8 +6,10 @@
     "express-session": "^1.17.2",
     "jsdom": "^19.0.0",
     "mongodb": "^4.5.0",
+    "morgan": "^1.10.0",
     "multer": "^1.4.4",
     "ssh2-sftp-client": "^8.0.0",
+    "winston": "^3.7.2",
     "ws": "^8.6.0",
     "yargs": "^17.4.1"
   },
@@ -15,7 +17,8 @@
     "prestart": "node downloadSecrets.mjs",
     "preprod": "node downloadSecrets.mjs",
     "test": "echo \"No tests defined!\"",
-    "start": "node main.js -i localhost -p 27017 --db COMP2800",
-    "prod": "node main.js -i db.nokko.me -p 27017 --auth true --db shakeguard"
+    "start": "node main.js --devLog -i localhost -p 27017 --db COMP2800",
+    "prod": "node main.j --devLog -i db.nokko.me -p 27017 --auth true --db shakeguard",
+    "showlog": "jq -r '\"[\\(.level)]\t\\(.message)\"' logs/app.log"
   }
 }

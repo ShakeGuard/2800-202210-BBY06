@@ -17,14 +17,9 @@ import multer from 'multer';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-// Grab secrets file
-import { readSecrets } from './shakeguardSecrets.mjs';
+import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
+import {readSecrets} from './shakeguardSecrets.mjs';
 
-console.log = () => {};
-console.dir = () => {};
-console.error = () => {};
-
-const secrets = await readSecrets();
 
 const argv = yargs(hideBin(process.argv))
   .option('port', {
@@ -51,6 +46,9 @@ const argv = yargs(hideBin(process.argv))
 		description: "If `--auth true`, the app will attempt to log into the MongoDB instance with"
 				+  "the username and password specified in the file `.secrets/mongodb_auth.json`.",
 		type: 'boolean'	
+  }).option('devLog', {
+		description: "If set, app will log lots of data to stdout. If not, only errors will be logged.",
+		type: 'boolean'	
   })
   .help()
   .alias('help', 'h').parse();
@@ -61,6 +59,21 @@ const upload = multer();
 const url = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
 
 const dbName = argv.dbName ?? "COMP2800";
+
+// Log in 'dev' format to stdout, if devLog option is set.
+// If devLog is not set, log errors only to stdout.
+await new Promise((resolve) => {
+	if (argv.devLog) {
+		app.use(stdoutLog);
+		addDevLog(log);
+	} else {
+		app.use(errorLog)
+	}
+	app.use(accessLog);
+	resolve();
+}).then(
+	async () => await readSecrets()
+);
 
 // The MongoDB Connection object.
 /** @type {?MongoClient} */
@@ -95,17 +108,17 @@ const connectMongo = async (url, dbName) => {
 		]);
 		db = mongo.db(dbName);
 		initDatabase(db);
-		console.log(`Connected to "${url}", using database "${dbName}"`);
+		log.info(`Connected to "${url}", using database "${dbName}"`);
 	} catch (error) {
-		console.log(); // Newline!
-		console.error(`Tried connecting to ${url}, using database ${dbName}`);
-		console.error("Ran into an error while connecting to MongoDB!");
+		log.info(); // Newline!
+		log.error(`Tried connecting to ${url}, using database ${dbName}`);
+		log.error("Ran into an error while connecting to MongoDB!");
 		switch (error.message) {
 			case "credentials must be an object with 'username' and 'password' properties":
 				if (argv.auth) {
-					console.error("Error: --auth option was set, but secrets module could "
+					log.error("Error: --auth option was set, but secrets module could "
 								+ "not load username and password for MongoDB instance!");
-					console.error("Try redownloading .secrets or running without the --auth option.")
+					log.error("Try redownloading .secrets or running without the --auth option.")
 				}
 				break;
 		
@@ -113,10 +126,10 @@ const connectMongo = async (url, dbName) => {
 				break;
 		}
 
-		console.error('Error object details:');
-		console.dir(error);
+		log.error('Error object details:');
+		log.dir(JSON.stringify(error, null, 2));
 
-		console.error('Exiting early due to errors!')
+		log.error('Exiting early due to errors!')
 		// TODO: consider any cleanup code before exiting: any open file handles?
 		process.exit();
 	} finally {
@@ -191,11 +204,11 @@ const loadHTMLComponent = async (baseDOM, placeholderSelector, componentSelector
 	return baseDOM;
 }
 
-console.log("Connecting to MongoDB instance…");
+log.info("Connecting to MongoDB instance…");
 try {
 	[mongo, db] = await connectMongo(url, dbName);
 } catch (err) {
-	console.error(`Could not connect to MongoDB instance at ${url}!`);
+	log.error(`Could not connect to MongoDB instance at ${url}!`);
 }
 
 app.use(express.json());
@@ -206,8 +219,11 @@ const sessionParser = session({
 	// create a unique identifier for that client
 	saveUninitialized: true
 });
-
 app.use(sessionParser);
+
+
+
+
 // static path mappings
 app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
@@ -358,7 +374,7 @@ app.patch('/profile', async(req, res) => {
 			res.status(200).send("userUpdated");
 		}
 	} catch(e) {
-		console.log(e);
+		log.info(e);
 		// Email addresses have a unique index so mongo will give error code 11000 if the email is already in use
 		if(e.code === 11000) {
 			res.status(403).send("emailInUse");
@@ -533,7 +549,7 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 			throw (err);
 		}
 	} catch(err) {
-		// Can catch the error and display it here, but Arron says console.log is not allowd
+		// Can catch the error and display it here, but Arron says log.info is not allowd
 		if (err.code === 11000) {
 			res.status(500).send("duplicateKey");
 			return;
@@ -699,5 +715,5 @@ server.on('upgrade', function upgrade(request, socket, head) {
 	})
 });
 server.listen(port, function () {
-    console.log(`Server listening on http://localhost:${port}`);
+    log.info(`Server listening on http://localhost:${port}`);
 })
