@@ -12,6 +12,7 @@ import fs from 'fs';
 import { readFile } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
 import multer from 'multer';
+import {accessLog, stdoutLog, errorLog} from './logging.mjs';
 
 // Use `yargs` to parse command-line arguments.
 import yargs from 'yargs';
@@ -19,10 +20,6 @@ import { hideBin } from 'yargs/helpers';
 
 // Grab secrets file
 import { readSecrets } from './shakeguardSecrets.mjs';
-
-console.log = () => {};
-console.dir = () => {};
-console.error = () => {};
 
 const secrets = await readSecrets();
 
@@ -50,6 +47,9 @@ const argv = yargs(hideBin(process.argv))
   .option('auth', {
 		description: "If `--auth true`, the app will attempt to log into the MongoDB instance with"
 				+  "the username and password specified in the file `.secrets/mongodb_auth.json`.",
+		type: 'boolean'	
+  }).option('devLog', {
+		description: "If set, app will log lots of data to stdout. If not, only errors will be logged.",
 		type: 'boolean'	
   })
   .help()
@@ -206,8 +206,17 @@ const sessionParser = session({
 	// create a unique identifier for that client
 	saveUninitialized: true
 });
-
 app.use(sessionParser);
+
+// Log in 'dev' format to stdout, if devLog option is set.
+// If devLog is not set, log errors only.
+if (argv.devLog) {
+	app.use(stdoutLog);
+} else {
+	app.use(errorLog)
+}
+app.use(accessLog);
+
 // static path mappings
 app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));

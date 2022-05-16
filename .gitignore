@@ -6,3 +6,5 @@ node_modules/
 # Never commit these!
 .secrets/
 
+# Log output: commit the log *folder*, but not the log *files*.
+logs/*
