@@ -127,7 +127,7 @@ const connectMongo = async (url, dbName) => {
 		}
 
 		log.error('Error object details:');
-		log.dir(error);
+		log.dir(JSON.stringify(error, null, 2));
 
 		log.error('Exiting early due to errors!')
 		// TODO: consider any cleanup code before exiting: any open file handles?

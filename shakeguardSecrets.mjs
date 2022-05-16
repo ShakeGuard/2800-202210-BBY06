@@ -14,9 +14,9 @@ async function readSecrets() {
     // Check that the .secrets directory exists and is available for reading/listing…
     try {
         await access(secretsPath, constants.F_OK | constants.R_OK | constants.X_OK);
-    } catch (err) {
+    } catch (error) {
         log.error("Could not access \`.secrets\` directory, check that it exists and that the permissions are set correctly!", );
-        log.dir(err);
+		log.dir(JSON.stringify(error, null, 2));
         return secrets;
     }
     // Check that each file in the .secrets directory is readable – warn on any inaccessible files.
