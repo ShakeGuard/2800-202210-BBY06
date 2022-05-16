@@ -22,7 +22,6 @@ import { hideBin } from 'yargs/helpers';
 import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
 import {readSecrets} from './shakeguardSecrets.mjs';
 
-
 const argv = yargs(hideBin(process.argv))
   .option('port', {
 	  alias: 'P',
@@ -228,7 +227,7 @@ try {
 app.use(express.json());
 
 const sessionParser = session({
-	secret: "shhhh...secret",
+	secret: secrets['session.json'].sessionSecret,
 	name: "ShakeGuardSessionID",
 	store: sessionStore ?? undefined,
 	resave: false,
