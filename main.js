@@ -408,8 +408,8 @@ app.get('/avatar', async(req, res) => {
 
 	const results = await db.collection('BBY-6_users').findOne({emailAddress:req.session.email});
 	res.status(200).send({
-		mimeType: results.avatarURL.contentType,
-		data: results.avatarURL.data
+		mimeType: results.avatar.contentType,
+		data: results.avatar.data.$binary.base64
 	})
 })
 
@@ -421,8 +421,12 @@ app.post('/avatar', upload.single("avatar"), async(req, res) => {
 
 	const results = await db.collection('BBY-6_users').updateOne({emailAddress:req.session.email}, {
 		$set: {
-			avatarURL: {
-				data: req.file.buffer,
+			avatar: {
+				data: {
+					$binary: {
+						base64: req.file.buffer
+					}
+				},
 				contentType: req.file.mimetype
 			}
 		}
@@ -497,13 +501,13 @@ app.get('/profiles', async function (req, res) {
  *      emailAddress: string,
  *      pwd: string,
  *      admin: boolean,
- *      avatarURL: ?string,
+ *      avatar: ?string,
  *      dateJoined: ?Date,
  * 	    achievements: ?string[]
  * } } UserDoc
  * */
-app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
-	// req.file is the value of 'avatarURL' specified in the formData
+app.post('/create-user', upload.single('avatar'), async function (req, res) {
+	// req.file is the value of 'avatar' specified in the formData
 
 	if (!req.session.isAdmin) {
 		res.status(401).send('notAnAdmin');
@@ -513,7 +517,11 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 	try {
 		// Default values
 		const uploadedAvatar = {
-			data: req.file.buffer,
+			data: {
+				$binary: {
+					base64: req.file.buffer
+				}
+			},
 			contentType: req.file.mimetype
 		}
 		const defaultAvatar = '/images/Default-Profile-Picture.jpg';
@@ -526,7 +534,7 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 			emailAddress: req.body?.emailAddress ?? undefined,
 			pwd: req.body?.pwd ?? undefined,
 			admin: (req.body?.admin == 'true') ? true : false, // Doing this because formdata can't send booleans
-			avatarURL: uploadedAvatar ?? defaultAvatar,
+			avatar: uploadedAvatar ?? defaultAvatar,
 			dateJoined: req.body?.dateJoined ?? undefined,
 			achievements: req.body?.achievements ?? defaultAchievements
 		};
@@ -552,7 +560,7 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 				name: newUserDoc.name,
 				emailAddress: newUserDoc.emailAddress,
 				pwd: await hashPassword,
-				avatarURL: newUserDoc.avatarURL,
+				avatar: newUserDoc.avatar,
 				dateJoined: convertedDate,
 				achievements: newUserDoc.achievements,
 				admin: newUserDoc.admin
