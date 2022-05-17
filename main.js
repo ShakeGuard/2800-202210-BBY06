@@ -999,31 +999,31 @@ app.get('/resource', async (req,res) =>{
 
 	/* Array here to determine how many cards to create*/
 	const CallAPI = [{
-		"{ID}": "sendID(1)",
+		"{cardLink}": "./html/resource_1.html",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title1",
 		"{cardDesc}": "desc1",
 		"{cardAuthor}": "auth1"
 	}, {
-		"{ID}": "sendID(2)",
+		"{cardLink}": "./html/resource_2.html",
 		"{cardImage}": "/images/600x337_Resource1.png",
 		"{cardTitle}": "title2",
 		"{cardDesc}": "desc2",
 		"{cardAuthor}": "auth2"
 	}, {
-		"{ID}": "sendID(3)",
+		"{cardLink}": "./html/resource_3.html",
 		"{cardImage}": "/images/600x337_Resource2.png",
 		"{cardTitle}": "title3",
 		"{cardDesc}": "desc3",
 		"{cardAuthor}": "auth3"
 	}, {
-		"{ID}": "sendID(4)",
+		"{cardLink}": "./html/resource_4.html",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title4",
 		"{cardDesc}": "desc4",
 		"{cardAuthor}": "auth4"
 	}, {
-		"{ID}": "sendID(5)",
+		"{cardLink}": "./html/resource_5.html",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title5",
 		"{cardDesc}": "desc5",
@@ -1036,12 +1036,12 @@ app.get('/resource', async (req,res) =>{
 
 	let cardDoc = await readFile("./templates/card.html", "utf-8");
 	const cardDOM = new JSDOM(cardDoc);
-	const cardTemplate = cardDOM.window.document.getElementsByClassName("Card-Container").item(0);
+	const cardTemplate = cardDOM.window.document.getElementsByClassName("Component").item(0);
 	
 	for (const element of CallAPI) {
 		const cardEl = cardTemplate.cloneNode(true);
 		if (cardEl){
-			// cardEl.querySelector("#Card-Link").addEventListener("click", sendID(element["{ID}"]))
+			cardEl.querySelector("#Card-Link").setAttribute("href", element["{cardLink}"]);
 			cardEl.querySelector("#Card-Image").setAttribute("src", element["{cardImage}"]);
 			cardEl.querySelector("#Card-Title").textContent = element["{cardTitle}"];
 			cardEl.querySelector("#Card-Description").textContent = element["{cardDesc}"];
@@ -1052,26 +1052,6 @@ app.get('/resource', async (req,res) =>{
 
 	res.send(resource.serialize());
 });
-
-function sendID(input){
-	switch (input){
-		case 1:
-			console.log("1");
-			break;
-		case 2:
-			console.log("2");
-			break;
-		case 3:
-			console.log("3");
-			break;
-		case 4:
-			console.log("4");
-			break;
-		case 5:
-			console.log("5");
-			break;
-	}
-}
 
 // RUN SERVER
 const port = argv.port ?? 8000;
