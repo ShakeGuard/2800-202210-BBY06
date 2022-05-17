@@ -7,7 +7,7 @@ body {
 #grid-container-main {
     text-align: center;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0 1fr);
     justify-items: center;
     margin-top: -10vh;
 }
@@ -33,7 +33,7 @@ body {
             rgba(23, 165, 186, 0.8), 
             rgba(23, 165, 186, 0.8)
         ),
-        url("../images/ali-kazal-jwyFn9kxQuc-unsplash.jpg");
+        url("../images/ali-kazal-jwyFn9kxQuc-unsplash-greyscale.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
