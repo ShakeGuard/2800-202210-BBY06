@@ -636,7 +636,10 @@ app.post('/edit-admin', async function (req, res) {
 			// Couldn't find the user
 			res.status(404).send("userNotFound");
 		} else {
-			req.session.name = req.body.name ?? req.session.name;
+			// Edit session name if the req is the same person
+			if (req.session._id === req.body._id) {
+				req.session.name = req.body.name;
+			}
 			res.status(200).send("userUpdated");
 		}
 	} catch(e) {
