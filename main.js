@@ -229,9 +229,7 @@ try {
 	log.error(JSON.stringify(err, null, 2));
 }
 
-// Use the JSON middleware for parsing JSON request bodies.
-app.use(express.json());
-
+app.use(express.json({limit: '50mb'}));
 const sessionParser = session({
 	secret: secrets['session.json'].sessionSecret,
 	name: "ShakeGuardSessionID",
@@ -719,11 +717,40 @@ app.post('/kits', async (req, res) => {
 			}
 			res.status(200).send(kitTemplate);
 		} catch(e) {
-			console.log(e)
 			res.status(500).send("serverIssue");
 		}
 	} catch(e) {
-		console.log(e)
+		res.status(500).send("serverIssue");
+	}
+})
+
+// TODO: We're bloating the requst by asking for the whole kit object but this works and I don't want to spend to much time on this
+app.patch('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id)
+	}
+	try {
+		req.body._id = new mdb.ObjectId(req.body._id);
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$": req.body}});
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(500).send("couldNotFindKit");
+			return;
+		}
+		res.status(200).send("kitUpdatedSuccessfully");
+	} catch(e) {
 		res.status(500).send("serverIssue");
 	}
 })
