@@ -15,7 +15,7 @@ const hiddenElements = document.querySelectorAll('.toggle');
 
 const createKitButton = document.querySelector('#create-kit-button');
 const kitOptionsFormTemplate = document.querySelector('#kit-options');
-
+let selectedTemplate = 'Home';
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
 const WelcomeMessage = document.querySelector(".user-name-welcome");
@@ -228,6 +228,17 @@ function createKitOptionsForm() {
     overlay.setAttribute('class', 'form-overlay');
     document.body.appendChild(overlay);
 	document.body.appendChild(form);
+
+	// Add event handlers for submission
+	const homeKitTemplate = document.querySelector("#kit-1");
+	const grabAndGoKitTemplate = document.querySelector("#kit-2");
+	homeKitTemplate.addEventListener('click', e => {
+		selectedTemplate = 'Home';
+	})
+	grabAndGoKitTemplate.addEventListener('click', e => {
+		selectedTemplate = 'Grab And Go';
+	})
+	form.addEventListener('submit', createKitSubmissionHandler);
 }
 
 function createEmptyKitMessage() {
@@ -248,5 +259,27 @@ async function getKits() {
 	}
 }
 
+async function createKit(templateName) {
+	const response = await fetch('/kits', {
+		method: 'POST',
+		headers: {'Content-Type':'application/json'},
+		body: JSON.stringify({
+			name: templateName
+		})
+	});
+	if (response.status === 500) {
+		const responseText = await response.text();
+		// TODO: Handle error 
+	} else {
+		const responseJSON = await response.json();
+		// TODO: Do something with the kit
+	}
+}
+
+async function createKitSubmissionHandler(e) {
+	e.preventDefault();
+	await createKit(selectedTemplate);
+	closeKitForm();
+}
 createKitButton.addEventListener('click', createKitOptionsForm);
 getKits();
