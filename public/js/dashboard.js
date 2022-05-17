@@ -155,6 +155,9 @@ function editAction(userID) {
                 toastQueue.queueToasts([
                     { message: `Saved "${userInput.value}"`, classes: ["toast-success"] }
                 ]);
+
+                refreshUsers(fetch('profiles'));
+                getProfileDetails();
                 return;
                 
             } catch (err) {
@@ -182,6 +185,8 @@ function cancelCreateAdmin() {
 
 function uploadFileFeedback() {
     if (validFileType(this.files)) {
+        const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName-Admin");
+        UserFeedbackFile.innerHTML = this.files[0].name;
         toastQueue.queueToasts([
             { message: "File selected", classes: ["toast-info"] }
         ]);

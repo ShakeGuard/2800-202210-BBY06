@@ -7,7 +7,6 @@
     <link href="images/comp2800_logo_favicon.ico" rel="icon" type="image/x-icon" />
     <link href="css/user-profile.css" rel="stylesheet"/>
     <link href="css/style.css" rel="stylesheet"/>
-    <link href="css/buttons.css" rel="stylesheet"/>
     <link href="/css/header-footer.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   </head>
@@ -17,18 +16,54 @@
       <!-- Nav goes here -->
       
     </header>
+    <h1 class="welcome-message">Welcome, <br/> <span class="user-name-welcome"></span></h1>
 
     <div id="Base-Container">
       
     </div>
 
-    <!-- Back to kit Button -->
-    <div id="Centering-Container-BackToKit">
-      <div id="Base-Container-BackToKit">
-        <span class="material-symbols-outlined" id="Back-Button-Arrow">arrow_back</span>
-        <p id="Back-Button">Back to Kit</p>
-      </div>
+    <!-- Kit section -->
+    <div id="user-kits">
+      <h2>Your Kits</h2>
+      <div class="empty-kit-message"></div>
+      <button type="button" class="button button-primary-teal" id="create-kit-button">
+        <span class="material-symbols-outlined">add</span> Create a kit
+      </button>
+
+      <ul id="user-kit-list">
+        <!-- User's kits go here -->
+      </ul>
     </div>
+
+
+    <template id="user-kit-row">
+      <li class="user-kit-list-item">
+        <span class="material-symbols-outlined">cottage</span>
+        <h3 class="kit-name">Kit name</h3>
+        <p class="kit-progress"><span>### %</span> complete</p>
+        <span class="material-symbols-outlined">expand_more</span>
+      </li>
+    </template>
+
+    <template id="kit-options">
+      <form id="kit-options-form">
+        <h2>Choose an option:</h2>
+        <div class="kit-option" id="kit-1">
+          <span class="material-symbols-outlined">cottage</span>
+          <h3 class="kit-name">Home Kit</h3>
+          <p class="kit-description">The Home Kit is for emergencies like earthquakes, storms, or accidents where you will stay at home for the duration of the situation.</p>
+        </div>
+        <div class="kit-option" id="kit-2">
+          <span class="material-symbols-outlined">airport_shuttle</span>
+          <h3 class="kit-name">Grab-and-Go Bag</h3>
+          <p class="kit-description">The Grab-and-Go Bag is a smaller portable version of the Home kit, prepared for mobility. Applicable situations for the Grab-and-Go bag include floods, landslides, wildfires, and tsunamis.</p>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="button button-primary">Submit</button>
+          <button type="button" class="button button-secondary">Cancel</button>
+        </div>
+      </form>
+    </template>
 
     <script src="js/user-profile.js"></script>
     <footer>

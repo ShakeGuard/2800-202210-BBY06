@@ -12,12 +12,13 @@
 
 body {
     margin: 0;
+    padding: 0;
     font-family: 'Satoshi', sans-serif;
     font-weight: 400;
 }
 
-h1, p {
-    color: black;
+h1 {
+    text-align: center;
 }
 
 #dashboard-grid {
@@ -29,6 +30,7 @@ h1, p {
 #overlay-grid {
 	display: grid;
 	position: fixed;
+    top: 0;
 	grid-template-columns: 100vw;
 	grid-template-rows: 90vh 10vh;
 	height: 100vh;
@@ -225,7 +227,7 @@ h1, p {
 
 .upload-image-group > .profile-picture {
     padding: 0;
-    border: 1rem solid rgb(237, 237, 237);
+    width: 100%;
 }
 .upload-button-group {
     position: absolute;

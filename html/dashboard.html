@@ -9,6 +9,7 @@
 
     <link href="/css/header-footer.css" rel="stylesheet" />
     <link href="css/user-profile.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
     <link href="/css/admin-dashboard.css" rel="stylesheet" />
 
     <!-- Google Material Icons -->
@@ -18,6 +19,7 @@
 <body>
     <!-- Dynamically inserted -->
     <header></header>
+    <h1 class="welcome-message">Welcome, <br/> <span class="user-name-welcome"></span></h1>
 
     <!-- Overlay grid – for toasts and such. -->
     <div id="overlay-grid">
@@ -37,6 +39,21 @@
 
     <!-- Profile template goes here -->
     <div id="Base-Container"></div>
+    
+    <!-- Logged in admin's kit stuff -->
+    <!-- Kit section -->
+    <div id="user-kits">
+        <h2>Your Kits</h2>
+        <div class="empty-kit-message"></div>
+        <button type="button" class="button button-primary-teal" id="create-kit-button">
+            <span class="material-symbols-outlined">add</span> Create a kit
+        </button>
+
+        <ul id="user-kit-list">
+            <!-- User's kits go here -->
+        </ul>
+    </div>
+
     <!-- Dashboard content -->
     <div id="dashboard-grid">
         <!-- Specific to Admins -->
@@ -86,7 +103,7 @@
                             </div>
                         </div>
                         <!-- Profile Picture User Feedback -->
-                        <p id="Upload-Avatar-FileName">filename</p>
+                        <p id="Upload-Avatar-FileName-Admin"></p>
                     </div>
                     <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
                     <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
@@ -94,6 +111,35 @@
                     <div class="button-group">
                         <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
                         <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
+                    </div>
+                </form>
+            </template>
+
+            <template id="user-kit-row">
+                <li class="user-kit-list-item">
+                    <span class="material-symbols-outlined">cottage</span>
+                    <h3 class="kit-name">Kit name</h3>
+                    <p class="kit-progress"><span>### %</span> complete</p>
+                    <span class="material-symbols-outlined">expand_more</span>
+                </li>
+            </template>
+
+            <template id="kit-options">
+                <form id="kit-options-form">
+                    <h2>Choose an option:</h2>
+                    <div class="kit-option" id="kit-1">
+                        <span class="material-symbols-outlined">cottage</span>
+                        <h3 class="kit-name">Home Kit</h3>
+                        <p class="kit-description">The Home Kit is for emergencies like earthquakes, storms, or accidents where you will stay at home for the duration of the situation.</p>
+                    </div>
+                    <div class="kit-option" id="kit-2">
+                        <span class="material-symbols-outlined">airport_shuttle</span>
+                        <h3 class="kit-name">Grab-and-Go Bag</h3>
+                        <p class="kit-description">The Grab-and-Go Bag is a smaller portable version of the Home kit, prepared for mobility. Applicable situations for the Grab-and-Go bag include floods, landslides, wildfires, and tsunamis.</p>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="button button-primary">Submit</button>
+                        <button type="button" class="button button-secondary">Cancel</button>
                     </div>
                 </form>
             </template>
