@@ -999,22 +999,27 @@ app.get('/resource', async (req,res) =>{
 
 	/* Array here to determine how many cards to create*/
 	const CallAPI = [{
+		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title1",
 		"{cardDesc}": "desc1",
 		"{cardAuthor}": "auth1"
 	}, {
+		"{cardImage}": "/images/600x337_Resource1.png",
 		"{cardTitle}": "title2",
 		"{cardDesc}": "desc2",
 		"{cardAuthor}": "auth2"
 	}, {
+		"{cardImage}": "/images/600x337_Resource2.png",
 		"{cardTitle}": "title3",
 		"{cardDesc}": "desc3",
 		"{cardAuthor}": "auth3"
 	}, {
+		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title4",
 		"{cardDesc}": "desc4",
 		"{cardAuthor}": "auth4"
 	}, {
+		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title5",
 		"{cardDesc}": "desc5",
 		"{cardAuthor}": "auth5"
@@ -1030,6 +1035,7 @@ app.get('/resource', async (req,res) =>{
 	
 	for (const element of CallAPI) {
 		const cardEl = cardTemplate.cloneNode(true);
+		cardEl.querySelector("#Card-Image").setAttribute("src", element["{cardImage}"]);
 		cardEl.querySelector("#Card-Title").textContent = element["{cardTitle}"];
 		cardEl.querySelector("#Card-Description").textContent = element["{cardDesc}"];
 		cardEl.querySelector("#Description-Author").textContent = element["{cardAuthor}"];
