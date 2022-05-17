@@ -999,26 +999,31 @@ app.get('/resource', async (req,res) =>{
 
 	/* Array here to determine how many cards to create*/
 	const CallAPI = [{
+		"{ID}": "sendID(1)",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title1",
 		"{cardDesc}": "desc1",
 		"{cardAuthor}": "auth1"
 	}, {
+		"{ID}": "sendID(2)",
 		"{cardImage}": "/images/600x337_Resource1.png",
 		"{cardTitle}": "title2",
 		"{cardDesc}": "desc2",
 		"{cardAuthor}": "auth2"
 	}, {
+		"{ID}": "sendID(3)",
 		"{cardImage}": "/images/600x337_Resource2.png",
 		"{cardTitle}": "title3",
 		"{cardDesc}": "desc3",
 		"{cardAuthor}": "auth3"
 	}, {
+		"{ID}": "sendID(4)",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title4",
 		"{cardDesc}": "desc4",
 		"{cardAuthor}": "auth4"
 	}, {
+		"{ID}": "sendID(5)",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title5",
 		"{cardDesc}": "desc5",
@@ -1035,15 +1040,38 @@ app.get('/resource', async (req,res) =>{
 	
 	for (const element of CallAPI) {
 		const cardEl = cardTemplate.cloneNode(true);
-		cardEl.querySelector("#Card-Image").setAttribute("src", element["{cardImage}"]);
-		cardEl.querySelector("#Card-Title").textContent = element["{cardTitle}"];
-		cardEl.querySelector("#Card-Description").textContent = element["{cardDesc}"];
-		cardEl.querySelector("#Description-Author").textContent = element["{cardAuthor}"];
-		resource.window.document.getElementById("Base-Container").appendChild(cardEl);
+		if (cardEl){
+			// cardEl.querySelector("#Card-Link").addEventListener("click", sendID(element["{ID}"]))
+			cardEl.querySelector("#Card-Image").setAttribute("src", element["{cardImage}"]);
+			cardEl.querySelector("#Card-Title").textContent = element["{cardTitle}"];
+			cardEl.querySelector("#Card-Description").textContent = element["{cardDesc}"];
+			cardEl.querySelector("#Description-Author").textContent = element["{cardAuthor}"];
+			resource.window.document.getElementById("Base-Container").appendChild(cardEl);
+		}
 	}
 
 	res.send(resource.serialize());
 });
+
+function sendID(input){
+	switch (input){
+		case 1:
+			console.log("1");
+			break;
+		case 2:
+			console.log("2");
+			break;
+		case 3:
+			console.log("3");
+			break;
+		case 4:
+			console.log("4");
+			break;
+		case 5:
+			console.log("5");
+			break;
+	}
+}
 
 // RUN SERVER
 const port = argv.port ?? 8000;
