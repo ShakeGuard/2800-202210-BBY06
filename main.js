@@ -785,6 +785,12 @@ app.delete('/kits', async (req, res) => {
 		res.status(500).send("serverIssue");
 	}
 })
+
+app.get('/kit-templates', async (req, res) => {
+	const results = await db.collection('BBY-6_kit-templates').find({}).toArray();
+	res.status(200).send(results);
+})
+
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf-8");
 	res.send(doc);
