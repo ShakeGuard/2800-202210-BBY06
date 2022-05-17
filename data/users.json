@@ -22,34 +22,7 @@
     "finishKit"
   ],
   "admin": true,
-  "kits": [
-	  {
-	    "name": "Home",
-		"kit": [
-			{
-				"type": "flashlight",
-				"quantity": 2,
-				"description": "If the power cuts out then it would be nice to be still be able to see things.",
-				"completed": true,
-				"default": true
-			},
-			{
-				"type": "bandages",
-				"quantity": 50,
-				"description": "Useful for covering up small cuts and abraisions.",
-				"completed": true,
-				"default": true
-			},
-			{
-				"type": "Rubik's Cube",
-				"quantity": 1,
-				"description": "Something to pass the time.",
-				"completed": false,
-				"default": false
-			}
-		]		
-	  }
-	]
+  "kits": []
 },{
   "name": "Alex Kong",
   "emailAddress": "alexkonghockey@gmail.com",
@@ -74,34 +47,7 @@
     "finishKit"
   ],
   "admin": false,
-  "kits": [
-	{
-	  "name": "Home",
-	  "kit": [
-		  {
-			  "type": "flashlight",
-			  "quantity": 2,
-			  "description": "If the power cuts out then it would be nice to be still be able to see things.",
-			  "completed": true,
-			  "default": true
-		  },
-		  {
-			  "type": "bandages",
-			  "quantity": 50,
-			  "description": "Useful for covering up small cuts and abraisions.",
-			  "completed": true,
-			  "default": true
-		  },
-		  {
-			  "type": "Rubik's Cube",
-			  "quantity": 1,
-			  "description": "Something to pass the time.",
-			  "completed": false,
-			  "default": false
-		  }
-	  ]		
-	}
-  ]
+  "kits": []
 },{
   "name": "Jake",
   "emailAddress": "jake@statefarm.com",
@@ -126,32 +72,5 @@
     "finishKit"
   ],
   "admin": true,
-  "kits": [
-	{
-	  "name": "Home",
-	  "kit": [
-		  {
-			  "type": "flashlight",
-			  "quantity": 2,
-			  "description": "If the power cuts out then it would be nice to be still be able to see things.",
-			  "completed": true,
-			  "default": true
-		  },
-		  {
-			  "type": "bandages",
-			  "quantity": 50,
-			  "description": "Useful for covering up small cuts and abraisions.",
-			  "completed": true,
-			  "default": true
-		  },
-		  {
-			  "type": "Rubik's Cube",
-			  "quantity": 1,
-			  "description": "Something to pass the time.",
-			  "completed": false,
-			  "default": false
-		  }
-	  ]		
-	}
-  ]
+  "kits": []
 }]
