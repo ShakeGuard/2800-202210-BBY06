@@ -729,7 +729,7 @@ app.patch('/kits', async (req, res) => {
 	if (redirectToLogin(req, res)) {
 		return;
 	}
-	if(!req.body) {
+	if(!req.body || !req.body._id) {
 		res.status(400).send("missingBodyArguments");
 		return;
 	}
@@ -746,7 +746,7 @@ app.patch('/kits', async (req, res) => {
 			return;
 		} else if (result.matchedCount === 0) {
 			// Could not find kit
-			res.status(500).send("couldNotFindKit");
+			res.status(404).send("couldNotFindKit");
 			return;
 		}
 		res.status(200).send("kitUpdatedSuccessfully");
@@ -755,6 +755,36 @@ app.patch('/kits', async (req, res) => {
 	}
 })
 
+app.delete('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body || !req.body._id) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id)
+	}
+	try {
+		req.body._id = new mdb.ObjectId(req.body._id);
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$pull: {"kits": {"_id": new mdb.ObjectId(req.body._id)}}});
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(404).send("couldNotFindKit");
+			return;
+		}
+		res.status(200).send("kitDeletedSuccessfully");
+	} catch(e) {
+		console.log(e)
+		res.status(500).send("serverIssue");
+	}
+})
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf-8");
 	res.send(doc);
