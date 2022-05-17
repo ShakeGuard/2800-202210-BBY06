@@ -1,3 +1,8 @@
+h1 {
+    place-self: center;    
+    font-size: 40px;
+}
+
 .Card-Container{
     display: grid;
     grid-template-columns: 1fr;
@@ -5,6 +10,7 @@
     height: 450px;
     width: 85%;
     font-size: 12px;
+    text-decoration: none;
     margin-bottom: 14em;
     filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
 }
@@ -16,6 +22,7 @@
 
 #Card-Container-Descriptor{
     display: grid;
+    color: black;
     grid-template-columns: 1fr;
     grid-template-rows: .5fr 1fr 1fr;
     background-color: #d9f3f7;
