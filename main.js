@@ -1006,6 +1006,18 @@ app.get('/resource', async (req,res) =>{
 		"{cardTitle}": "title2",
 		"{cardDesc}": "desc2",
 		"{cardAuthor}": "auth2"
+	}, {
+		"{cardTitle}": "title3",
+		"{cardDesc}": "desc3",
+		"{cardAuthor}": "auth3"
+	}, {
+		"{cardTitle}": "title4",
+		"{cardDesc}": "desc4",
+		"{cardAuthor}": "auth4"
+	}, {
+		"{cardTitle}": "title5",
+		"{cardDesc}": "desc5",
+		"{cardAuthor}": "auth5"
 	}]
 
 	let resourceDoc = await readFile("./html/resource.html","utf-8");
