@@ -9,6 +9,26 @@ const Pen1 = document.getElementById("Pen-1");
 const Pen2 = document.getElementById("Pen-2");
 const Pen3 = document.getElementById("Pen-3");
 const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName");
+const EditProfile = document.querySelector("#Expand-Profile-Form");
+const CancelProfileChanges = document.querySelector("#Cancel-Profile-Form");
+const hiddenElements = document.querySelectorAll('.toggle');
+
+const createKitButton = document.querySelector('#create-kit-button');
+const kitOptionsFormTemplate = document.querySelector('#kit-options');
+
+// Add the logged in user's name to the profile welcome message
+/** @type HTML span */
+const WelcomeMessage = document.querySelector(".user-name-welcome");
+
+// Toggle the profile form when user clicks on "Edit profile"
+function toggleProfileForm() {
+	hiddenElements.forEach(element => {
+		element.classList.toggle('toggle');
+	});
+	EditProfile.classList.toggle('toggle');
+}
+EditProfile.addEventListener('click', toggleProfileForm);
+CancelProfileChanges.addEventListener('click', toggleProfileForm);
 
 let userName = FullNameInput.value;
 let userEmail = EmailInput.value
@@ -46,6 +66,7 @@ const getProfileDetails = async() => {
 	EmailInput.value = responseJson.email;
 	userName = FullNameInput.value;
 	userEmail = EmailInput.value;
+	WelcomeMessage.innerText = FullNameInput.value;
 }
 
 const getAvatar = async() => {
@@ -104,6 +125,7 @@ async function executeUpdate(){
             // Successfully updated
 			feedback.innerText = "Successfully Updated Profile";
 			feedback.style.color = "green";
+			toggleProfileForm();
             break;
         case "emailInUse":
             // Email already in use.
@@ -191,3 +213,40 @@ UpdateButton.addEventListener("click", executeUpdate, false);
 Pen1.addEventListener("click",editFullName,false);
 Pen2.addEventListener("click",editEmail,false);
 Pen3.addEventListener("click",editPasswordInput,false);
+
+
+function closeKitForm() {
+	document.querySelector("#kit-options-form").remove();
+	document.querySelector('.form-overlay').remove();
+}
+function createKitOptionsForm() {
+	const form = kitOptionsFormTemplate.content.cloneNode(true).firstElementChild;
+	const cancelButton = form.querySelector('[type="button"');
+	cancelButton.addEventListener('click', closeKitForm);
+	// Create the overlay to darken the contents of the screen
+    const overlay = document.createElement('div');
+    overlay.setAttribute('class', 'form-overlay');
+    document.body.appendChild(overlay);
+	document.body.appendChild(form);
+}
+
+function createEmptyKitMessage() {
+	const kitMessageContainer = document.querySelector('.empty-kit-message');
+	// Create the message
+	const message = document.createElement('p');
+	message.innerText = "You don't have a kit. Let's change that!";
+	message.id = "user-kits-message";
+	kitMessageContainer.appendChild(message);
+}
+
+async function getKits() {
+	const response = await fetch('/kits');
+	const responseJSON = await response.json();
+	console.log(responseJSON);
+	if (responseJSON.length === 0 || responseJSON.length === undefined || responseJSON.length === null) {
+		createEmptyKitMessage();
+	}
+}
+
+createKitButton.addEventListener('click', createKitOptionsForm);
+getKits();
