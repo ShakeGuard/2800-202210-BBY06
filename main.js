@@ -12,6 +12,8 @@ import fs from 'fs';
 import { readFile } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
 import multer from 'multer';
+import ConnectMongoDBSession from 'connect-mongodb-session';
+const MongoDBStore = ConnectMongoDBSession(session);
 
 // Use `yargs` to parse command-line arguments.
 import yargs from 'yargs';
@@ -19,7 +21,6 @@ import { hideBin } from 'yargs/helpers';
 
 import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
 import {readSecrets} from './shakeguardSecrets.mjs';
-
 
 const argv = yargs(hideBin(process.argv))
   .option('port', {
@@ -56,13 +57,13 @@ const argv = yargs(hideBin(process.argv))
 const app = express();
 const upload = multer();
 // Defaults for address and port:
-const url = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
+const dbURL = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
 
 const dbName = argv.dbName ?? "COMP2800";
 
 // Log in 'dev' format to stdout, if devLog option is set.
 // If devLog is not set, log errors only to stdout.
-await new Promise((resolve) => {
+const secrets = await new Promise((resolve) => {
 	if (argv.devLog) {
 		app.use(stdoutLog);
 		addDevLog(log);
@@ -78,30 +79,30 @@ await new Promise((resolve) => {
 // The MongoDB Connection object.
 /** @type {?MongoClient} */
 let mongo = null;
-// The MongoDB Database object.
-// Populated by the connectMongo(…) function.
-/** @type {?mdb.Db} */
+/** The MongoDB Database object.
+  * Populated by the `{@link connectMongo()} function.
+  * @type {?mdb.Db} */
 let db = null;
 
-// Establishes connection and returns necessary objects to interact with database
-// Caller is resonsible for closing the connection
-// TODO:
-// * Do this exactly once when the app starts up, save the connection.
-const connectMongo = async (url, dbName) => {
-
-	let mongo, db;
-
-	let dotAnim; // Interval handler for the "dots" animation.
-	try {
-		dotAnim = setInterval(() => process.stdout.write('…'), 1000);
-		mongo = await Promise.race([
-			MongoClient.connect(url, {
+/** Connection options for MongoDB, also used for the session store. 
+ *  @type {mdb.MongoClientOptions} */
+const mongoConnectionOptions = {
 				auth: argv.auth ? {
 					...secrets['mongodb_auth.json']
 				} : undefined,
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
-			}),
+			};
+
+// Establishes connection and returns necessary objects to interact with database
+// Caller is responsible for closing the connection
+const connectMongo = async (url, dbName) => {
+	let mongo, db;
+	let dotAnim; // Interval handler for the "dots" animation.
+	try {
+		dotAnim = setInterval(() => process.stdout.write('…'), 1000);
+		mongo = await Promise.race([
+			MongoClient.connect(url, mongoConnectionOptions),
 			new Promise((res,rej) => {
 				setTimeout(() => rej("Timed out after 15 seconds."), 15000)
 			})
@@ -146,10 +147,12 @@ const connectMongo = async (url, dbName) => {
  * @param  {mdb.Db} db - The database to initialize.
  */
 async function initDatabase(db){
+	// Touch the sessions collection.
+	const sessionsCollection = db.collection("BBY-6_sessions");
 	const usersCollection = db.collection("BBY-6_users");
 	// There are no collections in this database so we need to add ours.
 	const users = await usersCollection.find({}).toArray();
-	if(users.length === 0) {
+	if (users.length === 0) {
 		const usersJson = JSON.parse(await readFile('./data/users.json', 'utf-8'));
 		await db.collection("BBY-6_users").insertMany(usersJson);
 		// Create a unique index on the emailAddress field in the users collection.
@@ -157,19 +160,19 @@ async function initDatabase(db){
 	}
 	
 	const items = await db.collection("BBY-6_items").find({}).toArray();
-	if(items.length === 0 ){
+	if (items.length === 0) {
 		const itemsJson = JSON.parse(await readFile('./data/items.json', 'utf-8'))
 		await db.collection("BBY-6_items").insertMany(itemsJson);
 	}
 
 	const categories = await db.collection("BBY-6_categories").find({}).toArray();
-	if(categories.length === 0 ){
+	if (categories.length === 0) {
 		const categoriesJson = JSON.parse(await readFile('./data/categories.json', 'utf-8'))
 		await db.collection("BBY-6_categories").insertMany(categoriesJson);
 	}
 
 	const articles = await db.collection("BBY-6_articles").find({}).toArray();
-	if(articles.length === 0 ){
+	if (articles.length === 0) {
 		const articlesJson = JSON.parse(await readFile('./data/articles.json', 'utf-8'))
 		await db.collection("BBY-6_articles").insertMany(articlesJson);
 	}
@@ -205,16 +208,28 @@ const loadHTMLComponent = async (baseDOM, placeholderSelector, componentSelector
 }
 
 log.info("Connecting to MongoDB instance…");
+let sessionStore = null;
+
 try {
-	[mongo, db] = await connectMongo(url, dbName);
+	[mongo, db] = await connectMongo(dbURL, dbName);
+	sessionStore = new MongoDBStore({
+			uri: dbURL,
+			databaseName: dbName,
+			collection: "BBY-6_sessions",
+			connectionOptions: mongoConnectionOptions
+		});
 } catch (err) {
-	log.error(`Could not connect to MongoDB instance at ${url}!`);
+	log.error(`Could not connect to MongoDB instance at ${dbURL}/${dbName}!`);
+	log.error(JSON.stringify(err, null, 2));
 }
 
+// Use the JSON middleware for parsing JSON request bodies.
 app.use(express.json());
+
 const sessionParser = session({
-	secret: "shhhh...secret",
+	secret: secrets['session.json'].sessionSecret,
 	name: "ShakeGuardSessionID",
+	store: sessionStore ?? undefined,
 	resave: false,
 	// create a unique identifier for that client
 	saveUninitialized: true
@@ -234,11 +249,11 @@ app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {
 		if (req.session.isAdmin) {
 			res.redirect('/dashboard');
-			return;
 		} else {
 			res.redirect('/profile');
-			return;
 		}
+		console.log("User logged in!");
+		return;
 	}
 	
 	const doc = await readFile("./html/index.html", "utf8");
