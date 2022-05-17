@@ -50,9 +50,9 @@ function makeUserRow(userDoc) {
     // Fill in other stuff, too?
     // The profile pictures
     const userAvatar = row.getElementsByClassName('profile-picture').item(0);
-    if (userDoc.avatar !== defaultAvatar) {
+    if (userDoc.avatar !== defaultAvatar && userDoc.avatar !== null) {
         userAvatar.setAttribute('data', userDoc.avatar);
-        let base64 = userDoc.avatar.data.$binary.base64;
+        let base64 = userDoc.avatar.data;
         base64 = `data:${userDoc.avatar.mimeType};base64,${base64}`;
         userAvatar.src = base64;
     }

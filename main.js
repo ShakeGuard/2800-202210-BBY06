@@ -411,9 +411,15 @@ app.get('/avatar', async(req, res) => {
 	}
 
 	const results = await db.collection('BBY-6_users').findOne({emailAddress:req.session.email});
+	let data, mimeType;
+	if (results?.avatar === null) {
+		// TODO: factor this out into a separate function/global constant/something.
+		data = await readFile("./public/images/Default-Profile-Picture.txt", "utf-8");
+		mimeType = 'image/jpeg';
+	}
 	res.status(200).send({
-		mimeType: results.avatar.contentType,
-		data: results.avatar.data.$binary.base64
+		mimeType: results.avatar?.contentType ?? mimeType,
+		data: results.avatar?.data?.$binary?.base64 ?? data
 	})
 })
 
