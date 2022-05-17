@@ -1000,19 +1000,19 @@ app.get('/resource', async (req,res) =>{
 	/* Array here to determine how many cards to create*/
 	const CallAPI = [{
 		"{cardLink}": "./html/resource_1.html",
-		"{cardImage}": "/images/Kit.png",
+		"{cardImage}": "/images/600x337_Resource1.png",
 		"{cardTitle}": "title1",
 		"{cardDesc}": "desc1",
 		"{cardAuthor}": "auth1"
 	}, {
 		"{cardLink}": "./html/resource_2.html",
-		"{cardImage}": "/images/600x337_Resource1.png",
+		"{cardImage}": "/images/600x337_Resource2.png",
 		"{cardTitle}": "title2",
 		"{cardDesc}": "desc2",
 		"{cardAuthor}": "auth2"
 	}, {
 		"{cardLink}": "./html/resource_3.html",
-		"{cardImage}": "/images/600x337_Resource2.png",
+		"{cardImage}": "/images/kit.png",
 		"{cardTitle}": "title3",
 		"{cardDesc}": "desc3",
 		"{cardAuthor}": "auth3"
@@ -1051,6 +1051,10 @@ app.get('/resource', async (req,res) =>{
 	}
 
 	res.send(resource.serialize());
+});
+
+app.get("/resource_1", (res, req)=>{
+
 });
 
 // RUN SERVER

@@ -3,6 +3,11 @@ h1 {
     font-size: 40px;
 }
 
+.Component{
+    display: grid;
+    place-items: center;
+}
+
 .Card-Container{
     display: grid;
     grid-template-columns: 1fr;
@@ -12,12 +17,13 @@ h1 {
     font-size: 12px;
     text-decoration: none;
     margin-bottom: 14em;
-    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0.3em 0.3em 0.5em rgba(0, 0, 0, 0.15));
 }
 
 #Card-Image{
     align-self: end;
     width: 100%;
+    border-radius: 3em 3em 0px 0px;
 }
 
 #Card-Container-Descriptor{
@@ -25,9 +31,17 @@ h1 {
     color: black;
     grid-template-columns: 1fr;
     grid-template-rows: .5fr 1fr 1fr;
-    background-color: #d9f3f7;
     padding: 2em;
     height: 80%;
+    border-radius: 0px 0px 3em 3em;
+    background-color: #ffffff;
+    transition: background-color .25s, color .25s;
+    transition-timing-function: ease-in-out;
+}
+
+.Card-Container:hover > #Card-Container-Descriptor {
+    background-color: #17A5BA;
+    color: #ffffff;
 }
 
 #Description-Author{
