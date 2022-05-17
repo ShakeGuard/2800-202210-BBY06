@@ -999,31 +999,31 @@ app.get('/resource', async (req,res) =>{
 
 	/* Array here to determine how many cards to create*/
 	const CallAPI = [{
-		"{cardLink}": "./html/resource_1.html",
+		"{cardLink}": "/resource_page1",
 		"{cardImage}": "/images/600x337_Resource1.png",
 		"{cardTitle}": "title1",
 		"{cardDesc}": "desc1",
 		"{cardAuthor}": "auth1"
 	}, {
-		"{cardLink}": "./html/resource_2.html",
+		"{cardLink}": "/resource_page2",
 		"{cardImage}": "/images/600x337_Resource2.png",
 		"{cardTitle}": "title2",
 		"{cardDesc}": "desc2",
 		"{cardAuthor}": "auth2"
 	}, {
-		"{cardLink}": "./html/resource_3.html",
+		"{cardLink}": "/resource_page3",
 		"{cardImage}": "/images/kit.png",
 		"{cardTitle}": "title3",
 		"{cardDesc}": "desc3",
 		"{cardAuthor}": "auth3"
 	}, {
-		"{cardLink}": "./html/resource_4.html",
+		"{cardLink}": "/resource_page4",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title4",
 		"{cardDesc}": "desc4",
 		"{cardAuthor}": "auth4"
 	}, {
-		"{cardLink}": "./html/resource_5.html",
+		"{cardLink}": "/resource_page5",
 		"{cardImage}": "/images/Kit.png",
 		"{cardTitle}": "title5",
 		"{cardDesc}": "desc5",
@@ -1053,8 +1053,14 @@ app.get('/resource', async (req,res) =>{
 	res.send(resource.serialize());
 });
 
-app.get("/resource_1", (res, req)=>{
+app.get("/resource_page1", async (req, res)=>{
+	let resourceDoc = await readFile("./html/resource_page1.html","utf-8");
+	const baseDOM = new JSDOM(resourceDoc);
+	let resource = await loadHeaderFooter(baseDOM);
 
+
+
+	res.send(resource.serialize());
 });
 
 // RUN SERVER
