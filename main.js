@@ -340,6 +340,8 @@ app.get('/profile', async (req, res) => {
 	profile = changeLoginButton(profile, req);
 
 	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
+	profile = await loadHTMLComponent(profile, "#kit-templates", "div", "./templates/kit.html");
+
     profile.window.document.getElementById("FullName").defaultValue = req.session.name;
 	profile.window.document.getElementById("Email").defaultValue = req.session.email;
 	res.send(profile.serialize());
@@ -465,6 +467,7 @@ app.get('/dashboard', async function (req, res) {
 		let dashboard = await loadHeaderFooter(baseDOM);
 		dashboard = changeLoginButton(dashboard, req);
 		let profileDetails = await loadHTMLComponent(dashboard, "#Base-Container", "div", "./templates/profile.html");
+		profileDetails = await loadHTMLComponent(dashboard, "#kit-templates", "div", "./templates/kit.html");
 	    profileDetails.window.document.getElementById("FullName").defaultValue = req.session.name;
 		profileDetails.window.document.getElementById("Email").defaultValue = req.session.email;
 		res.send(dashboard.serialize());

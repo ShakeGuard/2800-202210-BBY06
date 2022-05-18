@@ -109,60 +109,14 @@
                     <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
                     <input id="admin-form-input-password" type="password" name="password" placeholder="Password" required />
                     <div class="button-group">
-                        <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
                         <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
+                        <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
                     </div>
                 </form>
             </template>
-
-            <template id="individual-kit-item-row">
-                <li class="kit-item">
-                    <img src="/images/user-pic_Tracy.svg" alt="Kit Item"/>
-                    <span class="material-symbols-outlined checkcircle">
-                        radio_button_unchecked</span>
-                    <h3 class="item-name">Item</h3>
-                    <p class="item-quantity">Quantity: <span>#</span></p>
-                    <p class="item-description">Text</p>
-                </li>
-            </template>
-            
-            <template id="user-kit-row">
-                <li class="user-kit-list-item">
-                    <span class="material-symbols-outlined kit-icon">cottage</span>
-                    <h3 class="kit-name">Kit name</h3>
-                    <p class="kit-progress"><span>### %</span> complete</p>
-                    <span class="material-symbols-outlined expand-kit">expand_more</span>
-                    <span class="material-symbols-outlined teal delete-kit">delete</span>
-                    <ul class="all-kit-items-list"></ul>
-                    <button type="submit" class="button button-secondary-teal add-custom-item hidden">
-                        <span class="material-symbols-outlined">add</span> Add item
-                    </button>
-                </li>
-            </template>
-
-            <template id="kit-options">
-                <form id="kit-options-form" class="popup-form">
-                    <h2>Choose an option:</h2>
-                    <div class="kit-option" id="kit-1">
-                        <span class="material-symbols-outlined">cottage</span>
-                        <h3 class="kit-name">Home Kit</h3>
-                        <p class="kit-description">The Home Kit is for emergencies like earthquakes, storms, or accidents where you will stay at home for the duration of the situation.</p>
-                    </div>
-                    <div class="kit-option" id="kit-2">
-                        <span class="material-symbols-outlined">airport_shuttle</span>
-                        <h3 class="kit-name">Grab-and-Go Bag</h3>
-                        <p class="kit-description">The Grab-and-Go Bag is a smaller portable version of the Home kit, prepared for mobility. Applicable situations for the Grab-and-Go bag include floods, landslides, wildfires, and tsunamis.</p>
-                    </div>
-                    <div class="button-group">
-                        <button type="submit" class="button button-primary">Submit</button>
-                        <button type="button" class="button button-secondary">Cancel</button>
-                    </div>
-                </form>
-            </template>
-        </div>
-    </div>
 
     <!-- Dynamically inserted -->
+    <div id="kit-templates"></div>
     <footer></footer>
 
     <script type="module" src="js/toasts.mjs"></script>
