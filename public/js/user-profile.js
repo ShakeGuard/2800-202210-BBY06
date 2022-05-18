@@ -257,7 +257,7 @@ function createKitOptionsForm() {
 	})
 	form.addEventListener('submit', createKitSubmissionHandler);
 }
-function createAddItemForm() {
+function createAddItemForm(kitIndex) {
 	const form = addItemFormTemplate.content.cloneNode(true).firstElementChild;
 	const cancelButton = form.querySelector('[type="button"');
 	cancelButton.addEventListener('click', () => {
@@ -265,7 +265,10 @@ function createAddItemForm() {
 	});
 	createFormOverlay(form);
 	// Add event handlers for submission
-	form.addEventListener('submit', addItemSubmissionHandler);
+	form.addEventListener('submit', e => {
+		e.preventDefault();
+		addItemSubmissionHandler(kitIndex);
+	});
 }
 function createEmptyKitMessage() {
 	// Create the message
@@ -384,7 +387,8 @@ async function loadKit() {
 			deleteKitButton.addEventListener('click', createDeleteConfirmation);
 
 			const addCustomItemButton = row.querySelector('.add-custom-item');
-			addCustomItemButton.addEventListener('click', createAddItemForm);
+			addCustomItemButton.addEventListener('click', () => createAddItemForm(kitIndex));
+			addCustomItemButton.dataset.kitIndex = kitIndex;
 			kitList.appendChild(row);
 		});
 	}
@@ -433,7 +437,6 @@ async function addItem(kitIndex) {
 		formData.append("image", document.querySelector("#add-item-image").files[0]);
 		formData.append("itemProps", JSON.stringify(newItemProps));
 
-		console.log(formData)
 		const response = await fetch('/add-item', {
 			method: 'POST',
 			body: formData
@@ -443,11 +446,8 @@ async function addItem(kitIndex) {
 	}
 }
 
-async function addItemSubmissionHandler(e) {
-	e.preventDefault();
-	// TODO: use html data attributes or something to store 
-	// and retrieve the index of the kit we're adding to
-	await addItem(0);
+async function addItemSubmissionHandler(kitIndex) {
+	await addItem(kitIndex);
 	// TODO: Visually fresh the kit
 	closeForm("#add-item-form");
 }
