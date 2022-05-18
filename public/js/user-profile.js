@@ -318,7 +318,7 @@ async function loadKit() {
 		createEmptyKitMessage();
 	} else {
 		userKits = responseJSON;
-		userKits.forEach(element => {
+		userKits.forEach((element, kitIndex) => {
 			// Store the number of items to calculate progress
 			let totalKitItems = 0;
 			let acquiredItems = 0;
