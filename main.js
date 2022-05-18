@@ -730,22 +730,28 @@ app.post('/kits', async (req, res) => {
 	}
 })
 
-// TODO: We're bloating the requst by asking for the whole kit object but this works and I don't want to spend to much time on this
 app.patch('/kits', async (req, res) => {
 	if (redirectToLogin(req, res)) {
 		return;
 	}
-	if(!req.body || !req.body._id) {
+	if(!req.body || !req.body._id || !req.body.name || req.body.completed === undefined) {
 		res.status(400).send("missingBodyArguments");
 		return;
 	}
 	const filterQuery = {
 		'_id': new mdb.ObjectId(req.session._id),
-		'kits._id': new mdb.ObjectId(req.body._id)
+		'kits._id': new mdb.ObjectId(req.body._id),
 	}
 	try {
 		req.body._id = new mdb.ObjectId(req.body._id);
-		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$": req.body}});
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j].completed": req.body.completed}}, 
+			{
+				arrayFilters: [ 
+					{"i._id": req.body._id}, 
+					{"j.name": req.body.name}
+				]
+			}
+		);
 		if(!result) {
 			// Could not find user 
 			res.status(500).send("couldNotFindUser");
