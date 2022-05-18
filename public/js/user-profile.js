@@ -15,7 +15,12 @@ const hiddenElements = document.querySelectorAll('.toggle');
 
 const createKitButton = document.querySelector('#create-kit-button');
 const kitOptionsFormTemplate = document.querySelector('#kit-options');
+const kitList = document.querySelector('#user-kit-list');
+const kitListItemTemplate = document.querySelector('#individual-kit-item-row');
+const kitRowTemplate = document.getElementById("user-kit-row");
+const kitMessageContainer = document.querySelector('.empty-kit-message');
 let selectedTemplate = 'Home';
+
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
 const WelcomeMessage = document.querySelector(".user-name-welcome");
@@ -234,15 +239,18 @@ function createKitOptionsForm() {
 	const grabAndGoKitTemplate = document.querySelector("#kit-2");
 	homeKitTemplate.addEventListener('click', e => {
 		selectedTemplate = 'Home';
+		homeKitTemplate.classList.toggle('selected-kit');
+		grabAndGoKitTemplate.classList.remove('selected-kit');
 	})
 	grabAndGoKitTemplate.addEventListener('click', e => {
 		selectedTemplate = 'Grab And Go';
+		grabAndGoKitTemplate.classList.toggle('selected-kit');
+		homeKitTemplate.classList.remove('selected-kit');
 	})
 	form.addEventListener('submit', createKitSubmissionHandler);
 }
 
 function createEmptyKitMessage() {
-	const kitMessageContainer = document.querySelector('.empty-kit-message');
 	// Create the message
 	const message = document.createElement('p');
 	message.innerText = "You don't have a kit. Let's change that!";
@@ -250,12 +258,101 @@ function createEmptyKitMessage() {
 	kitMessageContainer.appendChild(message);
 }
 
-async function getKits() {
+
+// TODO: figure out how to calculate the progress and store
+let kitProgress = '0';
+
+
+// Listens for event click, then changes the checkcircle's style
+function toggleCheckCircle(e) {
+	if (e.target.innerText == 'check_circle') {
+		// Deselect
+		e.target.innerText = 'radio_button_unchecked';
+		e.target.style.color = 'rgb(180, 180, 180)';
+	} else {
+		// Select
+		e.target.innerText = 'check_circle';
+		e.target.style.color = 'rgb(18, 210, 164)';
+	}
+}
+
+// Get kit data from the session user on load on page from templates
+async function loadKit() {
 	const response = await fetch('/kits');
 	const responseJSON = await response.json();
-	console.log(responseJSON);
+	
 	if (responseJSON.length === 0 || responseJSON.length === undefined || responseJSON.length === null) {
 		createEmptyKitMessage();
+	} else {
+		responseJSON.forEach(element => {
+			// Store the number of items to calculate progress
+			let totalKitItems = 0;
+			let acquiredItems = 0;
+			let kitProgress = 0;
+
+			// This is each kit that the user has
+			const row = kitRowTemplate.content.cloneNode(true).firstElementChild;
+			const kitName = row.querySelector('.kit-name').innerText = element.name;
+			// Make sure the appropriate icon represents the kit
+			switch (element.name) {
+				case 'Home':
+					row.querySelector('span').innerText = "cottage";
+					break;
+				case 'Grab And Go':
+					row.querySelector('span').innerText = "airport_shuttle";
+					break;
+			}
+
+			const kitItemArray = element.kit;
+			if (kitItemArray.length > 0) {
+				kitItemArray.forEach(item => {
+					// This is each item in the kit
+					const itemRow = kitListItemTemplate.content.cloneNode(true).firstElementChild;
+					// Get the image binary data
+					let base64 = `data:${item.image.contentType};base64,${item.image.data["$binary"]}`;
+					const itemImage = itemRow.querySelector('img').src = base64;
+					const itemType = itemRow.querySelector('.item-name').innerText = item.name;
+					const itemQuantity = itemRow.querySelector('.item-quantity span').innerText = item.quantity;
+					const itemDesc = itemRow.querySelector('.item-description').innerText = item.description;
+					// Checkbox functions
+					const itemCheckcircle = itemRow.querySelector('.checkcircle');
+					itemCheckcircle.addEventListener('click', toggleCheckCircle);
+					// Calculate the number of acquired items
+					if (item.acquired === true || item.acquired === 'true') {
+						acquiredItems++;
+						// Change the checkcircle to "checked" style/state
+						itemCheckcircle.innerText = 'check_circle';
+						itemCheckcircle.style.color = 'rgb(18, 210, 164)';
+					}
+					totalKitItems = kitItemArray.length;
+					if (totalKitItems > 0) {
+						kitProgress = acquiredItems / totalKitItems * 100;
+						kitProgress = kitProgress.toFixed(2);
+					} else {
+						kitProgress = 0;
+					}
+					let progressNote = row.querySelector('.kit-progress span').innerText = `${kitProgress}%`;
+					row.querySelector('ul').appendChild(itemRow);
+				});
+			}
+			// After loading all the kit contents, hide the kit contents
+			const listOfItemsInAKit = row.querySelector('.all-kit-items-list').classList.add('hidden');
+			const addCustomItemButton = row.querySelector('.add-custom-item');
+			const expandKitButton = row.querySelector('.expand-kit');
+			expandKitButton.addEventListener('click', function() {
+				row.querySelector('.all-kit-items-list').classList.toggle('hidden');
+				addCustomItemButton.classList.toggle('hidden');
+			});
+
+			// TODO: Add custom item button
+			console.log('Connect the Add Item form, see user-profile.js:348');
+			addCustomItemButton.addEventListener('click', () => {
+				// Some code
+			});
+
+			// Count total number of 
+			kitList.appendChild(row);
+		});
 	}
 }
 
@@ -279,7 +376,21 @@ async function createKit(templateName) {
 async function createKitSubmissionHandler(e) {
 	e.preventDefault();
 	await createKit(selectedTemplate);
+	clearKitsOnScreen();
+	loadKit();
 	closeKitForm();
 }
+
+// Hacky way to refresh the kit list without reloading page
+function clearKitsOnScreen() {
+	const kitsOnScreen = kitList.querySelectorAll('.user-kit-list-item');
+	kitsOnScreen.forEach(item => {item.remove()});
+
+	// If there's an empty message
+	if (kitMessageContainer.querySelector('p')) {
+		kitMessageContainer.querySelector('p').remove();
+	}
+}
+
 createKitButton.addEventListener('click', createKitOptionsForm);
-getKits();
+loadKit();
