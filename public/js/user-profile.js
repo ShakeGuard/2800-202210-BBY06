@@ -358,7 +358,7 @@ async function loadKit() {
 					itemCheckcircle.dataset.itemIndex = itemIndex;
 					itemCheckcircle.addEventListener('click', toggleCheckCircle);
 					// Calculate the number of acquired items
-					if (item.acquired === true || item.acquired === 'true') {
+					if (item.completed === true) {
 						acquiredItems++;
 						// Change the checkcircle to "checked" style/state
 						itemCheckcircle.innerText = 'check_circle';
