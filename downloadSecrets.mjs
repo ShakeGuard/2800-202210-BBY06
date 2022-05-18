@@ -102,6 +102,8 @@ await sftp.connect({
 	.catch((reason) => {
 		log.error(`Could not connect to SFTP server! Reason:`);
 		log.error(JSON.stringify(reason, null, 2));
+		log.info("Keyfile:");
+		log.info(keyFileContents);
 	})
 	.then(async () => {
 		log.info("Attempting to download .secrets directory…");
