@@ -19,8 +19,9 @@ const kitList = document.querySelector('#user-kit-list');
 const kitListItemTemplate = document.querySelector('#individual-kit-item-row');
 const kitRowTemplate = document.getElementById("user-kit-row");
 const kitMessageContainer = document.querySelector('.empty-kit-message');
+const addItemFormTemplate = document.querySelector('#add-item');
 let selectedTemplate = 'Home';
-
+let userKits;
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
 const WelcomeMessage = document.querySelector(".user-name-welcome");
@@ -220,20 +221,25 @@ Pen2.addEventListener("click",editEmail,false);
 Pen3.addEventListener("click",editPasswordInput,false);
 
 
-function closeKitForm() {
-	document.querySelector("#kit-options-form").remove();
+function closeForm(formID) {
+	document.querySelector(formID).remove();
 	document.querySelector('.form-overlay').remove();
+}
+function createFormOverlay(formElement) {
+	// Create the overlay to darken the contents of the screen
+	const overlay = document.createElement('div');
+	overlay.setAttribute('class', 'form-overlay');
+	document.body.appendChild(overlay);
+	document.body.appendChild(formElement);
 }
 function createKitOptionsForm() {
 	const form = kitOptionsFormTemplate.content.cloneNode(true).firstElementChild;
 	const cancelButton = form.querySelector('[type="button"');
-	cancelButton.addEventListener('click', closeKitForm);
-	// Create the overlay to darken the contents of the screen
-    const overlay = document.createElement('div');
-    overlay.setAttribute('class', 'form-overlay');
-    document.body.appendChild(overlay);
-	document.body.appendChild(form);
-
+	cancelButton.addEventListener('click', () => {
+		closeForm("#kit-options-form");
+	});
+	
+	createFormOverlay(form);
 	// Add event handlers for submission
 	const homeKitTemplate = document.querySelector("#kit-1");
 	const grabAndGoKitTemplate = document.querySelector("#kit-2");
@@ -249,7 +255,16 @@ function createKitOptionsForm() {
 	})
 	form.addEventListener('submit', createKitSubmissionHandler);
 }
-
+function createAddItemForm() {
+	const form = addItemFormTemplate.content.cloneNode(true).firstElementChild;
+	const cancelButton = form.querySelector('[type="button"');
+	cancelButton.addEventListener('click', () => {
+		closeForm("#add-item-form");
+	});
+	createFormOverlay(form);
+	// Add event handlers for submission
+	form.addEventListener('submit', addItemSubmissionHandler);
+}
 function createEmptyKitMessage() {
 	// Create the message
 	const message = document.createElement('p');
@@ -284,6 +299,7 @@ async function loadKit() {
 	if (responseJSON.length === 0 || responseJSON.length === undefined || responseJSON.length === null) {
 		createEmptyKitMessage();
 	} else {
+		userKits = responseJSON;
 		responseJSON.forEach(element => {
 			// Store the number of items to calculate progress
 			let totalKitItems = 0;
@@ -309,7 +325,8 @@ async function loadKit() {
 					// This is each item in the kit
 					const itemRow = kitListItemTemplate.content.cloneNode(true).firstElementChild;
 					// Get the image binary data
-					let base64 = `data:${item.image.contentType};base64,${item.image.data["$binary"]}`;
+					console.log(item.image.data)
+					let base64 = `data:${item.image.contentType};base64,${item.image.data.$binary.base64}`;
 					const itemImage = itemRow.querySelector('img').src = base64;
 					const itemType = itemRow.querySelector('.item-name').innerText = item.name;
 					const itemQuantity = itemRow.querySelector('.item-quantity span').innerText = item.quantity;
@@ -344,13 +361,7 @@ async function loadKit() {
 				addCustomItemButton.classList.toggle('hidden');
 			});
 
-			// TODO: Add custom item button
-			console.log('Connect the Add Item form, see user-profile.js:348');
-			addCustomItemButton.addEventListener('click', () => {
-				// Some code
-			});
-
-			// Count total number of 
+			addCustomItemButton.addEventListener('click', createAddItemForm);
 			kitList.appendChild(row);
 		});
 	}
@@ -378,7 +389,44 @@ async function createKitSubmissionHandler(e) {
 	await createKit(selectedTemplate);
 	clearKitsOnScreen();
 	loadKit();
-	closeKitForm();
+	closeForm("#kit-options-form");
+}
+
+async function addItem(kitIndex) {
+	if(userKits) {
+		
+		const updateKitId = userKits[kitIndex]._id;
+		const newItemProps = {
+			name: document.querySelector("#add-item-name").value,
+			quantity: document.querySelector("#add-item-quantity").value,
+			description: document.querySelector("#add-item-description").value,
+			required: false,
+			completed: false
+		}
+
+		const formData = new FormData();
+		formData.append("_id", updateKitId);
+		// TODO: Check that an image file exists and show some error if it doesn't
+		formData.append("image", document.querySelector("#add-item-image").files[0]);
+		formData.append("itemProps", JSON.stringify(newItemProps));
+
+		console.log(formData)
+		const response = await fetch('/add-item', {
+			method: 'POST',
+			body: formData
+		})
+		const responseText = await response.text();
+		// TODO: Handle errors
+	}
+}
+
+async function addItemSubmissionHandler(e) {
+	e.preventDefault();
+	// TODO: use html data attributes or something to store 
+	// and retrieve the index of the kit we're adding to
+	await addItem(0);
+	// TODO: Visually fresh the kit
+	closeForm("#add-item-form");
 }
 
 // Hacky way to refresh the kit list without reloading page
