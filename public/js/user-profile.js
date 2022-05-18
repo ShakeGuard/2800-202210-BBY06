@@ -284,11 +284,27 @@ function toggleCheckCircle(e) {
 		// Deselect
 		e.target.innerText = 'radio_button_unchecked';
 		e.target.style.color = 'rgb(180, 180, 180)';
+		markItemCompleted(false, e.target.dataset.kitIndex, e.target.dataset.itemIndex);
 	} else {
 		// Select
 		e.target.innerText = 'check_circle';
 		e.target.style.color = 'rgb(18, 210, 164)';
+		markItemCompleted(true, e.target.dataset.kitIndex, e.target.dataset.itemIndex);
 	}
+}
+
+async function markItemCompleted(completed, kitIndex, itemIndex) {
+	const response = await fetch('/kits', {
+		method: 'PATCH',
+		headers: {'Content-Type':'application/json'},
+		body: JSON.stringify({
+			"_id": userKits[kitIndex]._id,
+			"name": userKits[kitIndex].kit[itemIndex].name,
+			"completed": completed
+		})
+	})
+	const responseText = await response.text();
+	// TODO: Error Handling
 }
 
 // Get kit data from the session user on load on page from templates
@@ -300,7 +316,7 @@ async function loadKit() {
 		createEmptyKitMessage();
 	} else {
 		userKits = responseJSON;
-		responseJSON.forEach(element => {
+		responseJSON.forEach((element, kitIndex) => {
 			// Store the number of items to calculate progress
 			let totalKitItems = 0;
 			let acquiredItems = 0;
@@ -321,11 +337,10 @@ async function loadKit() {
 
 			const kitItemArray = element.kit;
 			if (kitItemArray.length > 0) {
-				kitItemArray.forEach(item => {
+				kitItemArray.forEach((item, itemIndex) => {
 					// This is each item in the kit
 					const itemRow = kitListItemTemplate.content.cloneNode(true).firstElementChild;
 					// Get the image binary data
-					console.log(item.image.data)
 					let base64 = `data:${item.image.contentType};base64,${item.image.data.$binary.base64}`;
 					const itemImage = itemRow.querySelector('img').src = base64;
 					const itemType = itemRow.querySelector('.item-name').innerText = item.name;
@@ -333,6 +348,8 @@ async function loadKit() {
 					const itemDesc = itemRow.querySelector('.item-description').innerText = item.description;
 					// Checkbox functions
 					const itemCheckcircle = itemRow.querySelector('.checkcircle');
+					itemCheckcircle.dataset.kitIndex = kitIndex;
+					itemCheckcircle.dataset.itemIndex = itemIndex;
 					itemCheckcircle.addEventListener('click', toggleCheckCircle);
 					// Calculate the number of acquired items
 					if (item.acquired === true || item.acquired === 'true') {
