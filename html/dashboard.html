@@ -43,7 +43,7 @@
     <!-- Logged in admin's kit stuff -->
     <!-- Kit section -->
     <div id="user-kits">
-        <h2>Your Kits</h2>
+        <h1>Your Kits</h1>
         <div class="empty-kit-message"></div>
         <button type="button" class="button button-primary-teal" id="create-kit-button">
             <span class="material-symbols-outlined">add</span> Create a kit
@@ -115,12 +115,28 @@
                 </form>
             </template>
 
+            <template id="individual-kit-item-row">
+                <li class="kit-item">
+                    <img src="/images/user-pic_Tracy.svg" alt="Kit Item"/>
+                    <span class="material-symbols-outlined checkcircle">
+                        radio_button_unchecked</span>
+                    <h3 class="item-name">Item</h3>
+                    <p class="item-quantity">Quantity: <span>#</span></p>
+                    <p class="item-description">Text</p>
+                </li>
+            </template>
+            
             <template id="user-kit-row">
                 <li class="user-kit-list-item">
-                    <span class="material-symbols-outlined">cottage</span>
+                    <span class="material-symbols-outlined kit-icon">cottage</span>
                     <h3 class="kit-name">Kit name</h3>
                     <p class="kit-progress"><span>### %</span> complete</p>
-                    <span class="material-symbols-outlined">expand_more</span>
+                    <span class="material-symbols-outlined expand-kit">expand_more</span>
+                    <span class="material-symbols-outlined teal delete-kit">delete</span>
+                    <ul class="all-kit-items-list"></ul>
+                    <button type="submit" class="button button-secondary-teal add-custom-item hidden">
+                        <span class="material-symbols-outlined">add</span> Add item
+                    </button>
                 </li>
             </template>
 
