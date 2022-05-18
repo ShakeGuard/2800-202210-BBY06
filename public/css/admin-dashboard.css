@@ -305,11 +305,10 @@ h1 {
 
 /* For larger screens */
 @media only screen and (min-width: 1200px) {
+    #dashboard-grid {
+        grid-template-columns: 15% minmax(0, 1fr) 15%;
+    }
     .user-item-name-pic {
         gap: 3%;
     }
-    .profile-picture {
-        max-width: 10%;
-    }
-    
 }
