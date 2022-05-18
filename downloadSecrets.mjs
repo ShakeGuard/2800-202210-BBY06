@@ -114,11 +114,7 @@ await sftp.connect({
 	})
 	.catch((reason) => {
 		log.error(`Could not download .secrets directory! Reason:`);
-<<<<<<< HEAD
-		log.dir(JSON.stringify(reason, null, 2));
-=======
 		log.info(JSON.stringify(reason, null, 2));
->>>>>>> 3638306 (Fix package.json and logging in scripts.)
 	});
 
 keyFileHandle.close();

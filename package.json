@@ -16,6 +16,7 @@
   },
   "scripts": {
     "prestart": "",
+    "jaysecrets_laptop": "node downloadSecrets.mjs --keyfile \"C:\\Users\\jj554\\.ssh\\id_ed25519\"",
     "jaysecrets": "node downloadSecrets.mjs --keyfile \"C:\\Users\\super\\.ssh\\id_ed25519\"",
     "preprod": "node downloadSecrets.mjs",
     "test": "echo \"No tests defined!\"",
