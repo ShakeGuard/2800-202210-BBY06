@@ -68,52 +68,53 @@
             <ul id="user-list">
                 <!-- Users Go Here -->
             </ul>
+        </div>
+    </div>
 
 
-            <!-- Template for user items -->
-            <template id="user-row">
-                <li class="user-item">
-                    <div class="user-item-name-pic">
-                        <img src="/images/Default-Profile-Picture.jpg" id="admin-profile-pic" class="profile-picture" alt="Admin Avatar" />
-                        <input disabled type="text" name="admin-name" class="admin-name" placeholder="FirstName LastName" required />
-                    </div>
-                    <div class="edit-button-group">
-                        <button class="button button-secondary-teal small transparent edit-button">
-                            <span class="material-symbols-outlined teal">edit</span>
-                        </button>
-                        <button class="button button-secondary-teal small transparent delete-button">
-                            <span class="material-symbols-outlined teal">delete</span>
-                        </button>
-                    </div>
-                </li>
-            </template>
+    <!-- Template for user items -->
+    <template id="user-row">
+        <li class="user-item">
+            <div class="user-item-name-pic">
+                <img src="/images/Default-Profile-Picture.jpg" id="admin-profile-pic" class="profile-picture" alt="Admin Avatar" />
+                <input disabled type="text" name="admin-name" class="admin-name" placeholder="FirstName LastName" required />
+            </div>
+            <div class="edit-button-group">
+                <button class="button button-secondary-teal small transparent edit-button">
+                    <span class="material-symbols-outlined teal">edit</span>
+                </button>
+                <button class="button button-secondary-teal small transparent delete-button">
+                    <span class="material-symbols-outlined teal">delete</span>
+                </button>
+            </div>
+        </li>
+    </template>
 
-            <!-- Template for add admin form -->
-            <template id="new-admin">
-                <form id="add-admin-form">
-                    <h2>Create a new admin</h2>
-
-                    <div class="upload-image-container">
-                        <div class="upload-image-group">
-                            <img src="/images/Default-Profile-Picture.jpg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
-                            <div class="upload-button-group">
-                                <!-- Label will be overlaid on top and hide the default file button -->
-                                <label for="Upload-Admin-Avatar" class="custom-upload-button">+</label>
-                                <input id="Upload-Admin-Avatar" class="default-upload-button" type="file" name="Upload-Admin-Avatar" accept=".jpg,.png,.jpeg"/>
-                            </div>
-                        </div>
-                        <!-- Profile Picture User Feedback -->
-                        <p id="Upload-Avatar-FileName-Admin"></p>
+    <!-- Template for add admin form -->
+    <template id="new-admin">
+        <form id="add-admin-form">
+            <h2>Create a new admin</h2>
+            <div class="upload-image-container">
+                <div class="upload-image-group">
+                    <img src="/images/Default-Profile-Picture.jpg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
+                    <div class="upload-button-group">
+                        <!-- Label will be overlaid on top and hide the default file button -->
+                        <label for="Upload-Admin-Avatar" class="custom-upload-button">+</label>
+                        <input id="Upload-Admin-Avatar" class="default-upload-button" type="file" name="Upload-Admin-Avatar" accept=".jpg,.png,.jpeg"/>
                     </div>
-                    <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
-                    <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
-                    <input id="admin-form-input-password" type="password" name="password" placeholder="Password" required />
-                    <div class="button-group">
-                        <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
-                        <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
-                    </div>
-                </form>
-            </template>
+                </div>
+                <!-- Profile Picture User Feedback -->
+                <p id="Upload-Avatar-FileName-Admin"></p>
+            </div>
+            <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
+            <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
+            <input id="admin-form-input-password" type="password" name="password" placeholder="Password" required />
+            <div class="button-group">
+                <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
+                <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
+            </div>
+        </form>
+    </template>
 
     <!-- Dynamically inserted -->
     <div id="kit-templates"></div>
