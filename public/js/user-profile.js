@@ -22,6 +22,8 @@ const kitMessageContainer = document.querySelector('.empty-kit-message');
 const addItemFormTemplate = document.querySelector('#add-item');
 let selectedTemplate = 'Home';
 let userKits;
+const deleteKitConfirmationTemplate = document.querySelector('#delete-confirmation');
+
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
 const WelcomeMessage = document.querySelector(".user-name-welcome");
@@ -316,7 +318,7 @@ async function loadKit() {
 		createEmptyKitMessage();
 	} else {
 		userKits = responseJSON;
-		responseJSON.forEach((element, kitIndex) => {
+		userKits.forEach(element => {
 			// Store the number of items to calculate progress
 			let totalKitItems = 0;
 			let acquiredItems = 0;
@@ -324,6 +326,7 @@ async function loadKit() {
 
 			// This is each kit that the user has
 			const row = kitRowTemplate.content.cloneNode(true).firstElementChild;
+			row.id = element._id;
 			const kitName = row.querySelector('.kit-name').innerText = element.name;
 			// Make sure the appropriate icon represents the kit
 			switch (element.name) {
@@ -371,13 +374,16 @@ async function loadKit() {
 			}
 			// After loading all the kit contents, hide the kit contents
 			const listOfItemsInAKit = row.querySelector('.all-kit-items-list').classList.add('hidden');
-			const addCustomItemButton = row.querySelector('.add-custom-item');
 			const expandKitButton = row.querySelector('.expand-kit');
 			expandKitButton.addEventListener('click', function() {
 				row.querySelector('.all-kit-items-list').classList.toggle('hidden');
 				addCustomItemButton.classList.toggle('hidden');
 			});
 
+			const deleteKitButton = row.querySelector('.delete-kit');
+			deleteKitButton.addEventListener('click', createDeleteConfirmation);
+
+			const addCustomItemButton = row.querySelector('.add-custom-item');
 			addCustomItemButton.addEventListener('click', createAddItemForm);
 			kitList.appendChild(row);
 		});
@@ -444,6 +450,44 @@ async function addItemSubmissionHandler(e) {
 	await addItem(0);
 	// TODO: Visually fresh the kit
 	closeForm("#add-item-form");
+}
+
+// Delete a kit
+let requestedKitID = "";
+async function createDeleteConfirmation(e) {
+	requestedKitID = e.target.parentElement.id;
+	console.log(requestedKitID);
+	
+	const form = deleteKitConfirmationTemplate.content.cloneNode(true).firstElementChild;
+	const cancelButton = form.querySelector('[type="button"');
+	cancelButton.addEventListener('click', () => {
+		closeForm("#delete-confirmation-form");
+	});
+	createFormOverlay(form);
+	form.addEventListener('submit', deleteKitSubmissionHandler);
+}
+
+async function deleteKit(kitID) {
+	const response = await fetch('/kits', {
+		method: 'DELETE',
+		headers: {'Content-Type':'application/json'},
+		body: JSON.stringify({
+			'_id': kitID
+		})
+	});
+
+	// TO DO: error handling and add UI feedback, import the toasts?
+	const responseText = await response.text();
+	if (response.ok) {
+		console.log("Deleted kit ", requestedKitID);
+	}
+}
+
+// TO DO: refresh kits after delete
+async function deleteKitSubmissionHandler(e) {
+	e.preventDefault();
+	await deleteKit(requestedKitID);
+	closeForm("#delete-confirmation-form");
 }
 
 // Hacky way to refresh the kit list without reloading page
