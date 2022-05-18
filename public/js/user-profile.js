@@ -405,10 +405,7 @@ async function createKit(templateName) {
 	if (response.status === 500) {
 		const responseText = await response.text();
 		// TODO: Handle error 
-	} else {
-		const responseJSON = await response.json();
-		// TODO: Do something with the kit
-	}
+	} 
 }
 
 async function createKitSubmissionHandler(e) {
