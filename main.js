@@ -1094,13 +1094,6 @@ app.get("/resource_page5", async (req, res)=>{
 	res.send(resource.serialize());
 });
 
-// Serving up text file for Articles in Resource Card - DEPRECATED.
-// app.get("/data/resource_page1_article1", async(req, res)=>{
-// 	let outputFile = await readFileSync('./data/resource_page1_article1.rtf', 'utf-8');
-
-// 	res.send(outputFile);
-// });
-
 // RUN SERVER
 const port = argv.port ?? 8000;
 const server = createServer(app);
