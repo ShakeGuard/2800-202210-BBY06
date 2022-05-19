@@ -180,6 +180,11 @@ async function initDatabase(db){
 	const kits = await db.collection("BBY-6_kit-templates").find({}).toArray();
 	if(kits.length === 0 ){
 		const kitsJson = JSON.parse(await readFile('./data/kits.json', 'utf-8'))
+		kitsJson.forEach(kit => {
+			kit.kit.forEach(item => {
+				item._id = new mdb.ObjectId();
+			})
+		});
 		await db.collection("BBY-6_kit-templates").insertMany(kitsJson);
 	}
 }
@@ -827,7 +832,8 @@ app.post('/add-item', upload.single('image'), async(req, res) => {
 			contentType: req.file.mimetype
 		},
 		completed: itemProps.completed,
-		required: itemProps.required
+		required: itemProps.required,
+		_id: new mdb.ObjectId()
 	}
 	try {
 		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$push: {"kits.$.kit": newItem}});
