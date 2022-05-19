@@ -742,7 +742,7 @@ app.patch('/kits', async (req, res) => {
 	if (redirectToLogin(req, res)) {
 		return;
 	}
-	if(!req.body || !req.body._id || !req.body.name || req.body.completed === undefined) {
+	if(!req.body || !req.body._id || !req.body.itemId || req.body.completed === undefined) {
 		res.status(400).send("missingBodyArguments");
 		return;
 	}
@@ -751,12 +751,11 @@ app.patch('/kits', async (req, res) => {
 		'kits._id': new mdb.ObjectId(req.body._id),
 	}
 	try {
-		req.body._id = new mdb.ObjectId(req.body._id);
 		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j].completed": req.body.completed}}, 
 			{
 				arrayFilters: [ 
-					{"i._id": req.body._id}, 
-					{"j.name": req.body.name}
+					{"i._id": new mdb.ObjectId(req.body._id)}, 
+					{"j._id": new mdb.ObjectId(req.body.itemId)}
 				]
 			}
 		);
