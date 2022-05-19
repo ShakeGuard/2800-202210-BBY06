@@ -1,5 +1,5 @@
 #Base-Container{
-    place-items: center;
+    /* place-items: start; */
     display: grid;
     margin-left: 5em;
     margin-right: 5em;

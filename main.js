@@ -253,7 +253,6 @@ app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
 app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
-app.use("/data", express.static("public/data"));
 
 app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {
@@ -1001,34 +1000,40 @@ app.get('/resource', async (req,res) =>{
 	/* Array here to determine how many cards to create*/
 	const CallAPI = [{
 		"{cardLink}": "/resource_page1",
-		"{cardImage}": "/images/600x337_Resource1.png",
-		"{cardTitle}": "title1",
-		"{cardDesc}": "desc1",
-		"{cardAuthor}": "auth1"
+		"{cardImage}": "/images/Resource1.jpg",
+		"{cardTitle}": "Government of British Columbia",
+		"{cardDesc}": "PreparedBC is an earthquake resource prepared by the Government of British Columbia for disaster preparation in BC",
+		"{cardTopic}": "Disaster Preparation Knowledge"
 	}, {
 		"{cardLink}": "/resource_page2",
-		"{cardImage}": "/images/600x337_Resource2.png",
-		"{cardTitle}": "title2",
-		"{cardDesc}": "desc2",
-		"{cardAuthor}": "auth2"
+		"{cardImage}": "/images/Resource2.jpg",
+		"{cardTitle}": "City of Vancouver",
+		"{cardDesc}": "A general guide on disaster readiness made by the City of Vancouver.",
+		"{cardTopic}": "Kit Preparation"
 	}, {
 		"{cardLink}": "/resource_page3",
-		"{cardImage}": "/images/kit.png",
-		"{cardTitle}": "title3",
-		"{cardDesc}": "desc3",
-		"{cardAuthor}": "auth3"
+		"{cardImage}": "/images/Resource3.jpg",
+		"{cardTitle}": "Emergency Kit vs Grab-and-Go Bag",
+		"{cardDesc}": "Learn about the differences between the two Kits and why you may need one over the other.",
+		"{cardTopic}": "Kit Preparation"
 	}, {
 		"{cardLink}": "/resource_page4",
-		"{cardImage}": "/images/Kit.png",
-		"{cardTitle}": "title4",
-		"{cardDesc}": "desc4",
-		"{cardAuthor}": "auth4"
+		"{cardImage}": "/images/Resource4.jpg",
+		"{cardTitle}": "Pacific Northwest Seismic Network",
+		"{cardDesc}": "In-depth discussion on the Cascadia Subduction Zone that stretchs from Northern Vancouver Island to Cape Mendocino California.",
+		"{cardTopic}": "Earthquake Knowledge"
 	}, {
 		"{cardLink}": "/resource_page5",
-		"{cardImage}": "/images/Kit.png",
-		"{cardTitle}": "title5",
-		"{cardDesc}": "desc5",
-		"{cardAuthor}": "auth5"
+		"{cardImage}": "/images/Reesource5.jpg",
+		"{cardTitle}": "Canadian Red Cross",
+		"{cardDesc}": "The Canadian Red Cross details the procudures to take before, during, and after an Earthquake.",
+		"{cardTopic}": "Disaster Preparation Knowledge"
+	}, {
+		"{cardLink}": "/resource_page6",
+		"{cardImage}": "/images/Resource6.jpg",
+		"{cardTitle}": "ShakeOut",
+		"{cardDesc}": "ShakeOut is an annual event that aims to spread awareness about earthquake preparedness in BC. Click here to read more on instructions on how to run an Earthquake Drill.",
+		"{cardTopic}": "Disaster Preparation Knowledge"
 	}]
 
 	let resourceDoc = await readFile("./html/resource.html","utf-8");
@@ -1046,7 +1051,7 @@ app.get('/resource', async (req,res) =>{
 			cardEl.querySelector("#Card-Image").setAttribute("src", element["{cardImage}"]);
 			cardEl.querySelector("#Card-Title").textContent = element["{cardTitle}"];
 			cardEl.querySelector("#Card-Description").textContent = element["{cardDesc}"];
-			cardEl.querySelector("#Description-Author").textContent = element["{cardAuthor}"];
+			cardEl.querySelector("#Description-Author").textContent = element["{cardTopic}"];
 			resource.window.document.getElementById("Base-Container").appendChild(cardEl);
 		}
 	}
@@ -1088,6 +1093,14 @@ app.get("/resource_page4", async (req, res)=>{
 
 app.get("/resource_page5", async (req, res)=>{
 	let resourceDoc = await readFile("./html/resource_page5.html","utf-8");
+	const baseDOM = new JSDOM(resourceDoc);
+	let resource = await loadHeaderFooter(baseDOM);
+
+	res.send(resource.serialize());
+});
+
+app.get("/resource_page6", async (req, res)=>{
+	let resourceDoc = await readFile("./html/resource_page6.html","utf-8");
 	const baseDOM = new JSDOM(resourceDoc);
 	let resource = await loadHeaderFooter(baseDOM);
 
