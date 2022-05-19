@@ -8,7 +8,7 @@ import session from 'express-session';
 import { WebSocketServer } from 'ws';
 import { createServer, Server } from 'http';
 import bcrypt from 'bcrypt';
-import fs from 'fs';
+import fs, { read, readFileSync } from 'fs';
 import { readFile } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
 import multer from 'multer';
@@ -253,6 +253,7 @@ app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
 app.use("/images", express.static("public/images"));
 app.use("/html", express.static("public/html"));
+app.use("/data", express.static("public/data"));
 
 app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {
@@ -1058,10 +1059,47 @@ app.get("/resource_page1", async (req, res)=>{
 	const baseDOM = new JSDOM(resourceDoc);
 	let resource = await loadHeaderFooter(baseDOM);
 
+	res.send(resource.serialize());
+});
 
+app.get("/resource_page2", async (req, res)=>{
+	let resourceDoc = await readFile("./html/resource_page2.html","utf-8");
+	const baseDOM = new JSDOM(resourceDoc);
+	let resource = await loadHeaderFooter(baseDOM);
 
 	res.send(resource.serialize());
 });
+
+app.get("/resource_page3", async (req, res)=>{
+	let resourceDoc = await readFile("./html/resource_page3.html","utf-8");
+	const baseDOM = new JSDOM(resourceDoc);
+	let resource = await loadHeaderFooter(baseDOM);
+
+	res.send(resource.serialize());
+});
+
+app.get("/resource_page4", async (req, res)=>{
+	let resourceDoc = await readFile("./html/resource_page4.html","utf-8");
+	const baseDOM = new JSDOM(resourceDoc);
+	let resource = await loadHeaderFooter(baseDOM);
+
+	res.send(resource.serialize());
+});
+
+app.get("/resource_page5", async (req, res)=>{
+	let resourceDoc = await readFile("./html/resource_page5.html","utf-8");
+	const baseDOM = new JSDOM(resourceDoc);
+	let resource = await loadHeaderFooter(baseDOM);
+
+	res.send(resource.serialize());
+});
+
+// Serving up text file for Articles in Resource Card - DEPRECATED.
+// app.get("/data/resource_page1_article1", async(req, res)=>{
+// 	let outputFile = await readFileSync('./data/resource_page1_article1.rtf', 'utf-8');
+
+// 	res.send(outputFile);
+// });
 
 // RUN SERVER
 const port = argv.port ?? 8000;
