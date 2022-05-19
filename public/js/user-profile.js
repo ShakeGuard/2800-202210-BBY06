@@ -23,6 +23,8 @@ const addItemFormTemplate = document.querySelector('#add-item');
 let selectedTemplate = 'Home';
 let userKits;
 const deleteKitConfirmationTemplate = document.querySelector('#delete-confirmation');
+// Store the kit item HTML that the user wants to edit
+let customItem;
 
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
@@ -416,8 +418,21 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 		kitProgress = 0;
 	}
 	row.querySelector('.kit-progress span').innerText = `${kitProgress}%`;
+
+	// Custom items will have yellow background and will be editable
+	if (!item.required) {
+		itemRow.classList.add('custom-item');
+		// TODO: edit and delete item functionality
+		const editItemButton = itemRow.querySelector('span.edit');
+		customItem = itemRow;
+		editItemButton.addEventListener('click', editItemSubmissionHandler);
+		const deleteItemButton = itemRow.querySelector('.edit-button-group .delete');
+	} else {
+		itemRow.querySelector('.edit-button-group').remove();
+	}
+
 	row.querySelector('ul').appendChild(itemRow);
-	return { completedItems, kitProgress };
+	return { completedItems, totalKitItems, kitProgress };
 }
 
 async function createKit(templateName) {
@@ -483,6 +498,40 @@ async function addItemSubmissionHandler(kitIndex) {
 	await addItem(kitIndex);
 	closeForm("#add-item-form");
 }
+
+
+// TODO: Better styling for inputs
+function toggleItemEditing(customItem) {
+	// console.log('custom item', customItem);
+	const input = customItem.querySelectorAll('input, textarea');
+	input.forEach(inputField => {
+		if (inputField.disabled) {
+			inputField.disabled = false;
+			inputField.classList.add('active-input');
+			inputField.focus();
+			// TODO: Validate input
+		} else {
+			inputField.disabled = true;
+			inputField.classList.remove('active-input');
+			// TODO: Validate input
+		}
+	});
+}
+
+
+
+async function editItemSubmissionHandler(e) {
+	e.preventDefault();
+	// Change icon in the button to the appropriate one
+	if (e.target.innerText === 'done') {
+		e.target.innerText = 'edit'
+	} else {
+		e.target.innerText = 'done';
+	}
+
+	toggleItemEditing(customItem);
+}
+
 
 // Delete a kit
 let requestedKitID = "";

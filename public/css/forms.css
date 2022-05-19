@@ -130,12 +130,12 @@
 }
 
 .active-input {
-    font-weight: 700;
+    font-weight: 700 !important;
     background-color: rgba(251, 179, 59, 0.2);
     transition: background-color ease-in 0.2s;
 }
 .inactive-input {
-    font-weight: 400;
+    font-weight: 400 !important;
     background-color: white;
     transition: background-color ease-in 0.2s;
 }
