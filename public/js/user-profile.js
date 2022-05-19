@@ -324,7 +324,7 @@ async function loadKit() {
 		userKits.forEach((element, kitIndex) => {
 			// Store the number of items to calculate progress
 			let totalKitItems = 0;
-			let acquiredItems = 0;
+			let completedItems = 0;
 			let kitProgress = 0;
 
 			// This is each kit that the user has
@@ -345,36 +345,11 @@ async function loadKit() {
 			if (kitItemArray.length > 0) {
 				kitItemArray.forEach((item, itemIndex) => {
 					// This is each item in the kit
-					const itemRow = kitListItemTemplate.content.cloneNode(true).firstElementChild;
-					// Get the image binary data
-					let base64 = `data:${item.image.contentType};base64,${item.image.data.$binary.base64}`;
-					const itemImage = itemRow.querySelector('img').src = base64;
-					const itemType = itemRow.querySelector('.item-name').innerText = item.name;
-					const itemQuantity = itemRow.querySelector('.item-quantity span').innerText = item.quantity;
-					const itemDesc = itemRow.querySelector('.item-description').innerText = item.description;
-					// Checkbox functions
-					const itemCheckcircle = itemRow.querySelector('.checkcircle');
-					itemCheckcircle.dataset.kitIndex = kitIndex;
-					itemCheckcircle.dataset.itemIndex = itemIndex;
-					itemCheckcircle.addEventListener('click', toggleCheckCircle);
-					// Calculate the number of acquired items
-					if (item.completed === true) {
-						acquiredItems++;
-						// Change the checkcircle to "checked" style/state
-						itemCheckcircle.innerText = 'check_circle';
-						itemCheckcircle.style.color = 'rgb(18, 210, 164)';
-					}
-					totalKitItems = kitItemArray.length;
-					if (totalKitItems > 0) {
-						kitProgress = acquiredItems / totalKitItems * 100;
-						kitProgress = kitProgress.toFixed(2);
-					} else {
-						kitProgress = 0;
-					}
-					let progressNote = row.querySelector('.kit-progress span').innerText = `${kitProgress}%`;
-					row.querySelector('ul').appendChild(itemRow);
+					({ completedItems, totalKitItems, kitProgress } = addItemKit(item, kitIndex, itemIndex, completedItems, kitItemArray.length, kitProgress, row));
 				});
 			}
+			// Set data attribute on <ul> for easy access when adding custom items
+			row.querySelector(".all-kit-items-list").dataset.kitIndex = kitIndex;
 			// After loading all the kit contents, hide the kit contents
 			const listOfItemsInAKit = row.querySelector('.all-kit-items-list').classList.add('hidden');
 			const expandKitButton = row.querySelector('.expand-kit');
@@ -392,6 +367,37 @@ async function loadKit() {
 			kitList.appendChild(row);
 		});
 	}
+}
+
+function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, kitProgress, row, imgUrl) {
+	const itemRow = kitListItemTemplate.content.cloneNode(true).firstElementChild;
+	// Get the image binary data
+	let base64 = imgUrl ? null : `data:${item.image.contentType};base64,${item.image.data.$binary.base64}`;
+	const itemImage = itemRow.querySelector('img').src = imgUrl ?? base64;
+	const itemType = itemRow.querySelector('.item-name').innerText = item.name;
+	const itemQuantity = itemRow.querySelector('.item-quantity span').innerText = item.quantity;
+	const itemDesc = itemRow.querySelector('.item-description').innerText = item.description;
+	// Checkbox functions
+	const itemCheckcircle = itemRow.querySelector('.checkcircle');
+	itemCheckcircle.dataset.kitIndex = kitIndex;
+	itemCheckcircle.dataset.itemIndex = itemIndex;
+	itemCheckcircle.addEventListener('click', toggleCheckCircle);
+	// Calculate the number of acquired items
+	if (item.completed === true) {
+		completedItems++;
+		// Change the checkcircle to "checked" style/state
+		itemCheckcircle.innerText = 'check_circle';
+		itemCheckcircle.style.color = 'rgb(18, 210, 164)';
+	}
+	if (totalKitItems > 0) {
+		kitProgress = completedItems / totalKitItems * 100;
+		kitProgress = kitProgress.toFixed(2);
+	} else {
+		kitProgress = 0;
+	}
+	let progressNote = row.querySelector('.kit-progress span').innerText = `${kitProgress}%`;
+	row.querySelector('ul').appendChild(itemRow);
+	return { completedItems, totalKitItems, kitProgress };
 }
 
 async function createKit(templateName) {
@@ -429,9 +435,10 @@ async function addItem(kitIndex) {
 		}
 
 		const formData = new FormData();
+		const imageFile = document.querySelector("#add-item-image").files[0];
 		formData.append("_id", updateKitId);
 		// TODO: Check that an image file exists and show some error if it doesn't
-		formData.append("image", document.querySelector("#add-item-image").files[0]);
+		formData.append("image", imageFile);
 		formData.append("itemProps", JSON.stringify(newItemProps));
 
 		const response = await fetch('/add-item', {
@@ -440,12 +447,26 @@ async function addItem(kitIndex) {
 		})
 		const responseText = await response.text();
 		// TODO: Handle errors
+		if(response.ok) {
+			// Add item to DOM
+			const completedItems = userKits[kitIndex].kit.reduce(
+				(prev, current) => current.completed ? prev++ : prev, 0
+			);
+			const kitItemList = document.querySelector(`.all-kit-items-list ul[data-kit-index="${kitIndex}"]`);
+			const totalItems = kitItemList.childElementCount + 1;
+			const kitProgress = (completedItems / totalKitItems * 100).toFixed(2);
+			const row = document.querySelector(`#${userKits[kitIndex]._id}`);
+			const imageUrl = imageFile.value;
+			addItemKit(newItemProps, kitIndex, totalItems, completedItems, totalItems, kitProgress, row, imageUrl);
+		} 
 	}
 }
 
 async function addItemSubmissionHandler(kitIndex) {
 	await addItem(kitIndex);
-	// TODO: Visually fresh the kit
+	// TODO: Visually refresh the kit
+	
+
 	closeForm("#add-item-form");
 }
 
