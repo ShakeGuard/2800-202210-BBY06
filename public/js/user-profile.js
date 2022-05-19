@@ -305,6 +305,7 @@ async function markItemCompleted(completed, kitIndex, itemIndex) {
 		body: JSON.stringify({
 			"_id": userKits[kitIndex]._id,
 			"name": userKits[kitIndex].kit[itemIndex].name,
+			"itemId": userKits[kitIndex].kit[itemIndex]._id,
 			"completed": completed
 		})
 	})
@@ -449,7 +450,8 @@ async function addItem(kitIndex) {
 		// TODO: Handle errors
 		if(response.ok) {
 			// Push into local copy of kit
-			userKits[kitIndex].kit.push(newItemProps);
+			const response = await fetch('/kits');
+			userKits = await response.json();
 			// Add item to DOM
 			const completedItems = userKits[kitIndex].kit.reduce(
 				(prev, current) => current.completed ? prev++ : prev, 0
