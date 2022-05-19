@@ -352,12 +352,8 @@ async function loadKit() {
 			// Set data attribute on <ul> for easy access when adding custom items
 			row.querySelector(".all-kit-items-list").dataset.kitIndex = kitIndex;
 			// After loading all the kit contents, hide the kit contents
-			const listOfItemsInAKit = row.querySelector('.all-kit-items-list').classList.add('hidden');
-			const expandKitButton = row.querySelector('.expand-kit');
-			expandKitButton.addEventListener('click', function() {
-				row.querySelector('.all-kit-items-list').classList.toggle('hidden');
-				addCustomItemButton.classList.toggle('hidden');
-			});
+			const listOfItemsInAKit = row.querySelector('.all-kit-items-list');
+			listOfItemsInAKit.style.overflow = 'hidden';
 
 			const deleteKitButton = row.querySelector('.delete-kit');
 			deleteKitButton.addEventListener('click', createDeleteConfirmation);
@@ -365,8 +361,23 @@ async function loadKit() {
 			const addCustomItemButton = row.querySelector('.add-custom-item');
 			addCustomItemButton.addEventListener('click', () => createAddItemForm(kitIndex));
 			addCustomItemButton.dataset.kitIndex = kitIndex;
+
+			const expandKitButton = row.querySelector('.expand-kit');
+			expandKitButton.addEventListener('click', () => {
+				toggleExpand(listOfItemsInAKit);
+				addCustomItemButton.classList.toggle('hidden');
+			});
+
 			kitList.appendChild(row);
 		});
+	}
+}
+
+function toggleExpand(element) {
+	if (element.style.maxHeight) {
+		element.style.maxHeight = null;
+	} else {
+		element.style.maxHeight = element.scrollHeight + 'px';
 	}
 }
 
@@ -375,8 +386,8 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 	// Get the image binary data
 	let base64 = imgUrl ? null : `data:${item.image.contentType};base64,${item.image.data.$binary.base64}`;
 	itemRow.querySelector('img').src = base64 ?? URL.createObjectURL(imgUrl);
-	itemRow.querySelector('.item-name').innerText = item.name;
-	itemRow.querySelector('.item-quantity span').innerText = item.quantity;
+	itemRow.querySelector('.item-name').value = item.name;
+	itemRow.querySelector('.item-quantity').value = item.quantity;
 	itemRow.querySelector('.item-description').innerText = item.description;
 	// Checkbox functions
 	const itemCheckcircle = itemRow.querySelector('.checkcircle');

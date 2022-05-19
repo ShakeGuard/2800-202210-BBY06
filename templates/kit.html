@@ -53,9 +53,15 @@
             <img src="/images/user-pic_Tracy.svg" alt="Kit Item" />
             <span class="material-symbols-outlined checkcircle">
                 radio_button_unchecked</span>
-            <h3 class="item-name">Item</h3>
-            <p class="item-quantity">Quantity: <span>#</span></p>
-            <p class="item-description">Text</p>
+            <label for="item-name">Item</label>
+            <input type="text" name="Name" class="item-name" value="Name" id="item-name" disabled/>
+            <label for="item-quantity">Quantity</label>
+            <input type="text" name="Quantity" class="item-quantity" value="Quantity" id="item-quantity" disabled/>
+            <textarea class="item-description" id="item-description" name="Description" disabled></textarea>
+            <div class="edit-button-group">
+                <span class="material-symbols-outlined edit">edit</span>
+                <span class="material-symbols-outlined delete">delete</span>
+            </div>
         </li>
     </template>
 

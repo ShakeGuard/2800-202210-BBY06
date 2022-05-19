@@ -283,6 +283,11 @@ body{
     background-color: rgba(23, 165, 186, 0.5);
 }
 
+.user-kit-list-item:active .kit-item ,
+.user-kit-list-item:focus .kit-item {
+    background-color: transparent;
+}
+
 /* Kit icons */
 .user-kit-list-item > span {
     cursor: pointer;
@@ -346,25 +351,44 @@ body{
 .user-kit-list-item > ul {
     width: 100%;
     grid-column: 1 / span 3;
-    grid-row: 4 / span 1;
-    margin-top: 1rem;
+    grid-row: 3 / span 1;
+    margin-top: 0;
+    max-height: 0;
+    transition: all 0.3s ease-in-out;
 }
 
 .user-kit-list-item .add-custom-item {
     grid-column: 1 / span 3;
-    grid-row: 5 / span 1;
+    grid-row: 4 / span 1;
     margin-bottom: 1.5rem;
 }
 
 /* Styling for the individual items inside the kit array */
 .kit-item {
     display: grid;
-    grid-template-columns: 3rem 1fr 2.4rem;
+    grid-template-columns: 3rem minmax(0, 1fr) 1.8rem !important;
     grid-template-rows: auto auto auto auto;
-    gap: 0;
     max-width: 100%;
     background-color: #e5f7f9;
     border-top: 1px solid rgba(23, 165, 186, 1);
+}
+/* All labels in the kit item */
+.kit-item label,
+.kit-item input,
+.kit-item textarea {
+    font-size: 0.8rem;
+    max-width: 100%;
+    height: 100%;
+}
+/* Get rid of default input styles */
+.kit-item input,
+.kit-item textarea {
+    background-color: transparent;
+    border: none;
+}
+.kit-item input {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-weight: 700;
 }
 
 .kit-item img {
@@ -373,22 +397,28 @@ body{
     width: 3rem;
 }
 
+.kit-item label[for=item-name] {
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+}
+
 .kit-item .item-name {
-    grid-column: 1 / span 3;
+    grid-column: 2 / span 1;
     grid-row: 2 / span 1;
     margin: 0;
 }
 
 .kit-item .checkcircle {
-    max-width: 100%;
-    font-size: 2.4rem !important;
+    width: 100%;
+    height: 100%;
+    font-size: 1.8rem !important;
     grid-column: 3 / span 1;
     grid-row: 1 / span 1;
     cursor: pointer;
     color: rgb(180, 180, 180);
     font-variation-settings: 
         'FILL' 0,
-        'wght' 300, 
+        'wght' 400, 
         'GRAD' 0, 
         'opsz' 48;
     transition: all 0.2s ease-in-out;
@@ -403,15 +433,41 @@ body{
         'opsz' 48;
 }
 
-.kit-item .item-quantity {
-    grid-column: 1 / span 3;
+.kit-item label[for=item-quantity] {
+    grid-column: 1 / span 1;
     grid-row: 3 / span 1;
-    font-weight: bold;
+}
+
+.kit-item .item-quantity {
+    max-width: 100%;
+    grid-column: 2 / span 1;
+    grid-row: 3 / span 1;
 }
 
 .kit-item .item-description {
-    grid-column: 1 / span 3;
+    grid-column: 1 / span 2;
     grid-row: 4 / span 1;
+    height: 100%;
+}
+
+.kit-item .edit-button-group {
+    grid-column: 3 / span 1;
+    grid-row: 4 / span 1;
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+}
+.kit-item .edit-button-group span {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-radius: 1rem;
+    padding: 0.2rem 0.4rem;
+}
+
+.kit-item .edit-button-group span:hover {
+    background-color: rgba(23, 165, 186, 0.25);
 }
 
 /* Specific to the Create Kit form; see forms.css for more info */
@@ -435,6 +491,10 @@ body{
 .selected-kit {
     background-color: rgba(23, 165, 186, 0.25);
     border: 2px solid rgba(23, 165, 186, 1);
+}
+
+.custom-item {
+    background-color: #fff3df;
 }
 
 /*************** Media queries *******************/
@@ -474,8 +534,17 @@ body{
 
     /* Styling for the individual items inside the kit array */
     .kit-item {
-        grid-template-columns: 6rem minmax(0, 1fr) 3rem;
+        display: grid;
+        grid-template-columns: 6rem minmax(0, 3.5rem) 1fr 3rem !important;
         grid-template-rows: auto auto auto;
+    }
+
+    /* All labels in the kit item */
+    .kit-item label,
+    .kit-item input,
+    .kit-item textarea {
+        font-size: 1rem;
+        height: 100%;
     }
 
     .kit-item img {
@@ -484,28 +553,49 @@ body{
         width: 6rem;
     }
 
-    .kit-item .item-name {
+    .kit-item label[for=item-name] {
         grid-column: 2 / span 1;
         grid-row: 1 / span 1;
-        font-size: 1.4rem;
+        width: 6rem;
+    }
+    .kit-item .item-name {
+        grid-column: 3 / span 1;
+        grid-row: 1 / span 1;
     }
 
-    .kit-item .item-quantity {
+    .kit-item label[for=item-quantity] {
         grid-column: 2 / span 1;
         grid-row: 2 / span 1;
+        width: 6rem;
     }
-    
+    .kit-item .item-quantity {
+        grid-column: 3 / span 1;
+        grid-row: 2 / span 1;
+    }
     .kit-item .item-description {
-        grid-column: 2 / span 1;
+        grid-column: 2 / span 2;
         grid-row: 3 / span 1;
     }
 
     .kit-item .checkcircle {
         font-size: 3rem !important;
-        grid-column: 3 / span 1;
-        grid-row: 1 / span 2;
+        grid-column: 4 / span 1;
+        grid-row: 1 / span 1;
+        font-variation-settings:
+            'FILL' 0,
+            'wght' 300,
+            'GRAD' 0,
+            'opsz' 48
     }
 
+    .kit-item .edit-button-group {
+        grid-column: 4 / span 1;
+        grid-row: 3 / span 1;
+        gap: 2rem;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+    }
 
     .kit-option {
         max-width: 80%;
