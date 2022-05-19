@@ -307,7 +307,7 @@ function updateKitProgress(kitIndex) {
 	const total = userKits[kitIndex].kit.length;
 	const completed = userKits[kitIndex].kit.reduce((prev, curr) => {return curr.completed ? prev+1 : prev}, 0);
 	const kitProgress = (completed / total * 100).toFixed(2);
-	document.getElementById(userKits[kitIndex]._id).querySelector(".kit-progress").innerText = `${kitProgress}% complete`;
+	document.getElementById(userKits[kitIndex]._id).querySelector(".kit-progress span").innerText = `${kitProgress}%`;
 }
 
 async function markItemCompleted(completed, kitIndex, itemIndex) {
@@ -490,6 +490,7 @@ async function addItem(kitIndex) {
 			const kitProgress = (completedItems / totalItems * 100).toFixed(2);
 			const row = document.getElementById(`${userKits[kitIndex]._id}`);
 			addItemKit(newItemProps, kitIndex, totalItems - 1, completedItems, totalItems, kitProgress, row, imageFile);
+			kitItemList.style.maxHeight = kitItemList.scrollHeight + 'px';
 		} 
 	}
 }
