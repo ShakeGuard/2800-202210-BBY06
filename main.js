@@ -1024,7 +1024,7 @@ app.get('/resource', async (req,res) =>{
 		"{cardTopic}": "Earthquake Knowledge"
 	}, {
 		"{cardLink}": "/resource_page5",
-		"{cardImage}": "/images/Reesource5.jpg",
+		"{cardImage}": "/images/Resource5.jpg",
 		"{cardTitle}": "Canadian Red Cross",
 		"{cardDesc}": "The Canadian Red Cross details the procudures to take before, during, and after an Earthquake.",
 		"{cardTopic}": "Disaster Preparation Knowledge"
