@@ -373,10 +373,10 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 	const itemRow = kitListItemTemplate.content.cloneNode(true).firstElementChild;
 	// Get the image binary data
 	let base64 = imgUrl ? null : `data:${item.image.contentType};base64,${item.image.data.$binary.base64}`;
-	const itemImage = itemRow.querySelector('img').src = imgUrl ?? base64;
-	const itemType = itemRow.querySelector('.item-name').innerText = item.name;
-	const itemQuantity = itemRow.querySelector('.item-quantity span').innerText = item.quantity;
-	const itemDesc = itemRow.querySelector('.item-description').innerText = item.description;
+	itemRow.querySelector('img').src = base64 ?? URL.createObjectURL(imgUrl);
+	itemRow.querySelector('.item-name').innerText = item.name;
+	itemRow.querySelector('.item-quantity span').innerText = item.quantity;
+	itemRow.querySelector('.item-description').innerText = item.description;
 	// Checkbox functions
 	const itemCheckcircle = itemRow.querySelector('.checkcircle');
 	itemCheckcircle.dataset.kitIndex = kitIndex;
@@ -448,16 +448,17 @@ async function addItem(kitIndex) {
 		const responseText = await response.text();
 		// TODO: Handle errors
 		if(response.ok) {
+			// Push into local copy of kit
+			userKits[kitIndex].kit.push(newItemProps);
 			// Add item to DOM
 			const completedItems = userKits[kitIndex].kit.reduce(
 				(prev, current) => current.completed ? prev++ : prev, 0
 			);
-			const kitItemList = document.querySelector(`.all-kit-items-list ul[data-kit-index="${kitIndex}"]`);
+			const kitItemList = document.querySelector(`ul[data-kit-index="${kitIndex}"]`);
 			const totalItems = kitItemList.childElementCount + 1;
-			const kitProgress = (completedItems / totalKitItems * 100).toFixed(2);
-			const row = document.querySelector(`#${userKits[kitIndex]._id}`);
-			const imageUrl = imageFile.value;
-			addItemKit(newItemProps, kitIndex, totalItems, completedItems, totalItems, kitProgress, row, imageUrl);
+			const kitProgress = (completedItems / totalItems * 100).toFixed(2);
+			const row = document.getElementById(`${userKits[kitIndex]._id}`);
+			addItemKit(newItemProps, kitIndex, totalItems - 1, completedItems, totalItems, kitProgress, row, imageFile);
 		} 
 	}
 }
