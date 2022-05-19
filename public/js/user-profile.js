@@ -284,18 +284,28 @@ let kitProgress = '0';
 
 
 // Listens for event click, then changes the checkcircle's style
-function toggleCheckCircle(e) {
+async function toggleCheckCircle(e) {
+	const kitIndex = e.target.dataset.kitIndex;
+	const itemIndex = e.target.dataset.itemIndex;
 	if (e.target.innerText == 'check_circle') {
 		// Deselect
 		e.target.innerText = 'radio_button_unchecked';
 		e.target.style.color = 'rgb(180, 180, 180)';
-		markItemCompleted(false, e.target.dataset.kitIndex, e.target.dataset.itemIndex);
+		await markItemCompleted(false, kitIndex, itemIndex);
 	} else {
 		// Select
 		e.target.innerText = 'check_circle';
 		e.target.style.color = 'rgb(18, 210, 164)';
-		markItemCompleted(true, e.target.dataset.kitIndex, e.target.dataset.itemIndex);
+		await markItemCompleted(true, kitIndex, itemIndex);
 	}
+	updateKitProgress(kitIndex);
+}
+
+function updateKitProgress(kitIndex) {
+	const total = userKits[kitIndex].kit.length;
+	const completed = userKits[kitIndex].kit.reduce((prev, curr) => {return curr.completed ? prev+1 : prev}, 0);
+	const kitProgress = (completed / total * 100).toFixed(2);
+	document.getElementById(userKits[kitIndex]._id).querySelector(".kit-progress").innerText = `${kitProgress}% complete`;
 }
 
 async function markItemCompleted(completed, kitIndex, itemIndex) {
@@ -309,29 +319,24 @@ async function markItemCompleted(completed, kitIndex, itemIndex) {
 			"completed": completed
 		})
 	})
-	const responseText = await response.text();
+	await getKits();
+
 	// TODO: Error Handling
 }
 
 // Get kit data from the session user on load on page from templates
 async function loadKit() {
-	const response = await fetch('/kits');
-	const responseJSON = await response.json();
+	await getKits();
 	
-	if (responseJSON.length === 0 || responseJSON.length === undefined || responseJSON.length === null) {
+	if (userKits.length === 0) {
 		createEmptyKitMessage();
 	} else {
-		userKits = responseJSON;
 		userKits.forEach((element, kitIndex) => {
-			// Store the number of items to calculate progress
-			let totalKitItems = 0;
-			let completedItems = 0;
-			let kitProgress = 0;
-
+			
 			// This is each kit that the user has
 			const row = kitRowTemplate.content.cloneNode(true).firstElementChild;
 			row.id = element._id;
-			const kitName = row.querySelector('.kit-name').innerText = element.name;
+			row.querySelector('.kit-name').innerText = element.name;
 			// Make sure the appropriate icon represents the kit
 			switch (element.name) {
 				case 'Home':
@@ -341,12 +346,15 @@ async function loadKit() {
 					row.querySelector('span').innerText = "airport_shuttle";
 					break;
 			}
-
+					
 			const kitItemArray = element.kit;
 			if (kitItemArray.length > 0) {
+				// Store the number of items to calculate progress
+				let completedItems = 0;
+				let kitProgress = 0;
 				kitItemArray.forEach((item, itemIndex) => {
 					// This is each item in the kit
-					({ completedItems, totalKitItems, kitProgress } = addItemKit(item, kitIndex, itemIndex, completedItems, kitItemArray.length, kitProgress, row));
+					({ completedItems, kitProgress } = addItemKit(item, kitIndex, itemIndex, completedItems, kitItemArray.length, kitProgress, row));
 				});
 			}
 			// Set data attribute on <ul> for easy access when adding custom items
@@ -407,9 +415,9 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 	} else {
 		kitProgress = 0;
 	}
-	let progressNote = row.querySelector('.kit-progress span').innerText = `${kitProgress}%`;
+	row.querySelector('.kit-progress span').innerText = `${kitProgress}%`;
 	row.querySelector('ul').appendChild(itemRow);
-	return { completedItems, totalKitItems, kitProgress };
+	return { completedItems, kitProgress };
 }
 
 async function createKit(templateName) {
@@ -420,10 +428,7 @@ async function createKit(templateName) {
 			name: templateName
 		})
 	});
-	if (response.status === 500) {
-		const responseText = await response.text();
-		// TODO: Handle error 
-	} 
+	// TODO: Handle error 
 }
 
 async function createKitSubmissionHandler(e) {
@@ -460,9 +465,7 @@ async function addItem(kitIndex) {
 		const responseText = await response.text();
 		// TODO: Handle errors
 		if(response.ok) {
-			// Push into local copy of kit
-			const response = await fetch('/kits');
-			userKits = await response.json();
+			await getKits();
 			// Add item to DOM
 			const completedItems = userKits[kitIndex].kit.reduce(
 				(prev, current) => current.completed ? prev++ : prev, 0
@@ -478,9 +481,6 @@ async function addItem(kitIndex) {
 
 async function addItemSubmissionHandler(kitIndex) {
 	await addItem(kitIndex);
-	// TODO: Visually refresh the kit
-	
-
 	closeForm("#add-item-form");
 }
 
@@ -488,7 +488,6 @@ async function addItemSubmissionHandler(kitIndex) {
 let requestedKitID = "";
 async function createDeleteConfirmation(e) {
 	requestedKitID = e.target.parentElement.id;
-	console.log(requestedKitID);
 	
 	const form = deleteKitConfirmationTemplate.content.cloneNode(true).firstElementChild;
 	const cancelButton = form.querySelector('[type="button"');
@@ -509,10 +508,6 @@ async function deleteKit(kitID) {
 	});
 
 	// TO DO: error handling and add UI feedback, import the toasts?
-	const responseText = await response.text();
-	if (response.ok) {
-		console.log("Deleted kit ", requestedKitID);
-	}
 }
 
 // TO DO: refresh kits after delete
@@ -531,6 +526,11 @@ function clearKitsOnScreen() {
 	if (kitMessageContainer.querySelector('p')) {
 		kitMessageContainer.querySelector('p').remove();
 	}
+}
+
+async function getKits() {
+	const response = await fetch('/kits');
+	userKits = await response.json();
 }
 
 createKitButton.addEventListener('click', createKitOptionsForm);
