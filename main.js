@@ -889,6 +889,53 @@ app.patch('/edit-item', async (req,res) => {
 	}
 })
 
+app.delete('/delete-item', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body || !req.body._id || !req.body.itemId) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id)
+	}
+	try {
+		req.body._id = new mdb.ObjectId(req.body._id);
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, 
+			{
+				$pull: {
+						"kits.$[i].kit": {
+							"_id": new mdb.ObjectId(req.body.itemId),
+							"required": false
+						}
+				}
+			},
+			{
+				arrayFilters: [ 
+					{"i._id": new mdb.ObjectId(req.body._id)}
+				]
+			}
+		);
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(404).send("couldNotFindKit");
+			return;
+		} else if (result.modifiedCount === 0) {
+			res.status(401).send("cannotDeleteRequiredItem");
+			return;
+		}
+		res.status(200).send("itemDeletedSuccessfully");
+	} catch(e) {
+		res.status(500).send("serverIssue");
+	}
+})
+
 app.get('/kit-templates', async (req, res) => {
 	const results = await db.collection('BBY-6_kit-templates').find({}).toArray();
 	res.status(200).send(results);
