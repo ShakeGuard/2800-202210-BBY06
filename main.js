@@ -21,6 +21,7 @@ import { hideBin } from 'yargs/helpers';
 
 import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
 import {readSecrets} from './shakeguardSecrets.mjs';
+import applyEasterEggStyle from './easterEgg.mjs';
 
 const argv = yargs(hideBin(process.argv))
   .option('port', {
@@ -365,6 +366,11 @@ app.get('/profile', async (req, res) => {
 
     profile.window.document.getElementById("FullName").defaultValue = req.session.name;
 	profile.window.document.getElementById("Email").defaultValue = req.session.email;
+
+	if (req.session.easterEgg) 
+		profile = applyEasterEggStyle(profile);
+	}
+
 	res.send(profile.serialize());
 });
 
