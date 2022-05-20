@@ -360,7 +360,13 @@ app.get('/profile', async (req, res) => {
 	const baseDOM = new JSDOM(doc);
 	let profile = await loadHeaderFooter(baseDOM);
 	profile = changeLoginButton(profile, req);
-
+	if(req.session.easterEgg) {
+		const link = profile.window.document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = 'css/geocities.css'
+		profile.window.document.getElementsByTagName('HEAD')[0].appendChild(link);
+	}
 	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
 	profile = await loadHTMLComponent(profile, "#kit-templates", "div", "./templates/kit.html");
 
