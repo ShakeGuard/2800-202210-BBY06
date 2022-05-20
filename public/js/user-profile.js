@@ -429,6 +429,9 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 		editItemButton.dataset.itemIndex = itemIndex;
 		editItemButton.addEventListener('click', editItemSubmissionHandler);
 		const deleteItemButton = itemRow.querySelector('.edit-button-group .delete');
+		deleteItemButton.dataset.kitIndex = kitIndex;
+		deleteItemButton.dataset.itemIndex = itemIndex;
+		deleteItemButton.addEventListener('click', deleteItemSubmissionHandler);
 	} else {
 		itemRow.querySelector('.edit-button-group').remove();
 	}
@@ -521,8 +524,6 @@ function toggleItemEditing(customItem) {
 	});
 }
 
-
-
 async function editItemSubmissionHandler(e) {
 	e.preventDefault();
 	const kitIndex = e.target.dataset.kitIndex;
@@ -558,6 +559,28 @@ async function editItem(kitIndex, itemIndex, row) {
 	})
 	// TODO: Handle errors
 }
+
+async function deleteItemSubmissionHandler(e) {
+	e.preventDefault();
+	const kitIndex = e.target.dataset.kitIndex;
+	const itemIndex = e.target.dataset.itemIndex;
+	const row = e.target.parentElement.parentElement;
+	await deleteItem(kitIndex, itemIndex);
+	row.remove();
+}
+
+async function deleteItem(kitIndex, itemIndex) {
+	const response = await fetch('/delete-item', {
+		method: "DELETE",
+		headers: {'Content-Type':'application/json'},
+		body: JSON.stringify({
+			"_id": userKits[kitIndex]._id,
+			"itemId": userKits[kitIndex].kit[itemIndex]._id
+		})
+	})
+	// TODO: Handle errors
+}
+
 // Delete a kit
 let requestedKitID = "";
 async function createDeleteConfirmation(e) {
