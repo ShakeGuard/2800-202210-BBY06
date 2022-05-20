@@ -27,14 +27,19 @@
     grid-row: 1 / span 1;
 }
 
-.popup-form > input {
+.popup-form input {
     width: 100%;
+    min-height: 2rem;
     grid-column: 1 / span 1;
     border-style: none;
 
     padding: 0.2rem 0.5rem;
     font-size: 1.1rem;
     border-bottom: 2px solid #c4c4c4;
+}
+
+.popup-form input[type=file] {
+    border: none;
 }
 
 .popup-form .button-group {
