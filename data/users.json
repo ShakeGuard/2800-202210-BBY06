@@ -96,7 +96,7 @@
 	  "planKit",
 	  "finishKit"
 	],
-	"admin": true,
+	"admin": false,
 	"kits": [
 		{
 			"name": "My Garage",
