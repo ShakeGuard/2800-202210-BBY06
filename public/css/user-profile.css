@@ -274,18 +274,10 @@ body{
     transition: all 0.2s ease;
 }
 
-.user-kit-list-item:hover {
-    border: 2px solid rgba(23, 165, 186, 1);
-}
+.user-kit-list-item:hover,
 .user-kit-list-item:active,
 .user-kit-list-item:focus {
     border: 2px solid rgba(23, 165, 186, 1);
-    background-color: rgba(23, 165, 186, 0.5);
-}
-
-.user-kit-list-item:active .kit-item ,
-.user-kit-list-item:focus .kit-item {
-    background-color: transparent;
 }
 
 /* Kit icons */
@@ -495,6 +487,21 @@ body{
 
 .custom-item {
     background-color: #fff3df;
+}
+
+#kit-information {
+    background-color: rgba(23, 165, 186, 0.05);
+    border-radius: 1.5rem;
+    padding: 0.5rem 1rem;
+}
+
+#kit-information p {
+    text-align: left;
+    font-size: 0.8rem;
+}
+
+#kit-information .emphasis {
+    font-weight: 700;
 }
 
 /*************** Media queries *******************/

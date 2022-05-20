@@ -253,7 +253,7 @@ function createKitOptionsForm() {
 		grabAndGoKitTemplate.classList.remove('selected-kit');
 	})
 	grabAndGoKitTemplate.addEventListener('click', e => {
-		selectedTemplate = 'Grab And Go';
+		selectedTemplate = 'Grab-and-Go';
 		grabAndGoKitTemplate.classList.toggle('selected-kit');
 		homeKitTemplate.classList.remove('selected-kit');
 	})
@@ -344,7 +344,7 @@ async function loadKit() {
 				case 'Home':
 					row.querySelector('span').innerText = "cottage";
 					break;
-				case 'Grab And Go':
+				case 'Grab-and-Go':
 					row.querySelector('span').innerText = "airport_shuttle";
 					break;
 			}
