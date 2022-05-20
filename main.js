@@ -260,6 +260,7 @@ app.use(sessionParser);
 app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
 app.use("/images", express.static("public/images"));
+app.use("/sounds", express.static("public/sounds"));
 app.use("/html", express.static("public/html"));
 
 app.get('/', async function (req, res) {
