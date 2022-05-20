@@ -125,3 +125,8 @@ a:visited{
 .hidden {
     display: none;
 }
+
+#Title-h1{
+    place-self: center;
+    font-size: 40px;
+}

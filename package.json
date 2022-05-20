@@ -15,11 +15,13 @@
     "yargs": "^17.4.1"
   },
   "scripts": {
-    "prestart": "node downloadSecrets.mjs",
+    "prestart": "",
+    "jaysecrets_laptop": "node downloadSecrets.mjs --keyfile \"C:\\Users\\jj554\\.ssh\\id_ed25519\"",
+    "jaysecrets": "node downloadSecrets.mjs --keyfile \"C:\\Users\\super\\.ssh\\id_ed25519\"",
     "preprod": "node downloadSecrets.mjs",
     "test": "echo \"No tests defined!\"",
     "start": "node main.js --devLog -i localhost -p 27017 --db COMP2800",
-    "prod": "node main.j --devLog -i db.nokko.me -p 27017 --auth true --db shakeguard",
+    "prod": "node main.js --devLog -i db.nokko.me -p 27017 --auth true --db shakeguard",
     "showlog": "jq -r '\"[\\(.level)]\t\\(.message)\"' logs/app.log"
   }
 }
