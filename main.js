@@ -128,7 +128,7 @@ const connectMongo = async (url, dbName) => {
 		}
 
 		log.error('Error object details:');
-		log.dir(JSON.stringify(error, null, 2));
+		log.info(JSON.stringify(error, null, 2));
 
 		log.error('Exiting early due to errors!')
 		// TODO: consider any cleanup code before exiting: any open file handles?
@@ -261,7 +261,7 @@ app.get('/', async function (req, res) {
 		} else {
 			res.redirect('/profile');
 		}
-		console.log("User logged in!");
+		log.info("User logged in!");
 		return;
 	}
 	
@@ -801,7 +801,7 @@ app.delete('/kits', async (req, res) => {
 		}
 		res.status(200).send("kitDeletedSuccessfully");
 	} catch(e) {
-		console.log(e)
+		log.error(e)
 		res.status(500).send("serverIssue");
 	}
 })
@@ -885,7 +885,7 @@ app.patch('/edit-item', async (req,res) => {
 		}
 		res.status(200).send("kitUpdatedSuccessfully");
 	} catch(e) {
-		console.log(e)
+		log.info(e)
 		res.status(500).send("serverIssue");
 	}
 })
