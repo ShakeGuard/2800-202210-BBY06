@@ -5,7 +5,7 @@ import SFTPClient from 'ssh2-sftp-client';
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
 import path from 'node:path';
-import { open, access } from 'node:fs/promises';
+import { open, access, mkdir } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { log, addDevLog } from './logging.mjs';
 
@@ -109,6 +109,7 @@ await sftp.connect({
 		log.info("Attempting to download .secrets directory…");
 		// TODO: make sure the destination directory is the same directory that contains the package.json!
 		// Users might accidentally download the secrets into the wrong place…
+		await mkdir(process.cwd() + path.sep + '.secrets');
 		await sftp.downloadDir('/home/shakeguard/.secrets', process.cwd() + path.sep + '.secrets');
 		log.info('Downloaded successfully!');
 	})
