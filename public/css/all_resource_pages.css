@@ -32,7 +32,7 @@ a, a:visited{
 
 #Link{
     display: grid;
-    grid-template-columns: 1fr .3;
+    grid-template-columns: 1fr 0.3fr;
     grid-template-rows: 1fr;
     place-self: center;
     text-decoration: none;
