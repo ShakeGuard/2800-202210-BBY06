@@ -1,10 +1,22 @@
 @import url('https://api.fontshare.com/css?f[]=satoshi@400,401,700,701&display=swap'); 
 @import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
 
+:root {
+    --light-bg: #FFFFFF;
+    --link-text: #FFFFFF;
+    --light-text: #FFFFFF;
+    --error-text: #FF0000;
+    
+    --button-strong: #FBB33B;
+    --button-strong-hover: #FFBD4A;
+
+    --light-shadow: 5px 5px 10px rgb(179, 179, 179);
+}
+
 body {
     display: grid;
     justify-content: center;
-    background-color: #FFFFFF;
+    background-color: var(--light-bg);
     font-family: 'Satoshi', sans-serif;
 }
 
@@ -15,11 +27,11 @@ footer {
 }
 
 a{
-    color: #FFFFFF;
+    color: var(--link-text);
 }
 
 a:visited{
-    color: #FFFFFF;
+    color: var(--link-text);
 }
 
 .ShakeGuard-Logo{
@@ -59,13 +71,13 @@ a:visited{
     grid-template-rows: 1fr;
     margin: 20px;
     border-radius: 25px;
-    box-shadow: 5px 5px 10px rgb(179, 179, 179);
+    box-shadow: var(--light-shadow);
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
 }
 
 .Grid-Container-Form-Input{
-    background-color: #FFFFFF;
+    background-color: var(--light-bg);
     text-indent: 15px;
     font-size: 12px;
     font-weight: 600;
@@ -81,12 +93,12 @@ a:visited{
 }
 
 .Bottom-Text{
-    color: #FFFFFF;
+    color: var(--light-text);
     font-size: 20px;
 }
 
 #Sign-up-Link{
-    color: #FFFFFF;
+    color: var(--link-text);
     margin-top: -15px;
     margin-bottom: 50px;
 }
@@ -94,7 +106,7 @@ a:visited{
 #Button-Login{
     border: none;    
     border-radius: 25px;
-    background-color: #FBB33B;
+    background-color: var(--button-strong);
     width: 100px;
     font-weight: 600;
     font-family: 'Satoshi', sans-serif;
@@ -103,7 +115,7 @@ a:visited{
 }
 
 #Button-Login:hover{
-    background-color: #ffbd4a;
+    background-color: var(--button-strong-hover);
 }
 
 #Footer-Links {
@@ -120,9 +132,14 @@ a:visited{
 }
 
 .error {
-	color: red;
+	color: var(--error-text);
     font-size: 15px;
 }
 .hidden {
     display: none;
+}
+
+#Title-h1{
+    place-self: center;
+    font-size: 40px;
 }

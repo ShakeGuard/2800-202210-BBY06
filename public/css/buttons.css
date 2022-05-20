@@ -1,12 +1,14 @@
-.material-icons {
-    vertical-align: -10%;
+.material-symbols-outlined {
+    vertical-align: text-bottom;
 }
 
 /* Universal button styles */
 .button {
-    padding: 1em 2em;
+    height: auto;
+    width: auto;
+    padding: 0.8em 1.6em;
     border: none;
-    border-radius: 1em;
+    border-radius: 4em;
     outline: none;
     font: inherit;
     font-weight: 700;
@@ -14,6 +16,8 @@
     color: black;
     margin-top: 1em;
     transition: background-color 0.1s ease-in;
+    place-self: center;
+    cursor: pointer;
 }
 
 .button:hover,
@@ -33,6 +37,19 @@
 .button-primary:focus {
     background-color: #E99812;
 }
+
+
+.button-primary-teal {
+    background-color: rgba(23, 165, 186, 1);
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+}
+
+.button-primary-teal:hover, 
+.button-primary-teal:active, 
+.button-primary-teal:focus {
+    background-color: rgba(23, 165, 186, 0.8);
+}
+
 
 .button-secondary {
     border: 2px solid #FBB33B;

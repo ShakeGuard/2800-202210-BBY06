@@ -1,23 +1,14 @@
 Team Members:
-[Jay Wang], [A01291640], [2B], [May 6]
-[Tracy Ly], [A01309036], [1D], [May 6]
-[Alex Kong], [A00961078], [1D], [May 6]
-[Katy Petrova], [A01281045], [2C], [May 6]
+[Jay Wang], [A01291640], [2B], [May 20]
+[Tracy Ly], [A01309036], [1D], [May 20]
+[Alex Kong], [A00961078], [1D], [May 20]
+[Katy Petrova], [A01281045], [2C], [May 20]
 
-This assignment is [90]% complete
+This assignment is [80]% complete
 
-We are right before the Week 2 Milestone Handin, so in terms of progress:
-Front End has finished:
-Web design Template
-Responsive Design
-Login/Logout Page
-Signup Page
-
-Back End has finished:
-- Log in  
-- Log out 
-- Sign up
-- Made sure DB works for this hand in
+We are right before the Week 4 Milestone Handin, so in terms of progress:
+Earthquake Kit feature (2537 shopping cart requirement)
+Offline resources (app specific)
 
 
 Login Credentials: 
@@ -31,3 +22,12 @@ Login Credentials:
     sauce
     $2b$10$GX5JjtF80O31HMkYiisPK.IJjxApqZMnpkGGK08wAsXbMum2R5e96
 	
+	Admin User: 
+	jake@statefarm.com
+	jake
+	$2b$10$R1kEljqyKedYfQzYKhWulugHK1bR8/psJtvhfokFfV4RqlWeHrrl6
+
+	Regular User: 
+	tai@my.garage.com
+	knowledge
+	$2b$10$zB7F2pmTO6jnEPdci8Whm.NXlDxSyhElduYo.n4Chrxxr9ICKqEA2

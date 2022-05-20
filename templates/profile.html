@@ -11,19 +11,19 @@
   </div>
 
 	<!-- Edit Profile Picture "Button" -->
-	<label for="Upload-Avatar" id="Edit-ProfilePicture-Button">
+	<label for="Upload-Avatar" id="Edit-ProfilePicture-Button" class="toggle">
 		<span id="Pen-4" class="material-symbols-outlined">edit</span>
 	</label>
 
   <!-- Profile Picture User Feedback -->
-  <div id="Base-Container-Upload-Avatar-Centering-Container">
-    <p id="Upload-Avatar-FileName"></p>
+  <div id="Base-Container-Upload-Avatar-Centering-Container" class="toggle">
+    <p id="Upload-Avatar-FileName" class="toggle"></p>
     <input id="Upload-Avatar" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
   </div>
 
   <!-- Full Name -->
-  <div id="Base-Container-FullName-Container">
-    <form class="Container-Form">
+  <div id="Base-Container-FullName-Container" class="toggle">
+    <form class="Container-Form toggle">
       <input disabled="disabled" type="text" id="FullName" class="Form-Input" value="FirstName LastName"/>
       <span id="Pen-1" class="material-symbols-outlined">edit</span>
       <p class="error" id="FullName-Error"></p>
@@ -31,7 +31,7 @@
   </div>
 
   <!-- Email -->
-  <div id="Base-Container-Email-Container" class="Container">
+  <div id="Base-Container-Email-Container" class="Container toggle">
     <!-- Label -->
     <p class="Form-Label">Email</p>
     <!-- Container -->
@@ -43,7 +43,7 @@
   </div>
 
   <!-- Password -->
-  <div id="Base-Container-Password-Container" class="Container">
+  <div id="Base-Container-Password-Container" class="Container toggle">
     <!-- Label -->
     <p class="Form-Label">Password</p>
     <!-- Container -->
@@ -54,12 +54,16 @@
     </form>
   </div>
 
-  <!-- Upload Profile Picture -->
-  <p class="error" id="Avatar-Error"></p>
-    <!-- Update Profile Button -->
-    <div id="Base-Container-Update-Container">
-      <p id="Update-Button">Update</p>
-    </div>
-  <p id="Update-Error"></p>
+  <!-- Update Profile Button -->
+  <div id="Base-Container-Update-Container" class="toggle">
+    <p id="Update-Button" class="button button-primary">Update</p>
+  </div>
+  <!-- Edit Profile Button that should unhide the other fields -->
+  <button type="button" class="button button-primary" id="Expand-Profile-Form">Edit profile</button>
+  <button type="button" class="button button-secondary toggle" id="Cancel-Profile-Form">Cancel</button>
+
+  <!-- Error messages -->
+  <p id="Avatar-Error" class="error toggle"></p>
+  <p id="Update-Error" class="toggle"></p>
 
 </div>

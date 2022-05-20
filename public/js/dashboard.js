@@ -14,6 +14,8 @@ const addAdminButton = document.querySelector('#add-admin-button');
 /** @type HTMLTemplateElement */
 const adminFormTemplate = document.querySelector('#new-admin');
 
+/** @type {string} - Default avatar path */
+const defaultAvatar = '/images/Default-Profile-Picture.jpg';
 
 // Some JSDoc Record Types:
 /**
@@ -27,7 +29,7 @@ const adminFormTemplate = document.querySelector('#new-admin');
  *      _id: string,
  *      name: string,
  *      emailAddress: string,
- *      avatarURL: string,
+ *      avatar: string,
  *      dateJoined: MongoDate,
  *      achievements: Array<string>,
  *      admin: boolean
@@ -46,7 +48,13 @@ function makeUserRow(userDoc) {
     row.querySelector(".admin-name").value = userDoc.name;
     row.setAttribute('data-user-id', userDoc._id);
     // Fill in other stuff, too?
-    // TODO: Profile pictures!
+    // The profile pictures
+    const userAvatar = row.getElementsByClassName('profile-picture').item(0);
+    if (userDoc.avatar !== defaultAvatar && userDoc.avatar !== null) {
+        let base64 = userDoc.avatar.data['$binary'].base64;
+        base64 = `data:${userDoc.avatar.contentType};base64,${base64}`;
+        userAvatar.src = base64;
+    }
 
     /** @type HTMLButtonElement */
     const deleteButton = row.getElementsByClassName('delete-button').item(0);
@@ -82,9 +90,18 @@ function deleteAction(userID) {
     }
 }
 
-function validInput(input) {
+/** 
+ * Checks if the user wrote a valid name in the form.
+ * If invalid, send toast.
+ * @param {HTMLInputElement} input - the name field in the form
+ * @returns a boolean
+ */
+function validNameInput(input) {
     const checkInput = input.value;
     if (checkInput == undefined || checkInput == null || checkInput.trim().length == 0) {
+        toastQueue.queueToasts([
+            { message: `Please enter a valid name`, classes: ["toast-error"] }
+        ]);
         return false;
     }
     return true;
@@ -106,7 +123,7 @@ function editAction(userID) {
             userListItem.classList.remove('inactive-input');
             userListItem.classList.add('active-input');
             // Change the button's icon to editing mode
-            editButton.innerHTML = `<span class="material-icons teal">done</span>`;
+            editButton.innerHTML = `<span class="material-symbols-outlined teal">done</span>`;
             // Implementing Katy's cool toast queue feature
             toastQueue.queueToasts([
                 { message: `Editing "${userInput.value}"`, classes: ["toast-info"] }
@@ -114,11 +131,11 @@ function editAction(userID) {
             return;
         }
         
-        if (validInput(userInput)) {
+        if (validNameInput(userInput)) {
             userInput.disabled = true;
             userListItem.classList.remove('active-input');
             userListItem.classList.add('inactive-input');
-            editButton.innerHTML = `<span class="material-icons teal">edit</span>`;
+            editButton.innerHTML = `<span class="material-symbols-outlined teal">edit</span>`;
 
             let data = {
                 '_id': userID,
@@ -137,6 +154,9 @@ function editAction(userID) {
                 toastQueue.queueToasts([
                     { message: `Saved "${userInput.value}"`, classes: ["toast-success"] }
                 ]);
+
+                refreshUsers(fetch('profiles'));
+                getProfileDetails();
                 return;
                 
             } catch (err) {
@@ -146,13 +166,6 @@ function editAction(userID) {
                 throw err;
             }
         }
-
-        if (!validInput(userInput)) {
-            toastQueue.queueToasts([
-                { message: `Please enter a valid name`, classes: ["toast-error"] }
-            ]);
-            return;
-        }
     }
 }
 
@@ -160,7 +173,6 @@ function editAction(userID) {
 function closeForm() {
     document.querySelector('#add-admin-form').remove();
     document.querySelector('.form-overlay').remove();
-    document.body.classList.remove('disableScroll');
 }
 
 function cancelCreateAdmin() {
@@ -172,6 +184,8 @@ function cancelCreateAdmin() {
 
 function uploadFileFeedback() {
     if (validFileType(this.files)) {
+        const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName-Admin");
+        UserFeedbackFile.innerHTML = this.files[0].name;
         toastQueue.queueToasts([
             { message: "File selected", classes: ["toast-info"] }
         ]);
@@ -180,11 +194,11 @@ function uploadFileFeedback() {
 
 // Code snippet from Mozilla
 // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
-const fileTypes = [
-    "image/jpeg",
-    "image/png",
-];
 async function validFileType(file) {
+    const fileTypes = [
+        "image/jpeg",
+        "image/png",
+    ];
     return fileTypes.includes(file.type);
 }
 
@@ -193,7 +207,7 @@ function makeAdminForm() {
     // Clone the contents of the add-admin-form template
     const form = adminFormTemplate.content.cloneNode(true).firstElementChild;
     const cancelButton = form.querySelector('#admin-form-cancel-button');
-    const formImage = form.querySelector('#Upload-Avatar');
+    const formImage = form.querySelector('#Upload-Admin-Avatar');
 
     // Create the overlay to darken the contents of the screen
     const overlay = document.createElement('div');
@@ -206,16 +220,12 @@ function makeAdminForm() {
 
     document.body.appendChild(form);
     document.body.insertBefore(overlay, form);
-
-    document.body.classList.add('disableScroll');
 }
 
 addAdminButton.addEventListener('click', makeAdminForm);
 
 
 // Submit form contents
-// TODO: make image uploadable
-// 
 async function submitAdminForm(event) {
     event.preventDefault();
     const adminForm = event.currentTarget;
@@ -223,43 +233,36 @@ async function submitAdminForm(event) {
     const formInputEmail = adminForm.querySelector('#admin-form-input-email');
     const formInputPassword = adminForm.querySelector('#admin-form-input-password');
     /** @type HTMLInputElement */
-    const formImage = adminForm.querySelector('#Upload-Avatar');
+    const formImage = adminForm.querySelector('#Upload-Admin-Avatar');
+
+    // Create an empty form data object to manually add the input
+    // Don't specify headers when POSTing
     const formData = new FormData();
-    formData.append('avatar', formImage.files[0]);
+    if (formImage.files == undefined || formImage.files.length == 0) {
+        toastQueue.queueToasts([
+            { message: "Please upload a png or jpg file", classes: ["toast-info"] }
+        ]);
+    } else {
+        formData.append('name', formInputName.value.trim() || 'New Admin');
+        formData.append('emailAddress', formInputEmail.value);
+        formData.append('pwd', formInputPassword.value);
+        formData.append('avatar', formImage.files[0]);
+        formData.append('admin', true);
+        const response = await fetch("/create-user", {
+            method: "POST",
+            body: formData
+        })
 
-    const data = {
-        'name': formInputName.value.trim() || 'New Admin',
-        'emailAddress': formInputEmail.value,
-        'pwd': formInputPassword.value,
-        'dateJoined': new Date(),
-        'achievements': [ 'gettingStarted', 'planKit', 'finishKit' ],
-        'admin': true
-    };
-    const response = await fetch('/create-user', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    });
-    const status = await response.text();
-    serverMessages(status);
+        const status = await response.text();
+        serverMessages(status);
 
-    if (!response.ok) {
+        if (!response.ok) {
+            return;
+        }
+
+        refreshUsers(fetch('profiles'));
         return;
     }
-
-    // Account creation was successful, now upload avatar!
-    // formData.append('emailAddress', data.emailAddress);
-    const reqURL = new URL(location.href);
-    reqURL.searchParams.set('targetEmail', data.emailAddress);
-    reqURL.pathname = '/upload-avatar-new-admin';
-    const responseAvatar = await fetch(reqURL, {
-        method: 'POST',
-        body: formData
-    });
-    const avatarStatus = await responseAvatar.text()
-    serverMessages(avatarStatus);
 }
 
 
@@ -339,5 +342,23 @@ async function subscribeToChanges() {
 }
 
 subscribeToChanges();
-
 refreshUsers(fetch('profiles'));
+
+
+const logoutButton = document.getElementById("Button-Logout");
+
+logoutButton.onclick = async () => {
+    const response = await fetch('/logout', {
+        method: 'POST'
+    });
+
+    const status = await response.text();
+    switch (status) {
+        case 'logoutSuccessful':
+            window.location.href = "./";
+            break;
+        default:
+            break;
+    }
+
+};

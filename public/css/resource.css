@@ -1,0 +1,28 @@
+#Base-Container{
+    /* place-items: start; */
+    display: grid;
+    margin-left: 5em;
+    margin-right: 5em;
+}
+
+@media only screen and (max-width: 768px) {
+    #Base-Container{
+        grid-template-columns: 1fr;
+        margin-left: 0em;
+        margin-right: 0em;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    #Base-Container{
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    #Base-Container{
+        column-gap: 25px;
+        row-gap: 25px;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}

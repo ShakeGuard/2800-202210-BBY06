@@ -2,37 +2,40 @@
 @import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
 
 
-/* Modified Google Icons styles */
-.material-icons.md-dark { color: rgba(0, 0, 0, 1); }
-.material-icons.teal { color: rgba(23, 165, 186, 1); }
-
 :root {
     --color-primary: rgb(23, 165, 186);
     --color-secondary: rgb(251, 179, 59);
     --color-error: rgb(235, 65, 13);
     --color-success: rgb(18, 210, 164);
+    --toast-text: white;
+    --nice-drop-shadow: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    
+    --color-unfocused: rgba(0,0,0,0.5);
+    --color-text: rgba(0,0,0,1);
 }
 
 
 body {
     margin: 0;
+    padding: 0;
     font-family: 'Satoshi', sans-serif;
     font-weight: 400;
 }
 
-h1, p {
-    color: black;
+h1 {
+    text-align: center;
 }
 
 #dashboard-grid {
     display: grid;
     grid-template-columns: 10% minmax(0, 1fr) 10%;
-    margin-bottom: 10%;
+    margin-bottom: 20vh;
 }
 
 #overlay-grid {
 	display: grid;
 	position: fixed;
+    top: 0;
 	grid-template-columns: 100vw;
 	grid-template-rows: 90vh 10vh;
 	height: 100vh;
@@ -59,7 +62,7 @@ h1, p {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--toast-text);
 }
 
 /* Admin user list */
@@ -111,7 +114,7 @@ h1, p {
     padding: 5%;
     border-radius: 1.5rem;
     background-color: white;
-    filter: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    filter: var(--nice-drop-shadow);
 }
 
 .user-item-name-pic {
@@ -126,20 +129,14 @@ h1, p {
     border-top: none;
     border-right: none;
     border-left: none;
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--color-unfocused);
 }
 
 .admin-name:focus {
     font-weight: 700;
-    color: rgba(0, 0, 0, 1);
+    color: var(--color-text);
 }
 
-.profile-picture {
-    min-width: 3rem;
-    width: 15%;
-    height: auto;
-    border-radius: 50%;
-}
 
 .edit-button-group button {
     color: black;
@@ -153,129 +150,14 @@ h1, p {
 }
 
 
-/* Admin form */
-
-#add-admin-form {
-    color: black;
-    background-color: white;
-    filter: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
-    border-radius: 1.5rem;
-    padding: 2rem;
-
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    gap: 1rem;
-
-    position: absolute;
-    top: 10%;
-    right: 10%;
-    bottom: 10%;
-    left: 10%;
-
-    overflow-y: auto;
-}
-#add-admin-form h2 {
-    margin: 0;
-    font-size: 1.8rem;
-}
-#add-admin-form > input {
-    width: 100%;
-    grid-column: 1 / span 1;
-    border-style: none;
-
-    padding: 0.2rem 0.5rem;
-    font-size: 1.1rem;
-    border-bottom: 2px solid #c4c4c4;
-}
-
-.button-group {
-    display: flex;
-    flex-direction: column-reverse;
-}
-
-#add-admin-form img {
-    width: 6rem;
-}
-
-.form-overlay {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+.user-item .profile-picture {
+    clip-path: circle(50% at 50% 50%);
+    min-width: 2.5rem;
+    width: 3.5rem;
+    height: auto;
 }
 
 
-
-/* Upload image style */
-.upload-image-container {
-    width: 100%;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 3rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    position: relative;
-}
-
-.upload-image-group {
-    position: relative;
-}
-
-.upload-image-group > .profile-picture {
-    padding: 0;
-    border: 1rem solid rgb(237, 237, 237);
-}
-.upload-button-group {
-    position: absolute;
-    bottom: 0;
-    right: -0.5rem;
-    width: 3rem;
-    height: 3rem;
-}
-.default-upload-button {
-    display: none;
-    width: 100%;
-    height: 100%;
-}
-.custom-upload-button {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    border-radius: 1.5rem;
-    background-color: white;
-    color: black;
-    font-size: 2rem;
-    vertical-align: middle;
-    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
-    transition: background-color 0.1s ease-in;
-}
-.custom-upload-button:hover,
-.custom-upload-button:active,
-.custom-upload-button:focus {
-    background-color: #f5f5f5;
-}
-
-.active-input {
-    font-weight: 700;
-    background-color: rgba(251, 179, 59, 0.2);
-    transition: background-color ease-in 0.2s;
-}
-.inactive-input {
-    font-weight: 400;
-    background-color: white;
-    transition: background-color ease-in 0.2s;
-}
-
-.disableScroll {
-    overflow-y: hidden;
-}
 
 /*************** Media queries *******************/
 
@@ -295,27 +177,14 @@ h1, p {
     .user-item-name {
         font-size: 1.4em;
     }
-
-    /* Admin form */
-    .button-group {
-        flex-direction: row;
-        height: 6rem;
-        gap: 3rem;
-    }
-
-    #add-admin-form h2 {
-        margin-top: 1rem;
-        font-size: 2.4rem;
-    }
 }
 
 /* For larger screens */
 @media only screen and (min-width: 1200px) {
+    #dashboard-grid {
+        grid-template-columns: 15% minmax(0, 1fr) 15%;
+    }
     .user-item-name-pic {
         gap: 3%;
     }
-    .profile-picture {
-        max-width: 10%;
-    }
-    
 }

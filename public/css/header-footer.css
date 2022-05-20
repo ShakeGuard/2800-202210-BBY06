@@ -13,6 +13,7 @@ nav {
     right: 0;
     max-width: 100vw;
     overflow: hidden;
+    color: black !important;
 }
 
 .logo {
@@ -23,7 +24,6 @@ nav {
 #menu-icon {
     height: 3rem;
 }
-
 
 /* 
     Collapsible menu tutorial referenced
@@ -60,21 +60,69 @@ input:checked ~ ul {
 .collapsible-content .content-inner {
     padding: .5rem 1rem;
     text-align: center;
-    background-color: #caeefa;
+    background-color: #9fe0ea;
 }
 .collapsible-content ul {
+    max-width: 100%;
     list-style: none;
     padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.content-inner li > * {
+    max-width: 100%;
 }
 
 .content-inner a {
     display: block;
+    color: black !important;
 }
 
-footer {
-    text-align: center;
+#Button-Logout {
+    width: 100%;
 }
 
-footer img {
+#easteregg_container {
+    position: absolute;
+    min-width: 8rem;
+    left: 0;
+    overflow: clip;
+}
+
+#crack {
+    max-width: 8rem;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+    filter: opacity(5%);
+}
+
+footer svg {
+    user-select: none;
+}
+
+.slideup {
+    transform: translateY(0%) rotate(-2.5deg) !important;
+}
+
+#tai_postit {
+    position: absolute;
+    transform: translateY(150%) rotate(5deg);
+    transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.5s transform;
+}
+  
+footer > .footer-content {
+    max-width: 100%;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column;
+}
+
+footer > .footer-content > div {
+    justify-content: center;
+}
+
+.footer-content img {
     width: 3rem;
 }
