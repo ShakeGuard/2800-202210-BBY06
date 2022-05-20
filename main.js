@@ -367,7 +367,7 @@ app.get('/profile', async (req, res) => {
     profile.window.document.getElementById("FullName").defaultValue = req.session.name;
 	profile.window.document.getElementById("Email").defaultValue = req.session.email;
 
-	if (req.session.easterEgg) 
+	if (req.session.easterEgg) {
 		profile = applyEasterEggStyle(profile);
 	}
 
