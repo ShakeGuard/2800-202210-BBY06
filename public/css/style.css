@@ -2,6 +2,7 @@
 @import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
 
 body {
+    display: grid;
     justify-content: center;
     background-color: #FFFFFF;
     font-family: 'Satoshi', sans-serif;
