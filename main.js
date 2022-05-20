@@ -304,7 +304,13 @@ function redirectToLogin(req, res) {
 	}
 	return false;
 }
-
+/**
+ * Hide the logout/login buttons as appropriate, based on whether the user 
+ * has an active session.
+ * NOTE: param types might be wrong fix em later
+ * @param  {JSDOM} baseDOM
+ * @param  {Request} req
+ */
 function changeLoginButton(baseDOM, req) {
 	const document = baseDOM.window.document;
 	if(!req.session || !req.session.loggedIn) {
@@ -1039,6 +1045,8 @@ app.get('/resource', async (req,res) =>{
 	let resourceDoc = await readFile("./html/resource.html","utf-8");
 	const baseDOM = new JSDOM(resourceDoc);
 	let resource = await loadHeaderFooter(baseDOM);
+
+	resource = changeLoginButton(resource, req);
 
 	let cardDoc = await readFile("./templates/card.html", "utf-8");
 	const cardDOM = new JSDOM(cardDoc);
