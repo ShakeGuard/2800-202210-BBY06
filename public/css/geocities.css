@@ -12,3 +12,9 @@ body {
 * {
     font-family: 'Levity', 'Satoshi', sans-serif !important;
 }
+.material-symbols-outlined {
+	font-family: 'Material Symbols Outlined', sans-serif !important;
+}
+.user-kit-list-item{
+	color: black;
+}
