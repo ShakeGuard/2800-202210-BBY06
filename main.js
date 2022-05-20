@@ -309,6 +309,7 @@ function changeLoginButton(baseDOM, req) {
 	const document = baseDOM.window.document;
 	if(!req.session || !req.session.loggedIn) {
 		document.getElementById("Button-Logout").style.display = "none";
+		document.getElementById("Kit-Button").style.display = "none";
 	} else {
 		document.getElementById("Button-Login-Nav").style.display = "none";
 	}
