@@ -84,16 +84,45 @@ input:checked ~ ul {
     width: 100%;
 }
 
-footer {
+#easteregg_container {
+    position: absolute;
+    min-width: 8rem;
+    left: 0;
+    overflow: clip;
+}
+
+#crack {
+    max-width: 8rem;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+    filter: opacity(5%);
+}
+
+footer svg {
+    user-select: none;
+}
+
+.slideup {
+    transform: translateY(0%) rotate(-2.5deg) !important;
+}
+
+#tai_postit {
+    position: absolute;
+    transform: translateY(150%) rotate(5deg);
+    transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.5s transform;
+}
+  
+footer > .footer-content {
     max-width: 100%;
     text-align: center !important;
     display: flex !important;
     flex-direction: column;
 }
 
-footer > div {
+footer > .footer-content > div {
     justify-content: center;
 }
-footer img {
+
+.footer-content img {
     width: 3rem;
 }

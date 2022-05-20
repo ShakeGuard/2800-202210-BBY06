@@ -1,0 +1,20 @@
+@font-face {
+    font-family: "Levity";
+    src: url("/fonts/levity.woff2") format("woff2"),
+         url("/fonts/levity.ttf") format("truetype");
+}
+
+body {
+    color: white;
+	background: url("../images/easteregg/geocities_background.jpg");
+}
+
+* {
+    font-family: 'Levity', 'Satoshi', sans-serif !important;
+}
+.material-symbols-outlined {
+	font-family: 'Material Symbols Outlined', sans-serif !important;
+}
+.user-kit-list-item{
+	color: black;
+}

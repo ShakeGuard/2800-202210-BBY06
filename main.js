@@ -21,6 +21,7 @@ import { hideBin } from 'yargs/helpers';
 
 import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
 import {readSecrets} from './shakeguardSecrets.mjs';
+import applyEasterEggStyle from './easterEgg.mjs';
 
 const argv = yargs(hideBin(process.argv))
   .option('port', {
@@ -154,6 +155,14 @@ async function initDatabase(db){
 	const users = await usersCollection.find({}).toArray();
 	if (users.length === 0) {
 		const usersJson = JSON.parse(await readFile('./data/users.json', 'utf-8'));
+		usersJson.forEach(user => {
+			user.kits.forEach(kit => {
+				kit._id = new mdb.ObjectId();
+				kit.kit.forEach(item=> {
+					item._id = new mdb.ObjectId();
+				})
+			})
+		})
 		await db.collection("BBY-6_users").insertMany(usersJson);
 		// Create a unique index on the emailAddress field in the users collection.
 		await db.collection("BBY-6_users").createIndex({ emailAddress: 1 }, { unique: true });
@@ -252,7 +261,9 @@ app.use(sessionParser);
 app.use("/js", express.static("public/js"));
 app.use("/css", express.static("public/css"));
 app.use("/images", express.static("public/images"));
+app.use("/sounds", express.static("public/sounds"));
 app.use("/html", express.static("public/html"));
+app.use("/fonts", express.static("public/fonts"));
 
 app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {
@@ -350,12 +361,23 @@ app.get('/profile', async (req, res) => {
 	const baseDOM = new JSDOM(doc);
 	let profile = await loadHeaderFooter(baseDOM);
 	profile = changeLoginButton(profile, req);
-
+	if(req.session.easterEgg) {
+		const link = profile.window.document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = 'css/geocities.css'
+		profile.window.document.getElementsByTagName('HEAD')[0].appendChild(link);
+	}
 	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
 	profile = await loadHTMLComponent(profile, "#kit-templates", "div", "./templates/kit.html");
 
     profile.window.document.getElementById("FullName").defaultValue = req.session.name;
 	profile.window.document.getElementById("Email").defaultValue = req.session.email;
+
+	if (req.session.easterEgg) {
+		profile = applyEasterEggStyle(profile);
+	}
+
 	res.send(profile.serialize());
 });
 
@@ -975,6 +997,7 @@ app.post("/login", async (req, res) => {
 			req.session.loggedIn = true;
 			req.session.isAdmin = user.admin;
 			req.session._id = user._id;
+			req.session.easterEgg = user.name === "Tai Lopez";
 			if (user.admin) {
 				res.send("loginSuccessfulAdmin")
 			} else {
