@@ -39,7 +39,6 @@ function increaseCrack() {
 
     crackState.clicks = crackState.clicks + 1;
     if (crackState.clicks > 10) {
-        console.log('ding?')
         dingSoundEl.play();
         taiEl.classList.add('slideup');
         crackState.done = true;
