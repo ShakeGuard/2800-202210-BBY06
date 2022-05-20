@@ -983,6 +983,7 @@ app.post("/login", async (req, res) => {
 			req.session.loggedIn = true;
 			req.session.isAdmin = user.admin;
 			req.session._id = user._id;
+			req.session.easterEgg = user.name === "Tai Lopez";
 			if (user.admin) {
 				res.send("loginSuccessfulAdmin")
 			} else {
