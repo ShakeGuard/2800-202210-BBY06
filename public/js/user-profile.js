@@ -425,6 +425,8 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 		// TODO: edit and delete item functionality
 		const editItemButton = itemRow.querySelector('span.edit');
 		customItem = itemRow;
+		editItemButton.dataset.kitIndex = kitIndex;
+		editItemButton.dataset.itemIndex = itemIndex;
 		editItemButton.addEventListener('click', editItemSubmissionHandler);
 		const deleteItemButton = itemRow.querySelector('.edit-button-group .delete');
 	} else {
@@ -523,9 +525,13 @@ function toggleItemEditing(customItem) {
 
 async function editItemSubmissionHandler(e) {
 	e.preventDefault();
+	const kitIndex = e.target.dataset.kitIndex;
+	const itemIndex = e.target.dataset.itemIndex;
+	const row = e.target.parentElement.parentElement;
 	// Change icon in the button to the appropriate one
 	if (e.target.innerText === 'done') {
 		e.target.innerText = 'edit'
+		await editItem(kitIndex, itemIndex, row);
 	} else {
 		e.target.innerText = 'done';
 	}
@@ -533,7 +539,25 @@ async function editItemSubmissionHandler(e) {
 	toggleItemEditing(customItem);
 }
 
-
+async function editItem(kitIndex, itemIndex, row) {
+	const response = await fetch('/edit-item', {
+		method: "PATCH",
+		headers: {'Content-Type':'application/json'},
+		body: JSON.stringify({
+			"_id": userKits[kitIndex]._id,
+			"itemProps": {
+				"_id": userKits[kitIndex].kit[itemIndex]._id,
+				"name": row.querySelector(".item-name").value,
+				"quantity": row.querySelector(".item-quantity").value,
+				"description": row.querySelector(".item-description").value,
+				"image": userKits[kitIndex].kit[itemIndex].image,
+				"required": false,
+				"completed": userKits[kitIndex].kit[itemIndex].completed,
+			}
+		})
+	})
+	// TODO: Handle errors
+}
 // Delete a kit
 let requestedKitID = "";
 async function createDeleteConfirmation(e) {
