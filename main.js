@@ -263,6 +263,7 @@ app.use("/css", express.static("public/css"));
 app.use("/images", express.static("public/images"));
 app.use("/sounds", express.static("public/sounds"));
 app.use("/html", express.static("public/html"));
+app.use("/fonts", express.static("public/fonts"));
 
 app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {

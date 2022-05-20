@@ -7,6 +7,11 @@
     --color-secondary: rgb(251, 179, 59);
     --color-error: rgb(235, 65, 13);
     --color-success: rgb(18, 210, 164);
+    --toast-text: white;
+    --nice-drop-shadow: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    
+    --color-unfocused: rgba(0,0,0,0.5);
+    --color-text: rgba(0,0,0,1);
 }
 
 
@@ -57,7 +62,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--toast-text);
 }
 
 /* Admin user list */
@@ -109,7 +114,7 @@ h1 {
     padding: 5%;
     border-radius: 1.5rem;
     background-color: white;
-    filter: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    filter: var(--nice-drop-shadow);
 }
 
 .user-item-name-pic {
@@ -124,12 +129,12 @@ h1 {
     border-top: none;
     border-right: none;
     border-left: none;
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--color-unfocused);
 }
 
 .admin-name:focus {
     font-weight: 700;
-    color: rgba(0, 0, 0, 1);
+    color: var(--color-text);
 }
 
 
