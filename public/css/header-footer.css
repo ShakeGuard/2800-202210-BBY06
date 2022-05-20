@@ -98,6 +98,10 @@ input:checked ~ ul {
     filter: opacity(5%);
 }
 
+footer svg {
+    user-select: none;
+}
+
 .slideup {
     transform: translateY(0%) rotate(-2.5deg) !important;
 }
