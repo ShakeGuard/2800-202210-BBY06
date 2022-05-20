@@ -78,8 +78,8 @@ a, a:visited{
     #Base-Container{
         width: auto;
     }
-    #Article-Continer-Content{
-        text-align: center;
+    .Article-Continer-Content{
+        text-align: start;
         font-size: 20px;
         margin: 1em;
     }
@@ -89,8 +89,8 @@ a, a:visited{
     #Base-Container{
         width: auto;
     }
-    #Article-Continer-Content{
-        text-align: center;
+    .Article-Continer-Content{
+        text-align: start;
         font-size: 22px;
         margin: 1.5em;
     }
@@ -100,8 +100,8 @@ a, a:visited{
     #Base-Container{
         width: auto;
     }
-    #Article-Continer-Content{
-        text-align: center;
+    .Article-Continer-Content{
+        text-align: start;
         font-size: 25px;
         margin: 2em;
     }

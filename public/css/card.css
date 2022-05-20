@@ -67,6 +67,6 @@ h1 {
 @media only screen and (min-width: 1200px) {
     .Card-Container{
         width: 100%;
-        font-size: 15px;
+        font-size: 20px;
     }
 }
