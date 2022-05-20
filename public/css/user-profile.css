@@ -1,16 +1,20 @@
+/* Modify global styles for forms here: */
+@import url('/css/forms.css'); 
+
 * {
     font-family: 'Satoshi', sans-serif;
 }
 
 body{
-    display: grid;
-    justify-content: center;
+    /* width: 100vw; */
+    margin: 0;
+    padding: 0;
 }
 
 #Base-Container{
     display: grid;
     grid-template-rows: repeat(6, auto);
-    grid-template-columns: 1fr;
+    grid-template-columns: 80vw;
     background-color: #FDF1BD;
     place-items: center;
     place-self: center;
@@ -18,7 +22,10 @@ body{
     border-radius: 25px;
     margin-top: 50px;
     text-align: center;
-    width: 95%;
+    min-width: 300px;
+    max-width: 80vw;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #Base-Container-ProfilePicture-Container{
@@ -51,10 +58,9 @@ body{
     grid-template-rows: 1fr;
     grid-column: 1 / span 1;
     grid-row: 2 / span 1;
-    padding: 5px;
     text-align: center;
     height: 100%;
-    width: 100%;
+    max-width: 100%;
 }
 
 #Upload-Avatar{
@@ -80,7 +86,7 @@ body{
 }
 
 #FullName, #Email, #Password{
-    font-size: 23px;
+    font-size: 1.2rem;
 }
 
 #FullName:disabled, #Email:disabled, #Password:disabled{
@@ -145,7 +151,7 @@ body{
     grid-row: 2 / span 1;
     display: grid;
     grid-template-rows: 1fr;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: minmax(0, 3fr) 1fr;
     place-self: center;
     justify-self: start;
     font-size: 25px;
@@ -174,72 +180,10 @@ body{
     'wght' 400,
     'GRAD' 0,
     'opsz' 48
-  }
-
-#Update-Button{
-    user-select: none;
-    -moz-user-select: none;    
-    -ms-user-select: none;  
-    -webkit-user-select: none; 
-    border: none;    
-    border-radius: 25px;
-    background-color: #FBB33B;
-    max-width: 300px;
-    padding-left: 35px;
-    padding-right: 35px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    height: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-    box-shadow: 1.5px 1.5px 2px rgb(202, 187, 144);
-    font-weight: 700;
 }
 
 #Update-Button:hover{
     background-color: #ffbd4a;
-}
-
-#Centering-Container-BackToKit{
-    user-select: none;
-    -moz-user-select: none;    
-    -ms-user-select: none;  
-    -webkit-user-select: none; 
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    place-items: center;
-}
-
-#Base-Container-BackToKit{
-    display: grid;
-    padding-right: 50px;
-    grid-template-columns: 1fr 1.40fr;
-    grid-template-rows: 1fr;
-    justify-content: center;
-    align-items: center;
-}
-
-#Back-Button-Arrow{
-    font-size: 45px !important;
-    color: #17A5BA;
-    justify-self: end;
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 1;
-}
-
-#Back-Button{
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 1;
-    color: #17A5BA;
-    font-size: 25px;
-    font-weight: bold;
-    text-align: left;
-}
-
-#Base-Container-BackToKit:hover > span, #Base-Container-BackToKit:hover > p{
-    color: #2dc7df;
 }
 
 #Update-Error{
@@ -250,15 +194,452 @@ body{
     display: none;
 }
 
+.welcome-message {
+    font-size: 2.4rem;
+    padding-top: 1rem;
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.welcome-message span {
+    font-family: 'Sharpie', serif;
+    font-weight: 400;
+    font-size: 2.8rem;
+}
+
+#user-kits {
+    max-width: 80vw;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#user-kits-message {
+    font-weight: 700;
+    color: #4f4f4f;
+}
+
+
+#Expand-Profile-Form {
+    margin-bottom: 3rem;
+}
+
+.toggle {
+    display: none;
+    transition: all 0.2s ease;
+}
+
+
+/* All ul elements in the kit */
+#user-kits ul {
+    list-style: none;
+    padding: 0;
+}
+
+/** User kit items container **/
+#user-kit-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* All li elements in the kit */
+#user-kit-list li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) 3rem;
+    grid-template-rows: 2rem auto;
+    column-gap: 1rem;
+    grid-gap: 1rem;
+    padding: 1rem;
+    transition: all 0.2s ease-in;
+    text-align: left;
+    align-items: center;
+}
+/* All p elements in the kit */
+#user-kit-list p {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+/* Specifically for the Kit */
+.user-kit-list-item {
+    background-color: white;
+    border-radius: 1.5rem;
+    border: 2px solid white;
+    filter: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    transition: all 0.2s ease;
+}
+
+.user-kit-list-item:hover,
+.user-kit-list-item:active,
+.user-kit-list-item:focus {
+    border: 2px solid rgba(23, 165, 186, 1);
+}
+
+/* Kit icons */
+.user-kit-list-item > span {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    border-radius: 1rem;
+}
+
+/* Icon representing the kit */
+.user-kit-list-item .kit-icon {
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+    font-size: 2.4rem !important;
+    height: auto;
+    color: rgba(23, 165, 186, 1);
+    font-variation-settings: 'FILL' 0,
+        'wght' 300, 
+        'GRAD' 0, 
+        'opsz' 48;
+}
+/* Expand kit arrow icon */
+.user-kit-list-item .expand-kit {
+    grid-column: 3 / span 1;
+    grid-row: 1/ span 1;
+    font-size: 2rem !important;
+    
+}
+/* Delete kit icon */
+.user-kit-list-item .delete-kit {
+    grid-column: 3 / span 1;
+    grid-row: 2 / span 1;
+    font-size: 2rem !important;
+}
+
+.user-kit-list-item .expand-kit:hover,
+.user-kit-list-item .delete-kit:hover {
+    background-color: rgba(23, 165, 186, 0.25);
+}
+
+/* Kit name */
+.user-kit-list-item > h3 {
+    width: 100%;
+    height: 100%;
+    font-size: 1.2rem;
+    padding: 0;
+    margin: 0;
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 1;
+}
+
+.user-kit-list-item > p {
+    grid-column: 2 / span 1;
+    grid-row: 2 / span 1;
+}
+
+/* This is where the kit items are inserted */
+.user-kit-list-item > ul {
+    width: 100%;
+    grid-column: 1 / span 3;
+    grid-row: 3 / span 1;
+    margin-top: 0;
+    max-height: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-kit-list-item .add-custom-item {
+    grid-column: 1 / span 3;
+    grid-row: 4 / span 1;
+    margin-bottom: 1.5rem;
+}
+
+/* Styling for the individual items inside the kit array */
+.kit-item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) 1.8rem !important;
+    grid-template-rows: auto auto auto auto;
+    max-width: 100%;
+    background-color: #e5f7f9;
+    border-top: 1px solid rgba(23, 165, 186, 1);
+}
+/* All labels in the kit item */
+.kit-item label,
+.kit-item input,
+.kit-item textarea {
+    font-size: 0.8rem;
+    font-weight: 400;
+    max-width: 100%;
+    height: 100%;
+}
+/* Get rid of default input styles */
+.kit-item input,
+.kit-item textarea {
+    background-color: transparent;
+    border: none;
+}
+.kit-item input {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.kit-item img {
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+    width: 3rem;
+}
+
+.kit-item label[for=item-name] {
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+}
+
+.kit-item .item-name {
+    grid-column: 2 / span 1;
+    grid-row: 2 / span 1;
+    margin: 0;
+}
+
+.kit-item .checkcircle {
+    width: 100%;
+    height: 100%;
+    font-size: 1.8rem !important;
+    grid-column: 3 / span 1;
+    grid-row: 1 / span 1;
+    cursor: pointer;
+    color: rgb(180, 180, 180);
+    font-variation-settings: 
+        'FILL' 0,
+        'wght' 400, 
+        'GRAD' 0, 
+        'opsz' 48;
+    transition: all 0.2s ease-in-out;
+}
+/* Cool transition of colour on hover */
+.kit-item .checkcircle:hover {
+    color: rgb(18, 210, 164);
+    font-variation-settings: 
+        'FILL' 1,
+        'wght' 300, 
+        'GRAD' 0, 
+        'opsz' 48;
+}
+
+.kit-item label[for=item-quantity] {
+    grid-column: 1 / span 1;
+    grid-row: 3 / span 1;
+}
+
+.kit-item .item-quantity {
+    max-width: 100%;
+    grid-column: 2 / span 1;
+    grid-row: 3 / span 1;
+}
+
+.kit-item .item-description {
+    grid-column: 1 / span 2;
+    grid-row: 4 / span 1;
+    height: 100%;
+}
+
+.kit-item .edit-button-group {
+    grid-column: 3 / span 1;
+    grid-row: 4 / span 1;
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+}
+.kit-item .edit-button-group span {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-radius: 1rem;
+    padding: 0.2rem 0.4rem;
+}
+
+.kit-item .edit-button-group span:hover {
+    background-color: rgba(23, 165, 186, 0.25);
+}
+
+/* Specific to the Create Kit form; see forms.css for more info */
+.kit-option {
+    background-color: white;
+    border: 2px solid white;
+    border-radius: 1.5rem;
+    filter: drop-shadow(0 0.4rem 0.4rem rgba(0, 0, 0, 0.1));
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.kit-option:hover {
+    border: 2px solid rgba(23, 165, 186, 1);
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.selected-kit {
+    background-color: rgba(23, 165, 186, 0.25);
+    border: 2px solid rgba(23, 165, 186, 1);
+}
+
+.custom-item {
+    background-color: #fff3df;
+}
+
+#kit-information {
+    background-color: rgba(23, 165, 186, 0.05);
+    border-radius: 1.5rem;
+    padding: 0.5rem 1rem;
+}
+
+#kit-information p {
+    text-align: left;
+    font-size: 0.8rem;
+}
+
+#kit-information .emphasis {
+    font-weight: 700;
+}
+
+/*************** Media queries *******************/
+
 @media only screen and (min-width: 768px) {
-    #Base-Container{
-        width: 768px;
+    /* Icon representing the kit */
+    .user-kit-list-item .kit-icon {
+        grid-column: 1 / span 1;
+        grid-row: 1 / span 2;
+        font-size: 5.4rem !important;
+        height: auto;
+        color: rgba(23, 165, 186, 1);
+        font-variation-settings: 'FILL' 0,
+            'wght' 200, 
+            'GRAD' 0, 
+            'opsz' 48;
     }
 
-    #Base-Container-FullName-Container{
-        margin-left: 0;
+    /* Kit name */
+    .user-kit-list-item > h3 {
+        font-size: 1.8rem;
+        padding: 0;
+        margin: 0;
+        grid-column: 2 / span 1;
+        grid-row: 1 / span 1;
     }
-    .Container{
-        margin-left: 0;
+
+    /* Expand kit arrow icon */
+    .user-kit-list-item .expand-kit {
+        font-size: 2.2rem !important;
+        
+    }
+    /* Delete kit icon */
+    .user-kit-list-item .delete-kit {
+        font-size: 2.2rem !important;
+    }
+
+    /* Styling for the individual items inside the kit array */
+    .kit-item {
+        display: grid;
+        grid-template-columns: 6rem minmax(0, 3.5rem) 1fr 3rem !important;
+        grid-template-rows: auto auto auto;
+    }
+
+    /* All labels in the kit item */
+    .kit-item label,
+    .kit-item input,
+    .kit-item textarea {
+        font-size: 1rem;
+        height: 100%;
+    }
+
+    .kit-item img {
+        grid-column: 1 / span 1;
+        grid-row: 1 / span 3;
+        width: 6rem;
+    }
+
+    .kit-item label[for=item-name] {
+        grid-column: 2 / span 1;
+        grid-row: 1 / span 1;
+        width: 6rem;
+    }
+    .kit-item .item-name {
+        grid-column: 3 / span 1;
+        grid-row: 1 / span 1;
+    }
+
+    .kit-item label[for=item-quantity] {
+        grid-column: 2 / span 1;
+        grid-row: 2 / span 1;
+        width: 6rem;
+    }
+    .kit-item .item-quantity {
+        grid-column: 3 / span 1;
+        grid-row: 2 / span 1;
+    }
+    .kit-item .item-description {
+        grid-column: 2 / span 2;
+        grid-row: 3 / span 1;
+    }
+
+    .kit-item .checkcircle {
+        font-size: 3rem !important;
+        grid-column: 4 / span 1;
+        grid-row: 1 / span 1;
+        font-variation-settings:
+            'FILL' 0,
+            'wght' 300,
+            'GRAD' 0,
+            'opsz' 48
+    }
+
+    .kit-item .edit-button-group {
+        grid-column: 4 / span 1;
+        grid-row: 3 / span 1;
+        gap: 2rem;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+    }
+
+    .kit-option {
+        max-width: 80%;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    #Base-Container,
+    #user-kits {
+        max-width: 70vw;
+    }
+
+    #kit-options-form {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+        height: fit-content;
+        top: 20%;
+        bottom: auto;
+    }
+
+    #kit-options-form h2 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 1;
+    }
+
+    #kit-1 {
+        grid-column: 1 / span 1;
+        grid-row: 2 / span 1;
+    }
+
+    #kit-2 {
+        grid-column: 2 / span 1;
+        grid-row: 2 / span 1;
+    }
+
+    #kit-options-form .button-group {
+        grid-column: 1 / span 2;
+        grid-row: 3 / span 1;
     }
 }

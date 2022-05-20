@@ -128,7 +128,7 @@ const connectMongo = async (url, dbName) => {
 		}
 
 		log.error('Error object details:');
-		log.dir(JSON.stringify(error, null, 2));
+		log.info(JSON.stringify(error, null, 2));
 
 		log.error('Exiting early due to errors!')
 		// TODO: consider any cleanup code before exiting: any open file handles?
@@ -175,6 +175,17 @@ async function initDatabase(db){
 	if (articles.length === 0) {
 		const articlesJson = JSON.parse(await readFile('./data/articles.json', 'utf-8'))
 		await db.collection("BBY-6_articles").insertMany(articlesJson);
+	}
+
+	const kits = await db.collection("BBY-6_kit-templates").find({}).toArray();
+	if(kits.length === 0 ){
+		const kitsJson = JSON.parse(await readFile('./data/kits.json', 'utf-8'))
+		kitsJson.forEach(kit => {
+			kit.kit.forEach(item => {
+				item._id = new mdb.ObjectId();
+			})
+		});
+		await db.collection("BBY-6_kit-templates").insertMany(kitsJson);
 	}
 }
 
@@ -223,9 +234,7 @@ try {
 	log.error(JSON.stringify(err, null, 2));
 }
 
-// Use the JSON middleware for parsing JSON request bodies.
-app.use(express.json());
-
+app.use(express.json({limit: '50mb'}));
 const sessionParser = session({
 	secret: secrets['session.json'].sessionSecret,
 	name: "ShakeGuardSessionID",
@@ -252,7 +261,7 @@ app.get('/', async function (req, res) {
 		} else {
 			res.redirect('/profile');
 		}
-		console.log("User logged in!");
+		log.info("User logged in!");
 		return;
 	}
 	
@@ -300,6 +309,7 @@ function changeLoginButton(baseDOM, req) {
 	const document = baseDOM.window.document;
 	if(!req.session || !req.session.loggedIn) {
 		document.getElementById("Button-Logout").style.display = "none";
+		document.getElementById("Kit-Button").style.display = "none";
 	} else {
 		document.getElementById("Button-Login-Nav").style.display = "none";
 	}
@@ -336,6 +346,8 @@ app.get('/profile', async (req, res) => {
 	profile = changeLoginButton(profile, req);
 
 	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
+	profile = await loadHTMLComponent(profile, "#kit-templates", "div", "./templates/kit.html");
+
     profile.window.document.getElementById("FullName").defaultValue = req.session.name;
 	profile.window.document.getElementById("Email").defaultValue = req.session.email;
 	res.send(profile.serialize());
@@ -407,9 +419,15 @@ app.get('/avatar', async(req, res) => {
 	}
 
 	const results = await db.collection('BBY-6_users').findOne({emailAddress:req.session.email});
+	let data, mimeType;
+	if (results?.avatar === null) {
+		// TODO: factor this out into a separate function/global constant/something.
+		data = await readFile("./public/images/Default-Profile-Picture.txt", "utf-8");
+		mimeType = 'image/jpeg';
+	}
 	res.status(200).send({
-		mimeType: results.avatarURL.contentType,
-		data: results.avatarURL.data
+		mimeType: results.avatar?.contentType ?? mimeType,
+		data: results.avatar?.data?.$binary?.base64 ?? data
 	})
 })
 
@@ -421,8 +439,12 @@ app.post('/avatar', upload.single("avatar"), async(req, res) => {
 
 	const results = await db.collection('BBY-6_users').updateOne({emailAddress:req.session.email}, {
 		$set: {
-			avatarURL: {
-				data: req.file.buffer,
+			avatar: {
+				data: {
+					$binary: {
+						base64: req.file.buffer
+					}
+				},
 				contentType: req.file.mimetype
 			}
 		}
@@ -451,6 +473,7 @@ app.get('/dashboard', async function (req, res) {
 		let dashboard = await loadHeaderFooter(baseDOM);
 		dashboard = changeLoginButton(dashboard, req);
 		let profileDetails = await loadHTMLComponent(dashboard, "#Base-Container", "div", "./templates/profile.html");
+		profileDetails = await loadHTMLComponent(dashboard, "#kit-templates", "div", "./templates/kit.html");
 	    profileDetails.window.document.getElementById("FullName").defaultValue = req.session.name;
 		profileDetails.window.document.getElementById("Email").defaultValue = req.session.email;
 		res.send(dashboard.serialize());
@@ -497,13 +520,14 @@ app.get('/profiles', async function (req, res) {
  *      emailAddress: string,
  *      pwd: string,
  *      admin: boolean,
- *      avatarURL: ?string,
+ *      avatar: ?object,
  *      dateJoined: ?Date,
- * 	    achievements: ?string[]
+ * 	    achievements: ?string[],
+ * 		kits: ?object[]
  * } } UserDoc
  * */
-app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
-	// req.file is the value of 'avatarURL' specified in the formData
+app.post('/create-user', upload.single('avatar'), async function (req, res) {
+	// req.file is the value of 'avatar' specified in the formData
 
 	if (!req.session.isAdmin) {
 		res.status(401).send('notAnAdmin');
@@ -512,13 +536,25 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 
 	try {
 		// Default values
-		const uploadedAvatar = {
-			data: req.file.buffer,
+		const uploadedAvatar = req.file ? {
+			data: {
+				$binary: {
+					base64: req.file.buffer
+				}
+			},
 			contentType: req.file.mimetype
+		} : undefined;
+		const defaultProfilePicture = await readFile("./public/images/Default-Profile-Picture.txt", "utf-8");
+		const defaultAvatar = {
+			data: {
+				$binary: {
+					base64: defaultProfilePicture
+				}
+			},
+			contentType: 'image/jpeg'
 		}
-		const defaultAvatar = '/images/Default-Profile-Picture.jpg';
 		const defaultAchievements = ["gettingStarted", "planKit", "finishKit"];
-
+		const defaultKits = [];
 		/** @type {UserDoc} */
 		const newUserDoc = {
 			_id: req.body?._id ?? undefined,
@@ -526,9 +562,10 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 			emailAddress: req.body?.emailAddress ?? undefined,
 			pwd: req.body?.pwd ?? undefined,
 			admin: (req.body?.admin == 'true') ? true : false, // Doing this because formdata can't send booleans
-			avatarURL: uploadedAvatar ?? defaultAvatar,
+			avatar: uploadedAvatar ?? defaultAvatar,
 			dateJoined: req.body?.dateJoined ?? undefined,
-			achievements: req.body?.achievements ?? defaultAchievements
+			achievements: req.body?.achievements ?? defaultAchievements,
+			kits: req.body?.kits ?? defaultKits
 		};
 
 		const requiredFields = ["name", "emailAddress", "pwd"];
@@ -552,10 +589,11 @@ app.post('/create-user', upload.single('avatarURL'), async function (req, res) {
 				name: newUserDoc.name,
 				emailAddress: newUserDoc.emailAddress,
 				pwd: await hashPassword,
-				avatarURL: newUserDoc.avatarURL,
+				avatar: newUserDoc.avatar,
 				dateJoined: convertedDate,
 				achievements: newUserDoc.achievements,
-				admin: newUserDoc.admin
+				admin: newUserDoc.admin,
+				kits: newUserDoc.kits
 			});
 			res.status(200).send("createdUserSuccess");
 		} catch(err) {
@@ -611,7 +649,10 @@ app.post('/edit-admin', async function (req, res) {
 			// Couldn't find the user
 			res.status(404).send("userNotFound");
 		} else {
-			req.session.name = req.body.name ?? req.session.name;
+			// Edit session name if the req is the same person
+			if (req.session._id === req.body._id) {
+				req.session.name = req.body.name;
+			}
 			res.status(200).send("userUpdated");
 		}
 	} catch(e) {
@@ -650,6 +691,256 @@ app.post('/delete-admin', async function(req, res) {
 		res.status(500).send("serverIssue");
 	}
 });
+
+app.get('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	const filterQuery = {'_id': new mdb.ObjectId(req.session._id)};
+	const user = await db.collection('BBY-6_users').findOne(filterQuery);
+	if(!user) {
+		// Could not find user
+		res.status(500).send("userNotFound");
+		return;
+	}
+	res.status(200).send(user.kits);
+})
+
+app.post('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	try {
+		const filterQuery = {'name': req.body.name};
+		const kitTemplate = await db.collection('BBY-6_kit-templates').findOne(filterQuery);
+		if(!kitTemplate) {
+			res.status(500).send("kitTemplateNotFound");
+			return;
+		}
+		try {
+			const userFilterQuery = {'_id': new mdb.ObjectId(req.session._id)};
+			kitTemplate.kit = kitTemplate.kit.map(element => {
+				element.required = true;
+				element.completed = false;	
+				return element;
+			})
+			const user = await db.collection('BBY-6_users').updateOne(userFilterQuery, {$push: {kits: kitTemplate}});
+			if(!user) {
+				// Could not find user
+				res.status(500).send("userNotFound");
+				return;
+			}
+			res.status(200).send(kitTemplate);
+		} catch(e) {
+			res.status(500).send("serverIssue");
+		}
+	} catch(e) {
+		res.status(500).send("serverIssue");
+	}
+})
+
+app.patch('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body || !req.body._id || !req.body.itemId || req.body.completed === undefined) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id),
+	}
+	try {
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j].completed": req.body.completed}}, 
+			{
+				arrayFilters: [ 
+					{"i._id": new mdb.ObjectId(req.body._id)}, 
+					{"j._id": new mdb.ObjectId(req.body.itemId)}
+				]
+			}
+		);
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(404).send("couldNotFindKit");
+			return;
+		}
+		res.status(200).send("kitUpdatedSuccessfully");
+	} catch(e) {
+		res.status(500).send("serverIssue");
+	}
+})
+
+app.delete('/kits', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body || !req.body._id) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id)
+	}
+	try {
+		req.body._id = new mdb.ObjectId(req.body._id);
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$pull: {"kits": {"_id": new mdb.ObjectId(req.body._id)}}});
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(404).send("couldNotFindKit");
+			return;
+		}
+		res.status(200).send("kitDeletedSuccessfully");
+	} catch(e) {
+		log.error(e)
+		res.status(500).send("serverIssue");
+	}
+})
+
+app.post('/add-item', upload.single('image'), async(req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body || !req.body._id || !req.body.itemProps || !req.file) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id)
+	}
+	const itemProps = JSON.parse(req.body.itemProps);
+	const newItem = {
+		name: itemProps.name,
+		quantity: itemProps.quantity,
+		description: itemProps.description,
+		image: {
+			data: {
+				$binary: {
+					base64: req.file.buffer
+				}
+			},
+			contentType: req.file.mimetype
+		},
+		completed: itemProps.completed,
+		required: itemProps.required,
+		_id: new mdb.ObjectId()
+	}
+	try {
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$push: {"kits.$.kit": newItem}});
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(404).send("couldNotFindKit");
+			return;
+		}
+		res.status(200).send("itemAddedSuccessfully");
+	} catch(e) {
+		res.status(500).send("serverIssue");
+	}
+})
+
+app.patch('/edit-item', async (req,res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body || !req.body._id || !req.body.itemProps) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id),
+	}
+	try {
+		req.body.itemProps._id = new mdb.ObjectId(req.body.itemProps._id);
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j]": req.body.itemProps}}, 
+			{
+				arrayFilters: [ 
+					{"i._id": new mdb.ObjectId(req.body._id)}, 
+					{"j._id": new mdb.ObjectId(req.body.itemProps._id)}
+				]
+			}
+		);
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(404).send("couldNotFindKit");
+			return;
+		}
+		res.status(200).send("kitUpdatedSuccessfully");
+	} catch(e) {
+		log.info(e)
+		res.status(500).send("serverIssue");
+	}
+})
+
+app.delete('/delete-item', async (req, res) => {
+	if (redirectToLogin(req, res)) {
+		return;
+	}
+	if(!req.body || !req.body._id || !req.body.itemId) {
+		res.status(400).send("missingBodyArguments");
+		return;
+	}
+	const filterQuery = {
+		'_id': new mdb.ObjectId(req.session._id),
+		'kits._id': new mdb.ObjectId(req.body._id)
+	}
+	try {
+		req.body._id = new mdb.ObjectId(req.body._id);
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, 
+			{
+				$pull: {
+						"kits.$[i].kit": {
+							"_id": new mdb.ObjectId(req.body.itemId),
+							"required": false
+						}
+				}
+			},
+			{
+				arrayFilters: [ 
+					{"i._id": new mdb.ObjectId(req.body._id)}
+				]
+			}
+		);
+		if(!result) {
+			// Could not find user 
+			res.status(500).send("couldNotFindUser");
+			return;
+		} else if (result.matchedCount === 0) {
+			// Could not find kit
+			res.status(404).send("couldNotFindKit");
+			return;
+		} else if (result.modifiedCount === 0) {
+			res.status(401).send("cannotDeleteRequiredItem");
+			return;
+		}
+		res.status(200).send("itemDeletedSuccessfully");
+	} catch(e) {
+		res.status(500).send("serverIssue");
+	}
+})
+
+app.get('/kit-templates', async (req, res) => {
+	const results = await db.collection('BBY-6_kit-templates').find({}).toArray();
+	res.status(200).send(results);
+})
 
 app.get('/login', function (req, res) {
 	let doc = fs.readFileSync("./html/login.html", "utf-8");

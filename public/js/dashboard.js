@@ -29,7 +29,7 @@ const defaultAvatar = '/images/Default-Profile-Picture.jpg';
  *      _id: string,
  *      name: string,
  *      emailAddress: string,
- *      avatarURL: string,
+ *      avatar: string,
  *      dateJoined: MongoDate,
  *      achievements: Array<string>,
  *      admin: boolean
@@ -50,10 +50,9 @@ function makeUserRow(userDoc) {
     // Fill in other stuff, too?
     // The profile pictures
     const userAvatar = row.getElementsByClassName('profile-picture').item(0);
-    if (userDoc.avatarURL !== defaultAvatar) {
-        userAvatar.setAttribute('data', userDoc.avatarURL);
-        let base64 = userDoc.avatarURL.data;
-        base64 = `data:${userDoc.avatarURL.mimeType};base64,${base64}`;
+    if (userDoc.avatar !== defaultAvatar && userDoc.avatar !== null) {
+        let base64 = userDoc.avatar.data['$binary'].base64;
+        base64 = `data:${userDoc.avatar.contentType};base64,${base64}`;
         userAvatar.src = base64;
     }
 
@@ -155,6 +154,9 @@ function editAction(userID) {
                 toastQueue.queueToasts([
                     { message: `Saved "${userInput.value}"`, classes: ["toast-success"] }
                 ]);
+
+                refreshUsers(fetch('profiles'));
+                getProfileDetails();
                 return;
                 
             } catch (err) {
@@ -182,6 +184,8 @@ function cancelCreateAdmin() {
 
 function uploadFileFeedback() {
     if (validFileType(this.files)) {
+        const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName-Admin");
+        UserFeedbackFile.innerHTML = this.files[0].name;
         toastQueue.queueToasts([
             { message: "File selected", classes: ["toast-info"] }
         ]);
@@ -242,7 +246,7 @@ async function submitAdminForm(event) {
         formData.append('name', formInputName.value.trim() || 'New Admin');
         formData.append('emailAddress', formInputEmail.value);
         formData.append('pwd', formInputPassword.value);
-        formData.append('avatarURL', formImage.files[0]);
+        formData.append('avatar', formImage.files[0]);
         formData.append('admin', true);
         const response = await fetch("/create-user", {
             method: "POST",
