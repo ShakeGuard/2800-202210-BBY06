@@ -132,7 +132,7 @@ a:visited{
 }
 
 .error {
-	color: --error-text;
+	color: var(--error-text);
     font-size: 15px;
 }
 .hidden {
