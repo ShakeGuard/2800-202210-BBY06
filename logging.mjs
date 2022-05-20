@@ -1,12 +1,19 @@
 import morgan from 'morgan';
 import winston, { loggers } from 'winston';
 import fs from 'node:fs';
-import { appendFile } from 'node:fs/promises';
+import { appendFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
 /** Developer-use log to standard out. */
 export const stdoutLog = morgan('dev');
 
+// Make sure the `logs/` directory exists before doing anything else!
+try {
+    await mkdir(path.join(process.cwd(), '/logs'));
+} catch {
+    // Error case doesn't matter!
+    // 10/10 coding.
+}
 
 // Before creating the filestream, quickly write a "Server Restarted!" message so it's easier to read.
 const logFileName = path.join(process.cwd(), '/logs/access.log');
