@@ -154,6 +154,14 @@ async function initDatabase(db){
 	const users = await usersCollection.find({}).toArray();
 	if (users.length === 0) {
 		const usersJson = JSON.parse(await readFile('./data/users.json', 'utf-8'));
+		usersJson.forEach(user => {
+			user.kits.forEach(kit => {
+				kit._id = new mdb.ObjectId();
+				kit.kit.forEach(item=> {
+					item._id = new mdb.ObjectId();
+				})
+			})
+		})
 		await db.collection("BBY-6_users").insertMany(usersJson);
 		// Create a unique index on the emailAddress field in the users collection.
 		await db.collection("BBY-6_users").createIndex({ emailAddress: 1 }, { unique: true });

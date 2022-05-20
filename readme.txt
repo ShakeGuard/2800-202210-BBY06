@@ -26,3 +26,8 @@ Login Credentials:
 	jake@statefarm.com
 	jake
 	$2b$10$R1kEljqyKedYfQzYKhWulugHK1bR8/psJtvhfokFfV4RqlWeHrrl6
+
+	Regular User: 
+	tai@my.garage.com
+	knowledge
+	$2b$10$zB7F2pmTO6jnEPdci8Whm.NXlDxSyhElduYo.n4Chrxxr9ICKqEA2
