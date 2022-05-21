@@ -24,6 +24,7 @@ h1 {
 #Card-Image{
     align-self: end;
     object-fit: cover;
+    height: 19em;
     width: 100%;
     border-radius: 3em 3em 0px 0px;
     grid-row: 1 / span 1;
