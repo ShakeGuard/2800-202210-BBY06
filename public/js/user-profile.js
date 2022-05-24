@@ -202,12 +202,26 @@ function checkForInvalidInput(input) {
 	}
 }
 
+// Code snippet from Mozilla
+// https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+function validFileType(file) {
+    const fileTypes = [
+        "image/jpeg",
+        "image/png",
+    ];
+    return fileTypes.includes(file.type);
+}
+
 AvatarInput.addEventListener("input", function(e) {
 	const file = this.files[0];
 	const error = document.getElementById("Avatar-Error");
 	if(file && file.size > 8 * 1024 * 1024) {
 		// Don't allow files larger than 8MB
 		error.innerText = "Max file size is 8MB";
+		errors = errors | errorFlags.Avatar;
+	} else if (!validFileType(file)) {
+		// Don't allow non jpg/png files
+		error.innerText = "File must be a jpg or png";
 		errors = errors | errorFlags.Avatar;
 	} else {
 		error.innerText = "";
