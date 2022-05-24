@@ -1,5 +1,7 @@
 import {readFile} from "node:fs/promises";
 import bcrypt from "bcrypt";
+import {JSDOM} from "jsdom";
+import {loadHeaderFooter, changeLoginButton} from "./domUtils.js";
 
 /**
  * `login.mjs` – Containts login/logout-related routes.
@@ -14,8 +16,16 @@ import bcrypt from "bcrypt";
  * @returns { Promise<void> }
  */
 export async function getLogin(req, res) {
-    let doc = await readFile("./html/login.html", "utf-8");
-    res.send(doc);
+    // Redirect to profile page if logged in
+    if (req.session.loggedIn) {
+        res.redirect("/profile");
+        return;
+    }
+    let doc = await readFile("./html/login.html", "utf8");
+    const baseDOM = new JSDOM(doc);
+    let login = await loadHeaderFooter(baseDOM);
+    login = changeLoginButton(login, req);
+    res.send(login.serialize());
 }
 
 /**

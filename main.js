@@ -14,12 +14,12 @@ import multer from 'multer';
 import path from 'node:path'
 // Use `yargs` to parse command-line arguments.
 import {accessLog, addDevLog, errorLog, log, stdoutLog} from './logging.mjs';
-import applyEasterEggStyle from './easterEgg.mjs';
-import {patchProfile} from "./patchProfile.mjs";
+import {getProfile, patchProfile} from "./profile.mjs";
 import {connectMongo, dbName, dbURL} from "./db.mjs";
 import {checkLoginError, sessionParser} from "./sessions.mjs";
 import {argv} from "./arguments.mjs";
 import {getLogin, makePostLogin, postLogout} from "./login.mjs";
+import {changeLoginButton, loadHeaderFooter, loadHTMLComponent} from "./domUtils.js";
 
 const app = express();
 const upload = multer();
@@ -43,34 +43,6 @@ let mongo = null;
   * @type {?mdb.Db} */
 let db = null;
 
-/**
- * Uses {@link loadHTMLComponent} to load header and footer into their respective tags given a JSDOM object.
- * @param {jsdom.JSDOM} baseDOM - the DOM object to template onto.
- * @returns {jsdom.JSDOM} The original DOM object, with header and footer attached.
- */
-const loadHeaderFooter = async (baseDOM) => {
-
-	// Add the header
-	baseDOM = await loadHTMLComponent(baseDOM, "header", "header", "./templates/header.html");
-
-	// Add the footer
-	baseDOM = await loadHTMLComponent(baseDOM, "footer", "footer", "./templates/footer.html");
-
-	return baseDOM;
-}
-
-// Load a HTML component 
-// baseDOM is the return value of `new JSDOM(htmlFile)` 
-// Selectors should be formatted as they would with `querySelector()`
-// componentLocation example: ./html/header.html
-const loadHTMLComponent = async (baseDOM, placeholderSelector, componentSelector, componentLocation) => {
-	const document = baseDOM.window.document;
-	const placeholder = document.querySelector(placeholderSelector);
-	const html = await readFile(componentLocation, "utf8");
-	const componentDOM = new JSDOM(html);
-	placeholder.innerHTML = componentDOM.window.document.querySelector(componentSelector).innerHTML;
-	return baseDOM;
-}
 
 log.info("Connecting to MongoDB instance…");
 
@@ -144,59 +116,8 @@ function redirectToLogin(req, res) {
 	}
 	return false;
 }
-/**
- * Hide the logout/login buttons as appropriate, based on whether the user
- * has an active session.
- * NOTE: param types might be wrong fix em later
- * @param  {JSDOM} baseDOM
- * @param  {Request} req
- */
-function changeLoginButton(baseDOM, req) {
-	const document = baseDOM.window.document;
-	if(!req.session || !req.session.loggedIn) {
-		document.getElementById("Button-Logout").style.display = "none";
-		document.getElementById("Kit-Button").style.display = "none";
-	} else {
-		document.getElementById("Button-Login-Nav").style.display = "none";
-	}
-	return baseDOM;
-}
 
-
-app.get('/profile', async (req, res) => {
-	if (redirectToLogin(req, res)) {
-		return;
-	}
-	if (req.session.isAdmin) {
-		res.redirect('/dashboard');
-		return;
-	}
-
-	let doc = await readFile("./html/user-profile.html", "utf8");
-    let profile = await loadHeaderFooter(new JSDOM(doc));
-	profile = changeLoginButton(profile, req);
-
-	if (req.session.easterEgg) {
-		const link = profile.window.document.createElement('link');
-		link.rel = 'stylesheet';
-		link.type = 'text/css';
-		link.href = 'css/geocities.css'
-		profile.window.document.getElementsByTagName('HEAD')[0].appendChild(link);
-	}
-
-	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
-	profile = await loadHTMLComponent(profile, "#kit-templates", "div", "./templates/kit.html");
-
-    profile.window.document.getElementById("FullName").defaultValue = req.session.name;
-	profile.window.document.getElementById("Email").defaultValue = req.session.email;
-
-	if (req.session.easterEgg) {
-		profile = applyEasterEggStyle(profile);
-	}
-
-	res.send(profile.serialize());
-});
-
+app.get('/profile', getProfile(db));
 app.patch('/profile', patchProfile(db))
 
 app.get('/avatar', async(req, res) => {
@@ -239,19 +160,6 @@ app.post('/avatar', upload.single("avatar"), async(req, res) => {
 	res.status(200).send("avatarUploaded");
 })
 
-app.get('/login', async function (req, res) {
-	// Redirect to profile page if logged in
-	if (req.session.loggedIn) {
-		res.redirect("/profile");
-		return;
-	}
-	let doc = await readFile("./html/login.html", "utf8");
-	const baseDOM = new JSDOM(doc);
-	let login = await loadHeaderFooter(baseDOM);
-	login = changeLoginButton(login, req);
-	res.send(login.serialize());
-});
-
 app.get('/dashboard', async function (req, res) {
 	if (req.session.isAdmin) {
 
@@ -264,10 +172,8 @@ app.get('/dashboard', async function (req, res) {
 	    profileDetails.window.document.getElementById("FullName").defaultValue = req.session.name;
 		profileDetails.window.document.getElementById("Email").defaultValue = req.session.email;
 		res.send(dashboard.serialize());
-
-		return;
 	} else {
-		// Unauthorized TODO: test
+		// Unauthorized! TODO: test
 		res.redirect('/profile');
 	}
 });
@@ -368,7 +274,7 @@ app.post('/create-user', upload.single('avatar'), async function (req, res) {
 		// All required fields present, time to convert the data into a good format.
 		const hashPassword = bcrypt.hash(newUserDoc.pwd, 10);
 		let convertedDate = new Date(newUserDoc.dateJoined);
-		if (convertedDate.valueOf() === NaN) {
+		if (isNaN(convertedDate.valueOf())) {
 			convertedDate = new Date();
 		}
 		try {
@@ -389,7 +295,6 @@ app.post('/create-user', upload.single('avatar'), async function (req, res) {
 			throw (err);
 		}
 	} catch(err) {
-		// Can catch the error and display it here, but Arron says log.info is not allowd
 		if (err.code === 11000) {
 			res.status(500).send("duplicateKey");
 			return;

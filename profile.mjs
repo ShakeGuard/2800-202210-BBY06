@@ -1,7 +1,19 @@
 import bcrypt from "bcrypt";
-import { log } from "./logging.mjs";
-import { checkLoginError } from "./sessions.mjs"
+import {log} from "./logging.mjs";
+import {checkLoginError} from "./sessions.mjs"
+import {readFile} from "node:fs/promises";
+import {JSDOM} from "jsdom";
+import applyEasterEggStyle from "./easterEgg.mjs";
 
+/**
+ * User profile-related routes.
+ */
+
+/**
+ * PATCH route for `/profile` endpoint.
+ * @param {mdb.Db} db
+ * @returns {(function(*, *): Promise<void>)|*}
+ */
 export function patchProfile(db) {
     return async function (req, res) {
         // If the request is not coming from a logged in user, reject.
@@ -51,7 +63,8 @@ export function patchProfile(db) {
             }
         } catch (e) {
             log.info(e);
-            // Email addresses have a unique index so mongo will give error code 11000 if the email is already in use
+            // Email addresses have a unique index set in the database.
+            // Mongo will return error code 11000 if the email is already in use
             if (e.code === 11000) {
                 res.status(403).send("emailInUse");
             } else {
@@ -59,4 +72,40 @@ export function patchProfile(db) {
             }
         }
     }
+}
+
+export function getProfile(db) {
+    return async (req, res) => {
+        if (redirectToLogin(req, res)) {
+            return;
+        }
+        if (req.session.isAdmin) {
+            res.redirect('/dashboard');
+            return;
+        }
+
+        let doc = await readFile("./html/user-profile.html", "utf8");
+        let profile = await loadHeaderFooter(new JSDOM(doc));
+        profile = changeLoginButton(profile, req);
+
+        if (req.session.easterEgg) {
+            const link = profile.window.document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'css/geocities.css'
+            profile.window.document.getElementsByTagName('HEAD')[0].appendChild(link);
+        }
+
+        profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
+        profile = await loadHTMLComponent(profile, "#kit-templates", "div", "./templates/kit.html");
+
+        profile.window.document.getElementById("FullName").defaultValue = req.session.name;
+        profile.window.document.getElementById("Email").defaultValue = req.session.email;
+
+        if (req.session.easterEgg) {
+            profile = applyEasterEggStyle(profile);
+        }
+
+        res.send(profile.serialize());
+    };
 }
