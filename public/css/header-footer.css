@@ -3,7 +3,7 @@
 @import url('/css/buttons.css');
 
 :root {
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Satoshi', 'Segoe UI', 'Arial', sans-serif;
 }
 
 nav {

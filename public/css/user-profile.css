@@ -2,7 +2,7 @@
 @import url('/css/forms.css'); 
 
 * {
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Satoshi', 'Segoe UI', 'Arial', sans-serif;
 }
 
 body{
@@ -155,7 +155,7 @@ body{
     place-self: center;
     justify-self: start;
     font-size: 25px;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Satoshi', 'Segoe UI', 'Arial', sans-serif;
     align-items: end;
 }
 
@@ -168,7 +168,7 @@ body{
     place-self: center;
     justify-self: start;
     font-size: 25px;
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Satoshi', 'Segoe UI', 'Arial', sans-serif;
     align-items: end;
 }
 
@@ -202,8 +202,8 @@ body{
 }
 
 .welcome-message span {
-    font-family: 'Sharpie', serif;
-    font-weight: 400;
+    font-family: 'Sharpie', 'Brush Script Std', 'Arial Black', sans-serif;
+    font-weight: bold;
     font-size: 2.8rem;
 }
 
