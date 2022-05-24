@@ -15,12 +15,26 @@ try {
     // 10/10 coding.
 }
 
-// Before creating the filestream, quickly write a "Server Restarted!" message so it's easier to read.
-const logFileName = path.join(process.cwd(), '/logs/access.log');
-await appendFile(logFileName, `Server started at ${new Date().toLocaleString('en-CA', {timeZone: 'America/Vancouver'})}\n`);
+// Before creating the filestream, quickly write a "Server Restarted!" message to all the logs, so it's easier to read.
+
+const logRootDirectory = '/logs/';
+/** @type {{[k: string]: string}} */
+const logs = Object.fromEntries(['access', 'app', 'error']
+                .map(name => [name, path.join(process.cwd(), name + '.log')])
+            );
+             
+
+const restartLogActions = Object.values(logs).map(logFilename => {
+    new Promise((resolve) => {
+        const prettyTime = new Date().toLocaleString('en-CA', {timeZone: 'America/Vancouver'});
+        resolve(appendFile(logFilename, `Server started at ${prettyTime}\n`));
+    })
+}
+    );
+await Promise.allSettled(restartLogActions);
 
 /** Append-only filestream for logs. */
-export const accessLogStream = fs.createWriteStream(logFileName, {flags: 'a'});
+export const accessLogStream = fs.createWriteStream(logs['access'], {flags: 'a'});
 
 /** Morgan access log, appends to a logfile. */
 export const accessLog = morgan('combined', { stream: accessLogStream });

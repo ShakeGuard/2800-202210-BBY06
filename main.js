@@ -2,80 +2,39 @@
 "use strict";
 
 import * as mdb from 'mongodb';
-import { MongoClient } from 'mongodb';
+import {MongoClient} from 'mongodb';
 import express from 'express';
-import session from 'express-session';
-import { WebSocketServer } from 'ws';
-import { createServer, Server } from 'http';
+import {WebSocketServer} from 'ws';
+import {createServer} from 'http';
 import bcrypt from 'bcrypt';
-import fs, { read, readFileSync } from 'fs';
-import { readFile } from 'node:fs/promises';
-import { JSDOM } from 'jsdom';
+import fs from 'fs';
+import {readdir, readFile} from 'node:fs/promises';
+import {JSDOM} from 'jsdom';
 import multer from 'multer';
-import ConnectMongoDBSession from 'connect-mongodb-session';
-const MongoDBStore = ConnectMongoDBSession(session);
-
+import path from 'node:path'
 // Use `yargs` to parse command-line arguments.
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
-
-import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
+import {accessLog, addDevLog, errorLog, log, stdoutLog} from './logging.mjs';
 import {readSecrets} from './shakeguardSecrets.mjs';
 import applyEasterEggStyle from './easterEgg.mjs';
-
-const argv = yargs(hideBin(process.argv))
-  .option('port', {
-	  alias: 'P',
-	  description: "The port that the app should listen on.",
-	  type: 'number'
-  })
-  .option('instanceAddress', {
-    alias: 'i',
-    description: "The IP address or hostname of the MongoDB instance to connect the app to. Defaults to `localhost`.",
-    type: 'string'
-  })
-  .option('instancePort', {
-    alias: 'p',
-    description: "The port number that the MongoDB instance listens on. Defaults to `27017`.",
-    type: 'number'
-  })
-  .option('dbName', {
-	  alias: 'db',
-	  description: "The name of the database to use in the MongoDB instance. Defaults to `COMP2800`.",
-	  type: 'string'
-  })
-  .option('auth', {
-		description: "If `--auth true`, the app will attempt to log into the MongoDB instance with"
-				+  "the username and password specified in the file `.secrets/mongodb_auth.json`.",
-		type: 'boolean'	
-  }).option('devLog', {
-		description: "If set, app will log lots of data to stdout. If not, only errors will be logged.",
-		type: 'boolean'	
-  })
-  .help()
-  .alias('help', 'h').parse();
+import {patchProfile} from "./patchProfile.mjs";
+import {connectMongo, dbName, dbURL} from "./db.mjs";
+import {checkLoginError, sessionParser} from "./sessions.mjs";
+import {argv} from "./arguments.mjs";
+import {getLogin, makePostLogin} from "./login.mjs";
 
 const app = express();
 const upload = multer();
-// Defaults for address and port:
-const dbURL = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
-
-const dbName = argv.dbName ?? "COMP2800";
 
 // Log in 'dev' format to stdout, if devLog option is set.
 // If devLog is not set, log errors only to stdout.
-const secrets = await new Promise((resolve) => {
-	if (argv.devLog) {
-		app.use(stdoutLog);
-		addDevLog(log);
-	} else {
-		app.use(errorLog)
-	}
-	app.use(accessLog);
-	resolve();
-}).then(
-	async () => await readSecrets()
-);
+if (argv.devLog) {
+	app.use(stdoutLog);
+	addDevLog(log);
+} else {
+	app.use(errorLog)
+}
+app.use(accessLog);
+
 
 // The MongoDB Connection object.
 /** @type {?MongoClient} */
@@ -85,127 +44,14 @@ let mongo = null;
   * @type {?mdb.Db} */
 let db = null;
 
-/** Connection options for MongoDB, also used for the session store. 
- *  @type {mdb.MongoClientOptions} */
-const mongoConnectionOptions = {
-				auth: argv.auth ? {
-					...secrets['mongodb_auth.json']
-				} : undefined,
-				useNewUrlParser: true,
-				useUnifiedTopology: true,
-			};
-
-// Establishes connection and returns necessary objects to interact with database
-// Caller is responsible for closing the connection
-const connectMongo = async (url, dbName) => {
-	let mongo, db;
-	let dotAnim; // Interval handler for the "dots" animation.
-	try {
-		dotAnim = setInterval(() => process.stdout.write('…'), 1000);
-		mongo = await Promise.race([
-			MongoClient.connect(url, mongoConnectionOptions),
-			new Promise((res,rej) => {
-				setTimeout(() => rej("Timed out after 15 seconds."), 15000)
-			})
-		]);
-		db = mongo.db(dbName);
-		initDatabase(db);
-		log.info(`Connected to "${url}", using database "${dbName}"`);
-	} catch (error) {
-		log.info(); // Newline!
-		log.error(`Tried connecting to ${url}, using database ${dbName}`);
-		log.error("Ran into an error while connecting to MongoDB!");
-		switch (error.message) {
-			case "credentials must be an object with 'username' and 'password' properties":
-				if (argv.auth) {
-					log.error("Error: --auth option was set, but secrets module could "
-								+ "not load username and password for MongoDB instance!");
-					log.error("Try redownloading .secrets or running without the --auth option.")
-				}
-				break;
-		
-			default:
-				break;
-		}
-
-		log.error('Error object details:');
-		log.info(JSON.stringify(error, null, 2));
-
-		log.error('Exiting early due to errors!')
-		// TODO: consider any cleanup code before exiting: any open file handles?
-		process.exit();
-	} finally {
-		clearInterval(dotAnim);
-	}
-	return [mongo, db];
-}
-
-// If db does not contain collections we need, add them.
-// Else do nothing
 /**
- * Initializes the given [database]{@link Db} with values from JSON files in the `./data/` directory.
- * If the database already contains all needed collections, this function is a no-op.
- * @param  {mdb.Db} db - The database to initialize.
- */
-async function initDatabase(db){
-	// Touch the sessions collection.
-	const sessionsCollection = db.collection("BBY-6_sessions");
-	const usersCollection = db.collection("BBY-6_users");
-	// There are no collections in this database so we need to add ours.
-	const users = await usersCollection.find({}).toArray();
-	if (users.length === 0) {
-		const usersJson = JSON.parse(await readFile('./data/users.json', 'utf-8'));
-		usersJson.forEach(user => {
-			user.kits.forEach(kit => {
-				kit._id = new mdb.ObjectId();
-				kit.kit.forEach(item=> {
-					item._id = new mdb.ObjectId();
-				})
-			})
-		})
-		await db.collection("BBY-6_users").insertMany(usersJson);
-		// Create a unique index on the emailAddress field in the users collection.
-		await db.collection("BBY-6_users").createIndex({ emailAddress: 1 }, { unique: true });
-	}
-	
-	const items = await db.collection("BBY-6_items").find({}).toArray();
-	if (items.length === 0) {
-		const itemsJson = JSON.parse(await readFile('./data/items.json', 'utf-8'))
-		await db.collection("BBY-6_items").insertMany(itemsJson);
-	}
-
-	const categories = await db.collection("BBY-6_categories").find({}).toArray();
-	if (categories.length === 0) {
-		const categoriesJson = JSON.parse(await readFile('./data/categories.json', 'utf-8'))
-		await db.collection("BBY-6_categories").insertMany(categoriesJson);
-	}
-
-	const articles = await db.collection("BBY-6_articles").find({}).toArray();
-	if (articles.length === 0) {
-		const articlesJson = JSON.parse(await readFile('./data/articles.json', 'utf-8'))
-		await db.collection("BBY-6_articles").insertMany(articlesJson);
-	}
-
-	const kits = await db.collection("BBY-6_kit-templates").find({}).toArray();
-	if(kits.length === 0 ){
-		const kitsJson = JSON.parse(await readFile('./data/kits.json', 'utf-8'))
-		kitsJson.forEach(kit => {
-			kit.kit.forEach(item => {
-				item._id = new mdb.ObjectId();
-			})
-		});
-		await db.collection("BBY-6_kit-templates").insertMany(kitsJson);
-	}
-}
-
-/** 
  * Uses {@link loadHTMLComponent} to load header and footer into their respective tags given a JSDOM object.
  * @param {jsdom.JSDOM} baseDOM - the DOM object to template onto.
  * @returns {jsdom.JSDOM} The original DOM object, with header and footer attached.
  */
 const loadHeaderFooter = async (baseDOM) => {
-	
-	// Add the header 
+
+	// Add the header
 	baseDOM = await loadHTMLComponent(baseDOM, "header", "header", "./templates/header.html");
 
 	// Add the footer
@@ -228,42 +74,26 @@ const loadHTMLComponent = async (baseDOM, placeholderSelector, componentSelector
 }
 
 log.info("Connecting to MongoDB instance…");
-let sessionStore = null;
 
 try {
 	[mongo, db] = await connectMongo(dbURL, dbName);
-	sessionStore = new MongoDBStore({
-			uri: dbURL,
-			databaseName: dbName,
-			collection: "BBY-6_sessions",
-			connectionOptions: mongoConnectionOptions
-		});
 } catch (err) {
 	log.error(`Could not connect to MongoDB instance at ${dbURL}/${dbName}!`);
 	log.error(JSON.stringify(err, null, 2));
 }
 
 app.use(express.json({limit: '50mb'}));
-const sessionParser = session({
-	secret: secrets['session.json'].sessionSecret,
-	name: "ShakeGuardSessionID",
-	store: sessionStore ?? undefined,
-	resave: false,
-	// create a unique identifier for that client
-	saveUninitialized: true
-});
 app.use(sessionParser);
 
 
 
 
-// static path mappings
-app.use("/js", express.static("public/js"));
-app.use("/css", express.static("public/css"));
-app.use("/images", express.static("public/images"));
-app.use("/sounds", express.static("public/sounds"));
-app.use("/html", express.static("public/html"));
-app.use("/fonts", express.static("public/fonts"));
+// Static path mappings: Everything in `/public` is accessible to the public, beware!
+const staticRouteNames = await readdir(process.cwd() + path.sep + 'public');
+for (const staticRoute of staticRouteNames) {
+	log.debug(`registering static route for "public/${staticRoute}" -> "GET /${staticRoute}"`)
+	app.use(`/${staticRoute}`, express.static(`public/${staticRoute}`))
+}
 
 app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {
@@ -275,7 +105,7 @@ app.get('/', async function (req, res) {
 		log.info("User logged in!");
 		return;
 	}
-	
+
 	const doc = await readFile("./html/index.html", "utf8");
 	const baseDOM = new JSDOM(doc);
 	let index = await loadHeaderFooter(baseDOM);
@@ -316,7 +146,7 @@ function redirectToLogin(req, res) {
 	return false;
 }
 /**
- * Hide the logout/login buttons as appropriate, based on whether the user 
+ * Hide the logout/login buttons as appropriate, based on whether the user
  * has an active session.
  * NOTE: param types might be wrong fix em later
  * @param  {JSDOM} baseDOM
@@ -334,20 +164,6 @@ function changeLoginButton(baseDOM, req) {
 }
 
 
-/**
- * Checks if the user is logged in, if they aren't, sends a 401 error.
- * @param {Response} res - Response object to send errors to; may get sent.
- * @returns `true` if the user was sent an error, `false` otherwise.
- */
-function checkLoginError(req, res) {
-	if (!req.session || !req.session.loggedIn) {
-		res.status(401).send("invalidSession");
-		return true;
-	} 
-	return false;
-}
-
-
 app.get('/profile', async (req, res) => {
 	if (redirectToLogin(req, res)) {
 		return;
@@ -358,16 +174,17 @@ app.get('/profile', async (req, res) => {
 	}
 
 	let doc = await readFile("./html/user-profile.html", "utf8");
-	const baseDOM = new JSDOM(doc);
-	let profile = await loadHeaderFooter(baseDOM);
+    let profile = await loadHeaderFooter(new JSDOM(doc));
 	profile = changeLoginButton(profile, req);
-	if(req.session.easterEgg) {
+
+	if (req.session.easterEgg) {
 		const link = profile.window.document.createElement('link');
 		link.rel = 'stylesheet';
 		link.type = 'text/css';
 		link.href = 'css/geocities.css'
 		profile.window.document.getElementsByTagName('HEAD')[0].appendChild(link);
 	}
+
 	profile = await loadHTMLComponent(profile, "#Base-Container", "div", "./templates/profile.html");
 	profile = await loadHTMLComponent(profile, "#kit-templates", "div", "./templates/kit.html");
 
@@ -381,64 +198,7 @@ app.get('/profile', async (req, res) => {
 	res.send(profile.serialize());
 });
 
-app.patch('/profile', async(req, res) => {
-	// if the request is not coming from a logged in user, reject.
-	if (checkLoginError(req, res)) {
-		return;
-	}
-	
-	// get user from db
-	const filterQuery = {emailAddress: req.session.email};
-	const userResults = await db.collection('BBY-6_users').find(filterQuery).toArray();
-	if(userResults.length === 0) {
-		// Could not find user
-		res.status(500).send("userNotFound");
-		return;
-	} 
-	
-	// based on what is present in the update query, 
-	const updateQuery = {};
-	if (req.body.email) {
-		// email to be changed
-		updateQuery['emailAddress'] = req.body.email;
-	} 
-	if (req.body.name) {
-		// name to be changed
-		updateQuery['name'] = req.body.name;
-	} 
-	if (req.body.pwd) {
-		// password to be changed
-		const pwd = await bcrypt.hash(req.body.pwd, 10);	
-		updateQuery['pwd'] = pwd;				
-	} 
-	 
-	if(updateQuery === {}){
-		// invalid body, reject request
-		res.status(400).send("missingBodyArgument(s)");
-		return;
-	}
-
-	try {
-		const results = await db.collection('BBY-6_users').updateOne(filterQuery, { $set: updateQuery});
-		if(results.matchedCount === 0) {
-			// Couldn't find the user
-			res.status(404).send("userNotFound");
-		} else {
-			req.session.name = req.body.name ?? req.session.name;
-			req.session.email = req.body.email ?? req.session.email;
-			res.status(200).send("userUpdated");
-		}
-	} catch(e) {
-		log.info(e);
-		// Email addresses have a unique index so mongo will give error code 11000 if the email is already in use
-		if(e.code === 11000) {
-			res.status(403).send("emailInUse");
-		} else {
-			res.status(500).send("serverIssue");
-		}
-	}
-
-})
+app.patch('/profile', patchProfile(db))
 
 app.get('/avatar', async(req, res) => {
 	//if the request is not coming from a logged in user, reject.
@@ -515,7 +275,7 @@ app.get('/dashboard', async function (req, res) {
 
 // This gets the admin profiles
 // May change endpoint name to be more descriptive, or not
-app.get('/profiles', async function (req, res) { 
+app.get('/profiles', async function (req, res) {
 	if (!req.session.isAdmin) {
 		res.status(401).send('notAnAdmin');
 		// TODO: log unauthorized access?
@@ -525,7 +285,7 @@ app.get('/profiles', async function (req, res) {
 	// TODO: error handling
 	// TODO: really, we should do pagination for this kind of request.
 	const usersCursor = db.collection('BBY-6_users').find({'admin': true})
-	// Omit password hashes! 
+	// Omit password hashes!
 	// There is probably a better way of doing this; any suggestions?
 	.map(user => {
 		delete user.pwd;
@@ -541,7 +301,7 @@ app.get('/profiles', async function (req, res) {
 	);
 })
 
-/** 
+/**
  * @typedef { {
  *      _id: ?mdb.ObjectId,
  *      name: string,
@@ -656,14 +416,14 @@ app.post('/edit-admin', async function (req, res) {
 		// Could not find user
 		res.status(500).send("userNotFound");
 		return;
-	} 
+	}
 
-	// based on what is present in the update query, 
+	// based on what is present in the update query,
 	const updateQuery = {};
 	if (req.body.name) {
 		// name to be changed
 		updateQuery['name'] = req.body.name;
-	} 
+	}
 
 	if(updateQuery === {}){
 		// invalid body, reject request
@@ -749,7 +509,7 @@ app.post('/kits', async (req, res) => {
 			const userFilterQuery = {'_id': new mdb.ObjectId(req.session._id)};
 			kitTemplate.kit = kitTemplate.kit.map(element => {
 				element.required = true;
-				element.completed = false;	
+				element.completed = false;
 				return element;
 			})
 			const user = await db.collection('BBY-6_users').updateOne(userFilterQuery, {$push: {kits: kitTemplate}});
@@ -780,16 +540,16 @@ app.patch('/kits', async (req, res) => {
 		'kits._id': new mdb.ObjectId(req.body._id),
 	}
 	try {
-		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j].completed": req.body.completed}}, 
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j].completed": req.body.completed}},
 			{
-				arrayFilters: [ 
-					{"i._id": new mdb.ObjectId(req.body._id)}, 
+				arrayFilters: [
+					{"i._id": new mdb.ObjectId(req.body._id)},
 					{"j._id": new mdb.ObjectId(req.body.itemId)}
 				]
 			}
 		);
 		if(!result) {
-			// Could not find user 
+			// Could not find user
 			res.status(500).send("couldNotFindUser");
 			return;
 		} else if (result.matchedCount === 0) {
@@ -819,7 +579,7 @@ app.delete('/kits', async (req, res) => {
 		req.body._id = new mdb.ObjectId(req.body._id);
 		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$pull: {"kits": {"_id": new mdb.ObjectId(req.body._id)}}});
 		if(!result) {
-			// Could not find user 
+			// Could not find user
 			res.status(500).send("couldNotFindUser");
 			return;
 		} else if (result.matchedCount === 0) {
@@ -866,7 +626,7 @@ app.post('/add-item', upload.single('image'), async(req, res) => {
 	try {
 		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$push: {"kits.$.kit": newItem}});
 		if(!result) {
-			// Could not find user 
+			// Could not find user
 			res.status(500).send("couldNotFindUser");
 			return;
 		} else if (result.matchedCount === 0) {
@@ -894,16 +654,16 @@ app.patch('/edit-item', async (req,res) => {
 	}
 	try {
 		req.body.itemProps._id = new mdb.ObjectId(req.body.itemProps._id);
-		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j]": req.body.itemProps}}, 
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery, {$set: {"kits.$[i].kit.$[j]": req.body.itemProps}},
 			{
-				arrayFilters: [ 
-					{"i._id": new mdb.ObjectId(req.body._id)}, 
+				arrayFilters: [
+					{"i._id": new mdb.ObjectId(req.body._id)},
 					{"j._id": new mdb.ObjectId(req.body.itemProps._id)}
 				]
 			}
 		);
 		if(!result) {
-			// Could not find user 
+			// Could not find user
 			res.status(500).send("couldNotFindUser");
 			return;
 		} else if (result.matchedCount === 0) {
@@ -932,7 +692,7 @@ app.delete('/delete-item', async (req, res) => {
 	}
 	try {
 		req.body._id = new mdb.ObjectId(req.body._id);
-		const result = await db.collection('BBY-6_users').updateOne(filterQuery, 
+		const result = await db.collection('BBY-6_users').updateOne(filterQuery,
 			{
 				$pull: {
 						"kits.$[i].kit": {
@@ -942,13 +702,13 @@ app.delete('/delete-item', async (req, res) => {
 				}
 			},
 			{
-				arrayFilters: [ 
+				arrayFilters: [
 					{"i._id": new mdb.ObjectId(req.body._id)}
 				]
 			}
 		);
 		if(!result) {
-			// Could not find user 
+			// Could not find user
 			res.status(500).send("couldNotFindUser");
 			return;
 		} else if (result.matchedCount === 0) {
@@ -970,47 +730,9 @@ app.get('/kit-templates', async (req, res) => {
 	res.status(200).send(results);
 })
 
-app.get('/login', function (req, res) {
-	let doc = fs.readFileSync("./html/login.html", "utf-8");
-	res.send(doc);
-});
+app.get('/login', getLogin);
 
-app.post("/login", async (req, res) => {
-	const email = req.body.email;
-	const pwd = req.body.password;
-	// Set response header regardless of success/failure
-	res.setHeader("Content-Type", "application/json");
-	try {
-		const results = await db.collection('BBY-6_users').find({emailAddress: email}).toArray();
-		if(results.length === 0) {
-			// Could not find user
-			res.status(401).send("userNotFound");
-			return;
-		} 
-		// found user. validate password
-		const user = results[0];
-		const passwordMatches = await bcrypt.compare(pwd, user.pwd);
-		if (passwordMatches) {
-			// Password matches, create session
-			req.session.name = user.name;
-			req.session.email = email;
-			req.session.loggedIn = true;
-			req.session.isAdmin = user.admin;
-			req.session._id = user._id;
-			req.session.easterEgg = user.name === "Tai Lopez";
-			if (user.admin) {
-				res.send("loginSuccessfulAdmin")
-			} else {
-				res.send("loginSuccessful");
-			}
-		} else {
-			// Password does not match
-			res.status(401).send("passwordMismatch");
-		}
-	} catch(e) {
-		res.status(500).send("serverIssue");
-	}
-})
+app.post("/login", makePostLogin(db))
 
 app.post("/logout", (req, res) => {
 	if(req.session) {
@@ -1074,7 +796,7 @@ app.get('/resource', async (req,res) =>{
 	let cardDoc = await readFile("./templates/card.html", "utf-8");
 	const cardDOM = new JSDOM(cardDoc);
 	const cardTemplate = cardDOM.window.document.getElementsByClassName("Component").item(0);
-	
+
 	for (const element of CallAPI) {
 		const cardEl = cardTemplate.cloneNode(true);
 		if (cardEl){
@@ -1143,9 +865,9 @@ const port = argv.port ?? 8000;
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
 wss.on('connection', function connection(ws, request, client) {
-	
+
 });
-  
+
 server.on('upgrade', function upgrade(request, socket, head) {
 	// Parse session and check if the user requesting the upgrade has an active admin session
 	sessionParser(request, {}, () => {
@@ -1154,12 +876,10 @@ server.on('upgrade', function upgrade(request, socket, head) {
 			if (!request.session.isAdmin) {
 				socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
 				socket.destroy();
-				return;
 			}
 		} else {
 			socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
 			socket.destroy();
-			return;
 		}
 	})
 });
