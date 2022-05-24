@@ -104,13 +104,6 @@ a.button {
     transition: all ease-in 0.1s;
 }
 
-a.button:hover,
-a.button:active,
-a.button:focus {
-    color: rgba(23, 165, 186, 1);
-    filter: none;
-}
-
 
 .block {
     display: block;

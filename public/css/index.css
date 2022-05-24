@@ -9,7 +9,6 @@ body {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
-    margin-top: -10vh;
 }
 
 #hero-container {
@@ -24,30 +23,30 @@ body {
 
 #hero-message {
     min-height: 10vh;
-    padding: 30% 10% 15% 10%;
+    padding: 20% 10% 15% 10%;
     color: white;
 
     background-image:
         /* color overlay */
         linear-gradient(
-            rgba(23, 165, 186, 0.8), 
+            rgba(255, 255, 255, 0.2), 30%,
             rgba(23, 165, 186, 0.8)
         ),
-        url("../images/ali-kazal-jwyFn9kxQuc-unsplash-greyscale.jpg");
+        url("../images/ali-kazal-jwyFn9kxQuc-unsplash-blue-gradient.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: center;
+    background-position: top;
 
-    border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;
+    border-bottom-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
 }
 
-#hero-message-heading1 {
+#hero-message h1 {
     font-size: 2.2em;
 }
 
 /* Keep the two words together in the "Big One" */
-#hero-message-heading1 span {
+#hero-message h1 span {
     white-space: nowrap;
 }
 
@@ -60,6 +59,7 @@ body {
     margin-top: -8%;
     margin-left: 12%;
     margin-right: 12%;
+    display: inline-block;
 }
 
 #section-container {
@@ -75,15 +75,11 @@ body {
 /* For medium screens */
 @media only screen and (min-width: 768px) {
 
-    h1 {
-        font-size: 3.6em;
+    #hero-message h1 {
+        font-size: 3.8rem;
     }
     #hero-message {
         padding: 20% 10% 15% 10%;
-    }
-
-    #hero-button-start {
-        display: inline-block;
     }
 
     #hero-message-paragraph {

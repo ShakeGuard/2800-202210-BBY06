@@ -52,8 +52,12 @@ a:visited{
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     background-image: 
-        linear-gradient(rgba(23,165,186,0.8),rgba(23,165,186,0.8)),
-        url(../images/mountain1.jpg);
+        linear-gradient(rgba(23, 165, 186, 0.2),
+        rgba(23, 165, 186, 0.8)),
+        url('../images/ali-kazal-jwyFn9kxQuc-unsplash-blue-gradient.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
     /* Apply Filter here */
     margin-left: 20px;
     margin-right: 20px;
