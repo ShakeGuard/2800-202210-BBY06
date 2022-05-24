@@ -29,8 +29,7 @@ const restartLogActions = Object.values(logs).map(logFilename => {
         const prettyTime = new Date().toLocaleString('en-CA', {timeZone: 'America/Vancouver'});
         resolve(appendFile(logFilename, `Server started at ${prettyTime}\n`));
     })
-}
-    );
+});
 await Promise.allSettled(restartLogActions);
 
 /** Append-only filestream for logs. */
