@@ -17,10 +17,10 @@ try {
 
 // Before creating the filestream, quickly write a "Server Restarted!" message to all the logs, so it's easier to read.
 
-const logRootDirectory = '/logs/';
+const logRootDirectory = 'logs';
 /** @type {{[k: string]: string}} */
 const logs = Object.fromEntries(['access', 'app', 'error']
-                .map(name => [name, path.join(process.cwd(), name + '.log')])
+                .map(name => [name, path.join(process.cwd(), logRootDirectory, name + '.log')])
             );
              
 
