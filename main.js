@@ -14,13 +14,12 @@ import multer from 'multer';
 import path from 'node:path'
 // Use `yargs` to parse command-line arguments.
 import {accessLog, addDevLog, errorLog, log, stdoutLog} from './logging.mjs';
-import {readSecrets} from './shakeguardSecrets.mjs';
 import applyEasterEggStyle from './easterEgg.mjs';
 import {patchProfile} from "./patchProfile.mjs";
 import {connectMongo, dbName, dbURL} from "./db.mjs";
 import {checkLoginError, sessionParser} from "./sessions.mjs";
 import {argv} from "./arguments.mjs";
-import {getLogin, makePostLogin} from "./login.mjs";
+import {getLogin, makePostLogin, postLogout} from "./login.mjs";
 
 const app = express();
 const upload = multer();
@@ -734,17 +733,7 @@ app.get('/login', getLogin);
 
 app.post("/login", makePostLogin(db))
 
-app.post("/logout", (req, res) => {
-	if(req.session) {
-		req.session.destroy(err => {
-			if(err) {
-				res.status(422).send("logoutFailed");
-			} else {
-				res.status(200).send("logoutSuccessful");
-			}
-		})
-	}
-})
+app.post("/logout", postLogout)
 
 app.get('/resource', async (req,res) =>{
 

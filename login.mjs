@@ -1,22 +1,26 @@
-import { readFile } from "node:fs/promises";
+import {readFile} from "node:fs/promises";
 import bcrypt from "bcrypt";
 
 /**
- * Login-related routes.
+ * `login.mjs` – Containts login/logout-related routes.
  */
+
+
 /**
- * GET – Login. Serve the login page to a client.
+ * GET route for /login endpoint.
+ * Serves the login page to a client.
  * @param { Request } req
  * @param { Response } res
  * @returns { Promise<void> }
  */
-
 export async function getLogin(req, res) {
     let doc = await readFile("./html/login.html", "utf-8");
     res.send(doc);
 }
 
 /**
+ * POST route for the /login endpoint.
+ * Authenticates a user using the database.
  * Note: Russian doll thing with the function to capture the `db` variable.
  * @param { mdb.Db } db
  * @returns { function(Request, Response): Promise<void> }
@@ -65,4 +69,21 @@ export function makePostLogin(db) {
             res.status(500).send("serverIssue");
         }
     };
+}
+
+/**
+ * POST route for the /logout endpoint.
+ * @param { Request } req
+ * @param { Response } res
+ */
+export function postLogout(req, res) {
+    if (req.session) {
+        req.session.destroy(err => {
+            if (err) {
+                res.status(422).send("logoutFailed");
+            } else {
+                res.status(200).send("logoutSuccessful");
+            }
+        })
+    }
 }
