@@ -121,6 +121,11 @@ async function executeUpdate(){
 		})
 	}
 
+	if(Object.keys(payload).length === 0 && !AvatarInput.files[0]) {
+		error.innerText = "Nothing to update."
+		error.style.color = "blue";
+		return;
+	}
 
     const response = await fetch("/profile", {
         method: "PATCH",
@@ -148,7 +153,7 @@ async function executeUpdate(){
     }
 
 	UserFeedbackFile.innerHTML = '';
-
+	AvatarInput.value = null;
 	getAvatar();
 	getProfileDetails();
 }
