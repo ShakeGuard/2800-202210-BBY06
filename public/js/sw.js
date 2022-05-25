@@ -21,7 +21,7 @@ self.addEventListener("install", evt => {
 self.addEventListener('fetch', (e) => {
     e.respondWith((async () => {
         // Check the static asset cache first.
-        if (e.request.method !== "GET") {
+        if (navigator.onLine || e.request.method !== "GET") {
             return await fetch(e.request);
         }
         const r = await (await staticCache()).match(e.request);
