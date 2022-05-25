@@ -47,5 +47,6 @@
             "type": "image/png",
             "sizes": "512x512"
         }
-    ]
+    ],
+    "orientation": "portrait"
 }

@@ -21,19 +21,22 @@ self.addEventListener("install", evt => {
 self.addEventListener('fetch', (e) => {
     e.respondWith((async () => {
         // Check the static asset cache first.
+        if (e.request.method !== "GET") {
+            return await fetch(e.request);
+        }
         const r = await (await staticCache()).match(e.request);
         if (r) {
-            console.log("cached by SW"); // TODO remove
             return r;
         }
 
         // Nothing in the static cache, this could be an AJAX thing
+
+        // Okay, check if the server knows what's up and put it in our static asset cache.
         let response;
         try {
             response = await fetch(e.request);
-            if (response.statusCode === 200) {
-                const cache = await caches.open(cacheName);
-                cache.put(e.request, response.clone());
+            if (response.status === 200) {
+                await (await staticCache()).put(e.request, response.clone());
             }
         } catch (err) {
             // No network, no cache – return bad response.
@@ -46,9 +49,6 @@ self.addEventListener('fetch', (e) => {
 // Clean up from previous SW installs.
 self.addEventListener('activate', (e) => {
     e.waitUntil(caches.keys().then((keyList) => {
-        Promise.all(keyList.map((key) => {
-            return caches.delete(key);
-        }));
         caches.open("shakeguard-assets-v1").then(
             cache => {
                 // Cache completely-static resource pages.
@@ -59,10 +59,18 @@ self.addEventListener('activate', (e) => {
                     "resource_page4",
                     "resource_page5",
                     "resource_page6",
-                    "resource"
+                    "resource",
+                    "css/all_resource_pages.css",
+                    "images/Resource1.jpg",
+                    "images/Resource2.jpg",
+                    "images/Resource3.jpg",
+                    "images/Resource4.jpg",
+                    "images/Resource5.jpg",
+                    "images/Resource6.jpg",
+                    "css/resource.css",
+                    "css/card.css"
                 ].map(pg => baseURL + '/' + pg);
                 cache.addAll(toCache);
-                console.log(toCache);
             }
         );
     }));
