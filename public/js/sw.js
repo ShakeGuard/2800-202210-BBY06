@@ -7,28 +7,41 @@
 // See https://web.dev/learn/pwa/service-workers/ for a basic guide.
 
 // Cache stuff.
-const cacheName = "shakeguard-assets-v1"
+const staticCache = () => caches.open("shakeguard-assets-v1");
 const baseURL = location.origin;
 
 self.addEventListener("install", evt => {
     evt.waitUntil(
         async () => {
-            await caches.open(cacheName)
-            .then(cache => {
-                const resourcePages = ['resource', 'resource_page1', 'resource_page2', 'resource_page2'];
-                cache.addAll(resourcePages.map(pg => bareURL + pg));
+            await staticCache()
+            .then(async cache => {
+                // Cache completely-static resource pages.
+                const toCache = [
+                    "resource_page1",
+                    "resource_page2",
+                    "resource_page3",
+                    "resource_page4",
+                    "resource_page5",
+                    "resource_page6",
+                    "resource"
+                ]
+                cache.addAll(toCache.map(pg => bareURL + pg));
             });
         }
-    )
+    );
 });
 
 // Intercept network requests.
 self.addEventListener('fetch', (e) => {
-
-
     e.respondWith((async () => {
-        const r = await caches.match(e.request);
-        if (r) { console.log("cached by SW"); return r; }
+        // Check the static asset cache first.
+        const r = await (await staticCache()).match(e.request);
+        if (r) {
+            console.log("cached by SW"); // TODO remove
+            return r;
+        }
+
+        // Nothing in the static cache, this could be an AJAX thing
         let response;
         try {
             response = await fetch(e.request);
