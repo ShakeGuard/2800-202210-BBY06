@@ -8,9 +8,7 @@ const taiEl = document.getElementById('tai_postit');
 const svgEl = document.getElementById('crack');
 
 /** @type HTMLAudioElement */
-const dingSoundEl = new Audio('/sounds/easteregg/ding.wav')
-container.appendChild(dingSoundEl);
-
+const dingSoundEl = document.getElementById("ding_sound");
 const crackState = {
     done: false,
     opacity: 5,
