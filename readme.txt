@@ -4,11 +4,11 @@ Team Members:
 [Alex Kong], [A00961078], [1D], [May 20]
 [Katy Petrova], [A01281045], [2C], [May 20]
 
-This assignment is [80]% complete
+This assignment is [100]% complete
 
 We are right before the Week 4 Milestone Handin, so in terms of progress:
-Earthquake Kit feature (2537 shopping cart requirement)
-Offline resources (app specific)
+Earthquake Kit feature is done
+Resource pages (app specific)
 
 
 Login Credentials: 

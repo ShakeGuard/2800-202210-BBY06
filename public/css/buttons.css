@@ -1,21 +1,27 @@
+/* @import url('style.css'); */
+
 .material-symbols-outlined {
-    vertical-align: text-bottom;
+    vertical-align: bottom;
+    font-size: 1.8rem !important;
+}
+
+button, input[type=submit] {
+    font-weight: var(--ff-bold);
 }
 
 /* Universal button styles */
 .button {
     height: auto;
     width: auto;
-    padding: 0.8em 1.6em;
+    padding: var(--btn-padding-sm);
     border: none;
-    border-radius: 4em;
+    border-radius: var(--border-rad-sm);
     outline: none;
     font: inherit;
-    font-weight: 700;
-    font-size: 1.2em;
-    color: black;
+    font-weight: var(--ff-bold);
+    color: var(--text-dark);
     margin-top: 1em;
-    transition: background-color 0.1s ease-in;
+    transition: var(--transition);
     place-self: center;
     cursor: pointer;
 }
@@ -23,67 +29,56 @@
 .button:hover,
 .button:active,
 .button:focus {
-    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+    filter: var(--shadow-light);
 
 }
 
 .button-primary {
-    background-color: #FBB33B;
-    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+    background-color: var(--color-yellow);
 }
 
 .button-primary:hover, 
 .button-primary:active, 
 .button-primary:focus {
-    background-color: #E99812;
+    background-color: var(--color-yellow-hover);
 }
 
 
 .button-primary-teal {
-    background-color: rgba(23, 165, 186, 1);
-    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+    color: var(--text-light);
+    background-color: var(--color-teal);
 }
 
 .button-primary-teal:hover, 
 .button-primary-teal:active, 
 .button-primary-teal:focus {
-    background-color: rgba(23, 165, 186, 0.8);
+    background-color: var(--color-teal-hover);
 }
 
 
 .button-secondary {
-    border: 2px solid #FBB33B;
-    background-color: transparent;
+    border: 2px solid var(--color-yellow);
+    background-color: var(--bg-light);
 }
 
 .button-secondary:hover, 
 .button-secondary:active, 
 .button-secondary:focus {
-    background-color: #FBB33B;
+    border-color: var(--color-yellow-hover);
+    background-color: var(--color-yellow-hover);
 }
 
-.button-secondary-grey {
-    border: 2px solid rgba(196, 196, 196, 1);
-    background-color: transparent;
-    color: rgba(196, 196, 196, 1);
-}
-
-.button-secondary-grey:hover,
-.button-secondary-grey:active,
-.button-secondary-grey:focus {
-    background-color: rgba(196, 196, 196, 0.25);
-}
 
 .button-secondary-teal {
-    border: 2px solid rgba(23, 165, 186, 1);
-    background-color: transparent;
-    color: rgba(23, 165, 186, 1);
+    border: 2px solid var(--color-teal);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
 }
 
 .button-secondary-teal:hover,
 .button-secondary-teal:active,
 .button-secondary-teal:focus {
-    background-color: rgba(23, 165, 186, 0.25);
+    background-color: var(--color-teal-hover);
 }
 
 
@@ -95,20 +90,22 @@
 
 .button-nav:hover,
 .button-nav:active,
-.button-nav:focus {
+.button-nav:focus,
+.button-nav:visited {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
 a.button {
     text-decoration: none;
-    transition: all ease-in 0.1s;
+    transition: var(--transition);
+    color: var(--text-dark);
 }
 
 a.button:hover,
 a.button:active,
-a.button:focus {
-    color: rgba(23, 165, 186, 1);
-    filter: none;
+a.button:focus,
+a.button:visited {
+    color: var(--text-dark);
 }
 
 
@@ -117,17 +114,28 @@ a.button:focus {
 }
 
 .small {
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-top: 0.1em;
-    padding-bottom: 0.1em;
-    max-height: 4em;
     width: auto;
     height: auto;
-    font-size: 1em;
+    font-size: var(--p-sm);
+    padding: var(--btn-padding-xs) !important;
 }
 
 .transparent {
     background-color: transparent;
     border-color: transparent;
+}
+
+
+/********************* Media queries  *************************/
+@media only screen and (min-width: 768px) {
+    .button {
+        padding: var(--btn-padding-med);
+        border-radius: var(--border-rad-med);
+    }
+}
+@media only screen and (min-width: 1200px) {
+    .button {
+        padding: var(--btn-padding-lg);
+        border-radius: var(--border-rad-lg);
+    }
 }

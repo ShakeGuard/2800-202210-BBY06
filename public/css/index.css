@@ -1,15 +1,9 @@
-body {
-    margin: 0;
-    padding: 0;
-}
-
 /* Page contents */
 #grid-container-main {
     text-align: center;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
-    margin-top: -10vh;
 }
 
 #hero-container {
@@ -19,40 +13,37 @@ body {
 }
 
 .heading-emphasis {
-    font-family: "Sharpie", serif;
+    font-family: var(--ff-emphasis)
 }
 
 #hero-message {
     min-height: 10vh;
-    padding: 30% 10% 15% 10%;
+    padding: 20% 10% 15% 10%;
     color: white;
 
     background-image:
         /* color overlay */
         linear-gradient(
-            rgba(23, 165, 186, 0.8), 
+            rgba(255, 255, 255, 0.2), 30%,
             rgba(23, 165, 186, 0.8)
         ),
-        url("../images/ali-kazal-jwyFn9kxQuc-unsplash-greyscale.jpg");
+        url("../images/ali-kazal-jwyFn9kxQuc-unsplash-blue-gradient.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: center;
+    background-position: top;
 
-    border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;
+    border-bottom-left-radius: var(--border-rad-sm);
+    border-bottom-right-radius: var(--border-rad-sm);
 }
 
-#hero-message-heading1 {
-    font-size: 2.2em;
-}
 
 /* Keep the two words together in the "Big One" */
-#hero-message-heading1 span {
+#hero-message h1 span {
     white-space: nowrap;
 }
 
 #hero-message-paragraph {
-    font-size: 1.4em;
+    font-size: var(--h3-sm);
     margin-top: 0.5em;
 }
 
@@ -60,6 +51,10 @@ body {
     margin-top: -8%;
     margin-left: 12%;
     margin-right: 12%;
+    display: inline-block;
+}
+#hero-button-start span {
+    font-size: 1.3rem !important;
 }
 
 #section-container {
@@ -67,39 +62,47 @@ body {
     grid-row: 3 / span 1;
 }
 
-#section-heading2 {
-    font-size: 1.3em;
+#section-heading {
+    font-size: var(--h3-sm);
 }
 
+#section-container .button-group {
+    width: 100%;
+}
 
 /* For medium screens */
 @media only screen and (min-width: 768px) {
-
-    h1 {
-        font-size: 3.6em;
-    }
     #hero-message {
         padding: 20% 10% 15% 10%;
-    }
-
-    #hero-button-start {
-        display: inline-block;
+        border-bottom-left-radius: var(--border-rad-med);
+        border-bottom-right-radius: var(--border-rad-med);
     }
 
     #hero-message-paragraph {
-        font-size: 1.6em;
+        font-size: var(--h3-med);
     }
 
     #section-button-resources-checklist,
     #section-button-resources {
         width: 30vw;
     }
-
+    
+    #section-heading {
+        font-size: var(--h3-med);
+    }
 }
 
 /* For larger screens */
 @media only screen and (min-width: 1200px) {
+    #hero-message {
+        border-bottom-left-radius: var(--border-rad-lg);
+        border-bottom-right-radius: var(--border-rad-lg);
+    }
     #hero-message-paragraph {
-        font-size: 2em;
+        font-size: var(--h3-lg);
+    }
+
+    #section-heading3 {
+        font-size: var(--h3-lg);
     }
 }
