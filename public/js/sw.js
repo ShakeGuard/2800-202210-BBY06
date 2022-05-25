@@ -7,26 +7,12 @@
 // See https://web.dev/learn/pwa/service-workers/ for a basic guide.
 
 // Cache stuff.
-const staticCache = () => caches.open("shakeguard-assets-v1");
+const staticCache = async () => await caches.open("shakeguard-assets-v1");
 const baseURL = location.origin;
 
 self.addEventListener("install", evt => {
     evt.waitUntil(
-        async () => {
-            await staticCache()
-            .then(async cache => {
-                // Cache completely-static resource pages.
-                const toCache = [
-                    "resource_page1",
-                    "resource_page2",
-                    "resource_page3",
-                    "resource_page4",
-                    "resource_page5",
-                    "resource_page6",
-                    "resource"
-                ]
-                cache.addAll(toCache.map(pg => bareURL + pg));
-            });
+        () => {
         }
     );
 });
@@ -60,9 +46,24 @@ self.addEventListener('fetch', (e) => {
 // Clean up from previous SW installs.
 self.addEventListener('activate', (e) => {
     e.waitUntil(caches.keys().then((keyList) => {
-        return Promise.all(keyList.map((key) => {
-            if (key === cacheName) { return; }
+        Promise.all(keyList.map((key) => {
             return caches.delete(key);
-        }))
+        }));
+        caches.open("shakeguard-assets-v1").then(
+            cache => {
+                // Cache completely-static resource pages.
+                const toCache = [
+                    "resource_page1",
+                    "resource_page2",
+                    "resource_page3",
+                    "resource_page4",
+                    "resource_page5",
+                    "resource_page6",
+                    "resource"
+                ].map(pg => baseURL + '/' + pg);
+                cache.addAll(toCache);
+                console.log(toCache);
+            }
+        );
     }));
 });
