@@ -1,0 +1,6 @@
+{
+    "name": "ShakeGuard Progressive Web App",
+    "short_name": "ShakeGuard",
+    "description": "ShakeGuard helps British Columbians prepare for disasters to come.",
+    "start_url": "./"
+}
