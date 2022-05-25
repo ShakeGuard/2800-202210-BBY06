@@ -22,9 +22,13 @@ const kitMessageContainer = document.querySelector('.empty-kit-message');
 const addItemFormTemplate = document.querySelector('#add-item');
 let selectedTemplate = 'Home';
 let userKits;
-const deleteKitConfirmationTemplate = document.querySelector('#delete-confirmation');
+const deleteConfirmationTemplate = document.querySelector('#delete-confirmation');
 // Store the kit item HTML that the user wants to edit
+// used in createItemDeleteConfirmation
 let customItem;
+let kitIndex;
+let itemIndex;
+let row;
 
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
@@ -451,7 +455,7 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 		const deleteItemButton = itemRow.querySelector('.edit-button-group .delete');
 		deleteItemButton.dataset.kitIndex = kitIndex;
 		deleteItemButton.dataset.itemIndex = itemIndex;
-		deleteItemButton.addEventListener('click', deleteItemSubmissionHandler);
+		deleteItemButton.addEventListener('click', createItemDeleteConfirmation);
 	} else {
 		itemRow.querySelector('.edit-button-group').remove();
 	}
@@ -580,13 +584,27 @@ async function editItem(kitIndex, itemIndex, row) {
 	// TODO: Handle errors
 }
 
+// Delete a kit item
+async function createItemDeleteConfirmation(e) {
+	e.preventDefault();
+	kitIndex = e.target.dataset.kitIndex;
+	itemIndex = e.target.dataset.itemIndex;
+	row = e.target.parentElement.parentElement;
+	
+	const form = deleteConfirmationTemplate.content.cloneNode(true).firstElementChild;
+	const cancelButton = form.querySelector('[type="button"');
+	cancelButton.addEventListener('click', () => {
+		closeForm("#delete-confirmation-form");
+	});
+	createFormOverlay(form);
+	form.addEventListener('submit', deleteItemSubmissionHandler);
+}
+
 async function deleteItemSubmissionHandler(e) {
 	e.preventDefault();
-	const kitIndex = e.target.dataset.kitIndex;
-	const itemIndex = e.target.dataset.itemIndex;
-	const row = e.target.parentElement.parentElement;
 	await deleteItem(kitIndex, itemIndex);
 	row.remove();
+	closeForm("#delete-confirmation-form");
 }
 
 async function deleteItem(kitIndex, itemIndex) {
@@ -606,7 +624,7 @@ let requestedKitID = "";
 async function createDeleteConfirmation(e) {
 	requestedKitID = e.target.parentElement.id;
 	
-	const form = deleteKitConfirmationTemplate.content.cloneNode(true).firstElementChild;
+	const form = deleteConfirmationTemplate.content.cloneNode(true).firstElementChild;
 	const cancelButton = form.querySelector('[type="button"');
 	cancelButton.addEventListener('click', () => {
 		closeForm("#delete-confirmation-form");
@@ -632,6 +650,8 @@ async function deleteKitSubmissionHandler(e) {
 	e.preventDefault();
 	await deleteKit(requestedKitID);
 	closeForm("#delete-confirmation-form");
+	const kit = document.getElementById(requestedKitID);
+	kit.remove();
 }
 
 // Hacky way to refresh the kit list without reloading page
