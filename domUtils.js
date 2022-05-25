@@ -48,3 +48,24 @@ export function changeLoginButton(baseDOM, req) {
     }
     return baseDOM;
 }
+
+/**
+ * Serve the specified HTML file with the specified templates applied in sequence.
+ * @param { string }     path       - The input HTML file path.
+ * @param { Function[] } templates  - Functions that take a JSDOM object, applied in sequence to the input file.
+ * @returns {(function(*, *): Promise<void>)|*}
+ */
+export function getPathWithTemplates(path, templates) {
+    return async function (req, res) {
+        try {
+            const baseDOM = new JSDOM(await readFile(path, "utf-8"));
+            for (const template of templates) {
+                await template(baseDOM);
+            }
+        } catch {
+            res.sendStatus(404);
+            return;
+        }
+        res.send(baseDOM.serialize());
+    }
+}
