@@ -205,6 +205,10 @@ textarea:enabled {
     transition: var(--transition);
 }
 
+.toggle-profile-form {
+    display: none;
+    transition: var(--transition);
+}
 
 /* All ul elements in the kit */
 #user-kits ul {

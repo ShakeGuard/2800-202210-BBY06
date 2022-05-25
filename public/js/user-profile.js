@@ -11,7 +11,7 @@ const Pen3 = document.getElementById("Pen-3");
 const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName");
 const EditProfile = document.querySelector("#Expand-Profile-Form");
 const CancelProfileChanges = document.querySelector("#Cancel-Profile-Form");
-const hiddenElements = document.querySelectorAll('.toggle');
+const hiddenProfileElements = document.querySelectorAll('.toggle-profile-form');
 
 const createKitButton = document.querySelector('#create-kit-button');
 const kitOptionsFormTemplate = document.querySelector('#kit-options');
@@ -31,11 +31,12 @@ let customItem;
 const WelcomeMessage = document.querySelector(".user-name-welcome");
 
 // Toggle the profile form when user clicks on "Edit profile"
-function toggleProfileForm() {
-	hiddenElements.forEach(element => {
-		element.classList.toggle('toggle');
+function toggleProfileForm(e) {
+	e.preventDefault();
+	hiddenProfileElements.forEach(element => {
+		element.classList.toggle('toggle-profile-form');
 	});
-	EditProfile.classList.toggle('toggle');
+	EditProfile.classList.toggle('toggle-profile-form');
 }
 EditProfile.addEventListener('click', toggleProfileForm);
 CancelProfileChanges.addEventListener('click', toggleProfileForm);
