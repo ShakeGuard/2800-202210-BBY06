@@ -1,22 +1,15 @@
 .popup-form{
-    background-color: var(--bg-light);
-    filter: var(--shadow-light);
-    border-radius: var(--border-rad-sm);
-    padding: 2rem;
-
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    align-items: baseline;
-    gap: 1rem;
+    width: 100vw;
+    height: 100vh;
 
     position: fixed;
-    top: 10%;
-    right: 10%;
-    bottom: 10%;
-    left: 10%;
-    
-    overflow-y: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    align-items: center;
 }
 
 .popup-form h2 {
@@ -145,7 +138,28 @@
     transition: var(--transition);
 }
 
+/* This positions the form's content and adds background, etc. */
+.form-content-wrapper {
+    background-color: var(--bg-light);
+    filter: var(--shadow-light);
+    border-radius: var(--border-rad-sm);
 
+    padding: 2rem;
+    max-width: 70vw;
+    max-height: 80vh;
+    width: fit-content;
+    height: fit-content;
+
+    margin-left: auto;
+    margin-right: auto;
+    overflow-y: auto;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-items: baseline;
+    gap: 1rem;
+}
 
 @media only screen and (min-width: 768px) {
     .popup-form h2 {
@@ -160,7 +174,7 @@
 
 @media only screen and (min-width: 1200px) {
     .popup-form input {
-        width: 60%;
+        width: 100%;
     }
 
 }
