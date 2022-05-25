@@ -35,7 +35,7 @@ export async function getLogin(req, res) {
  * @param { mdb.Db } db
  * @returns { function(Request, Response): Promise<void> }
  */
-export function makePostLogin(db) {
+export function makePostLoginRoute(db) {
     if (db === undefined) {
         throw new Error("Provide a MongoDB object to the POST route!");
     }

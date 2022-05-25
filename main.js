@@ -18,7 +18,7 @@ import {getProfile, patchProfile} from "./profile.mjs";
 import {connectMongo, dbName, dbURL} from "./db.mjs";
 import {checkLoginError, sessionParser} from "./sessions.mjs";
 import {argv} from "./arguments.mjs";
-import {getLogin, makePostLogin, postLogout} from "./login.mjs";
+import {getLogin, makePostLoginRoute, postLogout} from "./login.mjs";
 import {changeLoginButton, loadHeaderFooter, loadHTMLComponent} from "./domUtils.js";
 import {getResource, getResourcePage} from "./resources.mjs";
 
@@ -637,12 +637,11 @@ app.get('/kit-templates', async (req, res) => {
 
 app.get('/login', getLogin);
 
-app.post("/login", makePostLogin(db))
+app.post("/login", makePostLoginRoute(db))
 
 app.post("/logout", postLogout)
 
 app.get('/resource', getResource);
-
 app.get("/resource_page:pageNum", getResourcePage);
 
 // RUN SERVER
