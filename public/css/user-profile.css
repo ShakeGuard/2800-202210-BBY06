@@ -13,6 +13,7 @@
 }
 
 .profile-form .form-content-wrapper {
+    display: block;
     background-color: transparent;
     width: auto;
     filter: none;
@@ -22,7 +23,8 @@
 /* This is the wrapper for the input, label, and pen */
 .profile-form .form-input-container {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) 2rem;
+    grid-template-columns: minmax(0, 1fr) 2rem;
+    column-gap: 2rem;
     width: 100%;
 }
 
@@ -52,7 +54,7 @@
     transition: var(--transition);
     filter: var(--shadow-light);
 
-    grid-column: 3 / span 1;
+    grid-column: 2 / span 1;
     grid-row: 1 / span 2;
 }
 
@@ -96,6 +98,11 @@ textarea:enabled {
     opacity: 100%;
 }
 
+.profile-form .button-group {
+    display: flex;
+    flex-direction: column;
+}
+
 .profile-form .form-input-container .error {
     grid-column: 1 / span 1;
     grid-row: 3 / span 1;
@@ -106,8 +113,9 @@ textarea:enabled {
 }
 
 #Avatar-Error, #Update-Error {
-    margin: 0;
+    margin-top: 1rem;
     padding: 0;
+    text-align: center;
 }
 
 ::-webkit-file-upload-button {
