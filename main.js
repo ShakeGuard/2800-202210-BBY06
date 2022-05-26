@@ -60,7 +60,6 @@ const app = express();
 const upload = multer();
 // Defaults for address and port:
 const dbURL = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
-
 const dbName = argv.dbName ?? "COMP2800";
 
 // Log in 'dev' format to stdout, if devLog option is set.
@@ -269,6 +268,9 @@ app.use("/html", express.static("public/html"));
 app.use("/fonts", express.static("public/fonts"));
 app.use("/shakeguard.webmanifest", (req, res) => {
 	res.sendFile(join(process.cwd(), "/public/shakeguard.webmanifest"));
+});
+app.use("/favicon.ico", (req, res) => {
+	res.sendFile(join(process.cwd(), "/public/images/comp2800_logo_favicon.ico"));
 });
 app.use("/sw.js", (req, res) => {
 	res.setHeader("Service-Worker-Allowed", "/");
