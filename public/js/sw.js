@@ -7,7 +7,7 @@
 // See https://web.dev/learn/pwa/service-workers/ for a basic guide.
 
 // Cache stuff.
-const staticCache = async () => await caches.open("shakeguard-assets-v7");
+const staticCache = async () => await caches.open("shakeguard-assets-v8");
 const baseURL = location.origin;
 
 self.addEventListener("install", evt => {
