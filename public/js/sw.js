@@ -30,9 +30,6 @@ const offlineRoutes = {
 
 self.addEventListener('fetch', (e) => {
     e.respondWith((async () => {
-        if (e.request) {
-            return;
-        }
         // Check the static asset cache first.
         // Empty-bodied requests should be safe to serve from cache:
         if (e.request.method === "GET" && e.request.body === undefined) {
