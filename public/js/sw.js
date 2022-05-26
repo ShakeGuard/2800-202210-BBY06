@@ -28,6 +28,21 @@ const offlineRoutes = {
     '/login': () => new Response("offline", {status: 200})
 };
 
+/**
+ *
+ * @param {Request} req
+ */
+function shouldCache(req) {
+    // Don't cache things that have dynamic templates in them.
+    // TODO: make Kits cacheable in some way.
+    const templatedPages = new Set([
+        '/profile',
+        '/dashboard'
+    ]);
+    return !(req.headers.has('Cache-Control')
+    ||  templatedPages.has(new URL(req.url).pathname));
+}
+
 self.addEventListener('fetch', (e) => {
     e.respondWith((async () => {
         // Check the static asset cache first.
@@ -43,7 +58,7 @@ self.addEventListener('fetch', (e) => {
             let response;
             try {
                 response = await fetch(e.request);
-                if (response.status === 200 && !e.request.headers.has('Cache-Control')) {
+                if (response.status === 200 && shouldCache(e.request)) {
                     await (await staticCache()).put(e.request, response.clone());
                 }
             } catch (err) {
