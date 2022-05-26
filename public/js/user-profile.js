@@ -35,12 +35,24 @@ let row;
 const WelcomeMessage = document.querySelector(".user-name-welcome");
 
 // Toggle the profile form when user clicks on "Edit profile"
-function toggleProfileForm(e) {
-	e.preventDefault();
+function toggleProfileForm() {
+	// Toggle the form elements
 	hiddenProfileElements.forEach(element => {
 		element.classList.toggle('toggle-profile-form');
 	});
 	EditProfile.classList.toggle('toggle-profile-form');
+	// Disable inputs
+	FullNameInput.disabled= true; 
+    FullNameInput.value = userName;
+	EmailInput.disabled = true;
+	EmailInput.value = userEmail;
+	PasswordInput.disabled= true; 
+    PasswordInput.value = "12345";
+	// Clear all error messages
+	const errorMsgs = document.querySelectorAll('.profile-form .error');
+	errorMsgs.forEach(element => {
+		element.innerText = ""
+	});
 }
 EditProfile.addEventListener('click', toggleProfileForm);
 CancelProfileChanges.addEventListener('click', toggleProfileForm);
@@ -92,7 +104,8 @@ const getAvatar = async() => {
 	document.getElementById("Base-Container-ProfilePicture").src = base64;
 }
 
-async function executeUpdate(){
+async function executeUpdate(e){
+	e.preventDefault();
 	checkForInvalidInput(FullNameInput);
 	checkForInvalidInput(PasswordInput);
 	checkForInvalidInput(EmailInput);
