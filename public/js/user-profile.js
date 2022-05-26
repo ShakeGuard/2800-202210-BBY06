@@ -1,5 +1,6 @@
 "use strict";
 
+const ProfileForm = document.querySelector('.profile-form');
 const UpdateButton = document.getElementById("Update-Button");
 const FullNameInput = document.getElementById("FullName");
 const EmailInput = document.getElementById("Email");
@@ -257,7 +258,7 @@ AvatarInput.addEventListener("input", function(e) {
 })
 getAvatar();
 getProfileDetails();
-UpdateButton.addEventListener("click", executeUpdate, false);
+ProfileForm.addEventListener("submit", executeUpdate, false);
 Pen1.addEventListener("click",editFullName,false);
 Pen2.addEventListener("click",editEmail,false);
 Pen3.addEventListener("click",editPasswordInput,false);
