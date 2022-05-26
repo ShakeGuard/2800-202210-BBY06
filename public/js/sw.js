@@ -32,15 +32,20 @@ const offlineRoutes = {
  *
  * @param {Request} req
  */
-function shouldCache(req) {
+function shouldCache(req, res) {
     // Don't cache things that have dynamic templates in them.
     // TODO: make Kits cacheable in some way.
     const templatedPages = new Set([
         '/profile',
         '/dashboard'
     ]);
+    const JSONRoutes = new Set([
+        '/',
+    ]);
     return !(req.headers.has('Cache-Control')
-    ||  templatedPages.has(new URL(req.url).pathname));
+    ||  templatedPages.has(new URL(req.url).pathname)
+    ||  JSONRoutes.has(new URL(req.url).pathname)
+    || !res.clone().headers.get("Content-Type").includes("application/json"));
 }
 
 self.addEventListener('fetch', (e) => {
@@ -58,7 +63,7 @@ self.addEventListener('fetch', (e) => {
             let response;
             try {
                 response = await fetch(e.request);
-                if (response.status === 200 && shouldCache(e.request)) {
+                if (response.status === 200 && shouldCache(e.request, e.response)) {
                     await (await staticCache()).put(e.request, response.clone());
                 }
             } catch (err) {
