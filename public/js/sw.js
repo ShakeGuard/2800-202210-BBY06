@@ -119,19 +119,19 @@ self.addEventListener('activate', (e) => {
                     "css/header-footer.css",
                     // Web Manifest (? might be bad)
                     "shakeguard.webmanifest",
-                ].map(pg => baseURL + '/' + pg);
+                ].map(pg => baseURL + '/' + pg)
+                .concat([
+                    // Stuff that isn't ours:
+                    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
+                    "https://api.fontshare.com/css?f[]=satoshi@400,700&display=swap",
+                    "https://api.fontshare.com/css?f[]=sharpie@700&display=swap",
+                    "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+                ]);
 
                 for (const route of toCache) {
                     console.log(`adding ${route}`);
                     cache.add(route);
                 }
-                // Stuff that isn't ours:
-                cache.addAll([
-                    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
-                    "https://api.fontshare.com/css?f[]=satoshi@400,700&display=swap",
-                    "https://api.fontshare.com/css?f[]=sharpie@700&display=swap",
-                    "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-                ])
             }
         );
     }));
