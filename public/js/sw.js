@@ -43,7 +43,7 @@ self.addEventListener('fetch', (e) => {
             let response;
             try {
                 response = await fetch(e.request);
-                if (response.status === 200) {
+                if (response.status === 200 && e.request.headers.has('Cache-Control')) {
                     await (await staticCache()).put(e.request, response.clone());
                 }
             } catch (err) {
