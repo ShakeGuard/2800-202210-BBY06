@@ -30,6 +30,9 @@ const offlineRoutes = {
 
 self.addEventListener('fetch', (e) => {
     e.respondWith((async () => {
+        if (e.request) {
+            return;
+        }
         // Check the static asset cache first.
         // Empty-bodied requests should be safe to serve from cache:
         if (e.request.method === "GET" && e.request.body === undefined) {
@@ -93,6 +96,8 @@ self.addEventListener('activate', (e) => {
                     // Scripts:
                     "js/client.js",
                     "js/footer-easter-egg.js",
+                    // Sounds:
+                    "sounds/easteregg/ding.wav",
                     // Images:
                     "favicon.ico",
                     "images/Resource1.jpg",
@@ -125,7 +130,6 @@ self.addEventListener('activate', (e) => {
                     "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
                     "https://api.fontshare.com/css?f[]=satoshi@400,700&display=swap",
                     "https://api.fontshare.com/css?f[]=sharpie@700&display=swap",
-                    "http://localhost:8000/sounds/easteregg/ding.wav",
                     "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
                 ])
             }
