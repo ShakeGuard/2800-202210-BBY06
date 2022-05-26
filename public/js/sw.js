@@ -7,7 +7,7 @@
 // See https://web.dev/learn/pwa/service-workers/ for a basic guide.
 
 // Cache stuff.
-const staticCache = async () => await caches.open("shakeguard-assets-v8");
+const staticCache = async () => await caches.open("shakeguard-assets-v10");
 const baseURL = location.origin;
 
 self.addEventListener("install", evt => {
@@ -40,12 +40,16 @@ function shouldCache(req, res) {
         '/dashboard'
     ]);
     const JSONRoutes = new Set([
-        '/',
+        '/kits',
+        '/profiles',
+        '/avatar',
+        '/profile-details'
     ]);
     return !(req.headers.has('Cache-Control')
     ||  templatedPages.has(new URL(req.url).pathname)
     ||  JSONRoutes.has(new URL(req.url).pathname)
-    || !res.clone().headers.get("Content-Type").includes("application/json"));
+    ||  res.clone().type === "opaqueredirect"
+    ||  res.clone().headers.get("Content-Type").includes("application/json"));
 }
 
 self.addEventListener('fetch', (e) => {
@@ -63,12 +67,15 @@ self.addEventListener('fetch', (e) => {
             let response;
             try {
                 response = await fetch(e.request);
-                if (response.status === 200 && shouldCache(e.request, e.response)) {
+                if (response.status === 200 && shouldCache(e.request, response)) {
                     await (await staticCache()).put(e.request, response.clone());
                 }
             } catch (err) {
                 // No network, no cache – return bad response.
                 return null;
+            }
+            if (response.clone().type === "opaqueredirect") {
+                return response.redirect(res.clone().url, res.clone().status);
             }
             return response;
         }
@@ -100,6 +107,8 @@ self.addEventListener('activate', (e) => {
             cache => {
                 // Cache completely-static pages.
                 const toCache = [
+                    // Index Page:
+                    "",
                     // Login Page:
                     "login",
                     // Resource Pages:
