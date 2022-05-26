@@ -48,6 +48,7 @@ function toggleProfileForm() {
 	EmailInput.value = userEmail;
 	PasswordInput.disabled= true; 
     PasswordInput.value = "12345";
+	UserFeedbackFile.innerText = "";
 	// Clear all error messages
 	const errorMsgs = document.querySelectorAll('.profile-form .error');
 	errorMsgs.forEach(element => {
