@@ -1,5 +1,6 @@
 "use strict";
 
+const ProfileForm = document.querySelector('.profile-form');
 const UpdateButton = document.getElementById("Update-Button");
 const FullNameInput = document.getElementById("FullName");
 const EmailInput = document.getElementById("Email");
@@ -22,21 +23,38 @@ const kitMessageContainer = document.querySelector('.empty-kit-message');
 const addItemFormTemplate = document.querySelector('#add-item');
 let selectedTemplate = 'Home';
 let userKits;
-const deleteKitConfirmationTemplate = document.querySelector('#delete-confirmation');
+const deleteConfirmationTemplate = document.querySelector('#delete-confirmation');
 // Store the kit item HTML that the user wants to edit
+// used in createItemDeleteConfirmation
 let customItem;
+let kitIndex;
+let itemIndex;
+let row;
 
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
 const WelcomeMessage = document.querySelector(".user-name-welcome");
 
 // Toggle the profile form when user clicks on "Edit profile"
-function toggleProfileForm(e) {
-	e.preventDefault();
+function toggleProfileForm() {
+	// Toggle the form elements
 	hiddenProfileElements.forEach(element => {
 		element.classList.toggle('toggle-profile-form');
 	});
 	EditProfile.classList.toggle('toggle-profile-form');
+	// Disable inputs
+	FullNameInput.disabled= true; 
+    FullNameInput.value = userName;
+	EmailInput.disabled = true;
+	EmailInput.value = userEmail;
+	PasswordInput.disabled= true; 
+    PasswordInput.value = "12345";
+	UserFeedbackFile.innerText = "";
+	// Clear all error messages
+	const errorMsgs = document.querySelectorAll('.profile-form .error');
+	errorMsgs.forEach(element => {
+		element.innerText = ""
+	});
 }
 EditProfile.addEventListener('click', toggleProfileForm);
 CancelProfileChanges.addEventListener('click', toggleProfileForm);
@@ -88,7 +106,8 @@ const getAvatar = async() => {
 	document.getElementById("Base-Container-ProfilePicture").src = base64;
 }
 
-async function executeUpdate(){
+async function executeUpdate(e){
+	e.preventDefault();
 	checkForInvalidInput(FullNameInput);
 	checkForInvalidInput(PasswordInput);
 	checkForInvalidInput(EmailInput);
@@ -239,7 +258,7 @@ AvatarInput.addEventListener("input", function(e) {
 })
 getAvatar();
 getProfileDetails();
-UpdateButton.addEventListener("click", executeUpdate, false);
+ProfileForm.addEventListener("submit", executeUpdate, false);
 Pen1.addEventListener("click",editFullName,false);
 Pen2.addEventListener("click",editEmail,false);
 Pen3.addEventListener("click",editPasswordInput,false);
@@ -451,7 +470,7 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 		const deleteItemButton = itemRow.querySelector('.edit-button-group .delete');
 		deleteItemButton.dataset.kitIndex = kitIndex;
 		deleteItemButton.dataset.itemIndex = itemIndex;
-		deleteItemButton.addEventListener('click', deleteItemSubmissionHandler);
+		deleteItemButton.addEventListener('click', createItemDeleteConfirmation);
 	} else {
 		itemRow.querySelector('.edit-button-group').remove();
 	}
@@ -580,13 +599,27 @@ async function editItem(kitIndex, itemIndex, row) {
 	// TODO: Handle errors
 }
 
+// Delete a kit item
+async function createItemDeleteConfirmation(e) {
+	e.preventDefault();
+	kitIndex = e.target.dataset.kitIndex;
+	itemIndex = e.target.dataset.itemIndex;
+	row = e.target.parentElement.parentElement;
+	
+	const form = deleteConfirmationTemplate.content.cloneNode(true).firstElementChild;
+	const cancelButton = form.querySelector('[type="button"');
+	cancelButton.addEventListener('click', () => {
+		closeForm("#delete-confirmation-form");
+	});
+	createFormOverlay(form);
+	form.addEventListener('submit', deleteItemSubmissionHandler);
+}
+
 async function deleteItemSubmissionHandler(e) {
 	e.preventDefault();
-	const kitIndex = e.target.dataset.kitIndex;
-	const itemIndex = e.target.dataset.itemIndex;
-	const row = e.target.parentElement.parentElement;
 	await deleteItem(kitIndex, itemIndex);
 	row.remove();
+	closeForm("#delete-confirmation-form");
 }
 
 async function deleteItem(kitIndex, itemIndex) {
@@ -606,7 +639,7 @@ let requestedKitID = "";
 async function createDeleteConfirmation(e) {
 	requestedKitID = e.target.parentElement.id;
 	
-	const form = deleteKitConfirmationTemplate.content.cloneNode(true).firstElementChild;
+	const form = deleteConfirmationTemplate.content.cloneNode(true).firstElementChild;
 	const cancelButton = form.querySelector('[type="button"');
 	cancelButton.addEventListener('click', () => {
 		closeForm("#delete-confirmation-form");
@@ -632,6 +665,8 @@ async function deleteKitSubmissionHandler(e) {
 	e.preventDefault();
 	await deleteKit(requestedKitID);
 	closeForm("#delete-confirmation-form");
+	const kit = document.getElementById(requestedKitID);
+	kit.remove();
 }
 
 // Hacky way to refresh the kit list without reloading page
