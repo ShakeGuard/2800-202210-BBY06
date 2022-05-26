@@ -3,9 +3,7 @@
 
 #Base-Container{
     background-color: var(--bg-yellow);
-    place-items: center;
     border-radius: var(--border-rad-sm);
-    text-align: center;
     min-width: 150px;
     width: 90%;
     max-width: 350px;
@@ -14,39 +12,27 @@
     margin-right: auto;
 }
 
-#Base-Container-ProfilePicture-Container{
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 1;
+.profile-form .form-content-wrapper {
+    background-color: transparent;
+    width: auto;
+    filter: none;
+    margin-top: -100px;
 }
 
-#Base-Container-ProfilePicture{
+/* This is the wrapper for the input, label, and pen */
+.profile-form .form-input-container {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) 2rem;
+    width: 100%;
+}
+
+.profile-form img {
     width: 75px;
     height: 75px;
     object-fit: contain;
     border-radius: 55px;
-    background-color: #FFFFFF;
+    background-color: var(--bg-light);
     padding: 15px;
-    margin-top: -45px;
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 1;
-}
-
-#Base-Container-FullName-Container{
-    display: grid;
-    grid-column: 1 / span 1;
-    grid-row: 3 / span 1;
-    max-width: 100%;
-}
-
-#Base-Container-Upload-Avatar-Centering-Container{
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    grid-column: 1 / span 1;
-    grid-row: 2 / span 1;
-    text-align: center;
-    height: 100%;
-    max-width: 100%;
 }
 
 #Upload-Avatar{
@@ -55,24 +41,7 @@
     place-self: center;
 }
 
-#Base-Container-Email-Container{
-    align-items: flex-end;
-    grid-column: 1 / span 1;
-    grid-row: 4 / span 1;
-}
-
-#Base-Container-Password-Container{
-    grid-column: 1 / span 1;
-    grid-row: 5 / span 1;
-}
-
-#Base-Container-Update-Container{
-    grid-column: 1 / span 1;
-    grid-row: 6 / span 1;
-}
-
-
-#Pen-1, #Pen-2, #Pen-3, #Pen-4{
+.profile-form .pen {
     user-select: none;
     -moz-user-select: none;    
     -ms-user-select: none;  
@@ -82,16 +51,15 @@
     padding: 5px;
     transition: var(--transition);
     filter: var(--shadow-light);
+
+    grid-column: 3 / span 1;
+    grid-row: 1 / span 2;
 }
 
-#Pen-1:hover, #Pen-2:hover, #Pen-3:hover, #Pen-4:hover{
+.profile-form .pen:hover {
     filter: var(--shadow-dark);
     background-color: var(--color-light-hover);
-}
-
-#Pen-2, #Pen-3{
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 1;
+    cursor: pointer;
 }
 
 #Edit-ProfilePicture-Button{
@@ -104,66 +72,42 @@
     grid-row: 1 / span 1;
 }
 
-.Form-Label{
-    justify-self: start;
-    align-self: end;
-    margin-top: 0;
+.profile-form label {
     grid-column: 1 / span 1;
-    grid-row: 1/ span 1;
+    grid-row: 1 / span 1;
+    font-size: var(--p-sm);
 }
 
-.Form-Input{
+.profile-form input {
     border: 0px solid var(--color-grey);
     background: transparent;
     border-bottom-width: 1px;
+
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
 }
 
-.Form-Input:disabled,
+.profile-form input:disabled,
 textarea:disabled {
     opacity: 50%;
 }
-.Form-Input:enabled,
+.profile-form input:enabled,
 textarea:enabled {
     opacity: 100%;
 }
 
-.Container{
-    display: grid;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    grid-template-columns: 1fr;
-}
-
-.Container-Form{
+.profile-form .form-input-container .error {
     grid-column: 1 / span 1;
-    grid-row: 2 / span 1;
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: minmax(0, 3fr) auto;
-    gap: 1rem;
-    place-self: center;
-    justify-self: start;
-    align-items: end;
-}
-
-.Container-Form-FullName{
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 1;
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: 3fr 1fr;
-    place-self: center;
-    justify-self: start;
-    align-items: end;
+    grid-row: 3 / span 1;
 }
 
 .material-symbols-outlined {
     place-self: center;
 }
 
-
-#Update-Error{
-    padding-bottom: 10px;
+#Avatar-Error, #Update-Error {
+    margin: 0;
+    padding: 0;
 }
 
 ::-webkit-file-upload-button {
@@ -206,7 +150,7 @@ textarea:enabled {
 }
 
 .toggle-profile-form {
-    display: none;
+    display: none !important;
     transition: var(--transition);
 }
 
