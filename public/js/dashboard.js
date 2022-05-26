@@ -58,7 +58,7 @@ function makeUserRow(userDoc) {
 
     /** @type HTMLButtonElement */
     const deleteButton = row.getElementsByClassName('delete-button').item(0);
-    deleteButton.addEventListener("click", deleteAction(userDoc._id));
+    deleteButton.addEventListener("click", () => createDeleteAdminConfirmation(userDoc._id));
 
     /** @type HTMLButtonElement */
     const editButton = row.getElementsByClassName('edit-button').item(0);
@@ -68,25 +68,51 @@ function makeUserRow(userDoc) {
 }
 
 /**
+ * Create a confirmation popup when deleting an admin. 
+ * HTML form cloned is from kit.html template.
+ * @param {userDoc._id} userID - userID from db
+ */
+function createDeleteAdminConfirmation(userID) {
+    // Create the overlay to darken the contents of the screen
+    const overlay = document.createElement('div');
+    overlay.setAttribute('class', 'form-overlay');
+
+    const form = deleteConfirmationTemplate.content.cloneNode(true).firstElementChild;
+	const cancelButton = form.querySelector('[type="button"');
+	cancelButton.addEventListener('click', () => {
+		closeForm('#delete-confirmation-form');
+	});
+	createFormOverlay(form); // This code referenced is from user-profile.js
+	document.querySelector("#delete-confirmation-form").addEventListener('submit', (e) => {
+        e.preventDefault();
+        deleteAction(userID)
+    });
+}
+
+/**
  * Function that makes a "delete this userID" function
  * for use in click handlers.
  * @param {string} userID - a user ID to delete
  * @returns an async function that performs the delete operation for the given userID
  */
-function deleteAction(userID) {
-    return async function () {
-        let data = {
-            '_id': userID
-        };
-        const response = await fetch('/delete-admin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        const status = await response.text();
-        serverMessages(status);
+async function deleteAction(userID) {
+    let data = {
+        '_id': userID
+    };
+    const response = await fetch('/delete-admin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    const status = await response.text();
+    serverMessages(status);
+
+    // This could be handled better
+    if (response.ok) {
+        document.querySelector('#delete-confirmation-form').remove();
+        document.querySelector('.form-overlay').remove();
     }
 }
 
@@ -169,9 +195,12 @@ function editAction(userID) {
     }
 }
 
-
-function closeForm() {
-    document.querySelector('#add-admin-form').remove();
+/**
+ * Deletes the specified form and closes the overlay.
+ * @param {HTMLElement} form - An HTML form to delete, formatted for queryselector.
+ */
+function closeForm(form) {
+    document.querySelector(form).remove();
     document.querySelector('.form-overlay').remove();
 }
 
@@ -179,16 +208,13 @@ function cancelCreateAdmin() {
     toastQueue.queueToasts([
         { message: `Admin was not created`, classes: ["toast-warning"] }
     ]);
-    closeForm();
+    closeForm('#add-admin-form');
 }
 
 function uploadFileFeedback() {
     if (validFileType(this.files)) {
         const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName-Admin");
         UserFeedbackFile.innerHTML = this.files[0].name;
-        toastQueue.queueToasts([
-            { message: "File selected", classes: ["toast-info"] }
-        ]);
     }
 }
 
@@ -292,7 +318,7 @@ function serverMessages(status) {
                 { message: `Successfully added admin`, classes: ["toast-success"] }
             ]);
             refreshUsers(fetch('profiles'));
-            closeForm();
+            closeForm('#add-admin-form');
             break;
         case 'duplicateKey':
             toastQueue.queueToasts([
