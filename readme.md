@@ -120,7 +120,8 @@ Our team, BBY6, developed ShakeGuard to help British Columbians prepare for eart
 │          toasts.mjs                                                                                                   
 │          user-profile.js                                                                                              
 │                                                                                                                       
-└─templates                                                                                                                     card.html                                                                                                               
+└─templates
+card.html                                                                                                               
 footer.html                                                                                                             
 header.html                                                                                                             
 kit.html                                                                                                                
