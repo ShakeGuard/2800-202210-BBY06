@@ -8,27 +8,25 @@
 <div>
     <template id="kit-options">
         <form id="kit-options-form" class="popup-form">
-            <div class="form-content-wrapper">
-                <h2>Choose an option:</h2>
-                <div class="kit-option" id="kit-1">
-                    <span class="material-symbols-outlined">cottage</span>
-                    <h3 class="kit-name">Home Kit</h3>
-                    <p class="kit-description">The Home Kit is for emergencies like earthquakes, storms, or accidents where
-                        you
-                        will stay at home for the duration of the situation.</p>
-                </div>
-                <div class="kit-option" id="kit-2">
-                    <span class="material-symbols-outlined">airport_shuttle</span>
-                    <h3 class="kit-name">Grab-and-Go Bag</h3>
-                    <p class="kit-description">The Grab-and-Go Bag is a smaller portable version of the Home kit, prepared
-                        for
-                        mobility. Applicable situations for the Grab-and-Go bag include floods, landslides, wildfires, and
-                        tsunamis.</p>
-                </div>
-                <div class="button-group">
-                    <button type="submit" class="button button-primary">Submit</button>
-                    <button type="button" class="button button-secondary" id="create-kit-submit">Cancel</button>
-                </div>
+            <h2>Choose an option:</h2>
+            <div class="kit-option" id="kit-1">
+                <span class="material-symbols-outlined">cottage</span>
+                <h3 class="kit-name">Home Kit</h3>
+                <p class="kit-description">The Home Kit is for emergencies like earthquakes, storms, or accidents where
+                    you
+                    will stay at home for the duration of the situation.</p>
+            </div>
+            <div class="kit-option" id="kit-2">
+                <span class="material-symbols-outlined">airport_shuttle</span>
+                <h3 class="kit-name">Grab-and-Go Bag</h3>
+                <p class="kit-description">The Grab-and-Go Bag is a smaller portable version of the Home kit, prepared
+                    for
+                    mobility. Applicable situations for the Grab-and-Go bag include floods, landslides, wildfires, and
+                    tsunamis.</p>
+            </div>
+            <div class="button-group">
+                <button type="submit" class="button button-primary">Submit</button>
+                <button type="button" class="button button-secondary" id="create-kit-submit">Cancel</button>
             </div>
         </form>
     </template>
@@ -43,7 +41,7 @@
             <span class="material-symbols-outlined teal delete-kit">delete</span>
             <ul class="all-kit-items-list"></ul>
             <button type="submit" class="button button-secondary-teal add-custom-item hidden">
-                + Add item
+                <span class="material-symbols-outlined">add</span> Add item
             </button>
         </li>
     </template>
@@ -59,7 +57,7 @@
             <input type="text" name="Name" class="item-name" value="Name" id="item-name" disabled/>
             <label for="item-quantity">Quantity</label>
             <input type="text" name="Quantity" class="item-quantity" value="Quantity" id="item-quantity" disabled/>
-            <textarea class="item-description" id="item-description" name="Description" rows="5" disabled></textarea>
+            <textarea class="item-description" id="item-description" name="Description" disabled></textarea>
             <div class="edit-button-group">
                 <span class="material-symbols-outlined edit">edit</span>
                 <span class="material-symbols-outlined delete">delete</span>
@@ -70,16 +68,14 @@
 
     <template id="add-item">
         <form id="add-item-form" class="popup-form">
-            <div class="form-content-wrapper">
-                <h2>Custom Item</h2>
-                <input type="file" name="image" id="add-item-image" accept=".jpg,.png,.jpeg" />
-                <input type="text" name="name" placeholder="Name" id="add-item-name" />
-                <input type="text" name="quantity" placeholder="Quantity" id="add-item-quantity" />
-                <input type="text" name="description" placeholder="Description" id="add-item-description" />
-                <div class="button-group">
-                    <button type="submit" class="button button-primary">Submit</button>
-                    <button type="button" class="button button-secondary" id="add-item-submit">Cancel</button>
-                </div>
+            <h2>Custom Item</h2>
+            <input type="file" name="image" id="add-item-image" accept=".jpg,.png,.jpeg" />
+            <input type="text" name="name" placeholder="Name" id="add-item-name" />
+            <input type="text" name="quantity" placeholder="Quantity" id="add-item-quantity" />
+            <input type="text" name="description" placeholder="Description" id="add-item-description" />
+            <div class="button-group">
+                <button type="submit" class="button button-primary">Submit</button>
+                <button type="button" class="button button-secondary" id="add-item-submit">Cancel</button>
             </div>
         </form>
     </template>
@@ -87,12 +83,10 @@
 
     <template id="delete-confirmation">
         <form id="delete-confirmation-form" class="popup-form">
-            <div class="form-content-wrapper">
-                <h2>Are you sure?</h2>
-                <div class="button-group">
-                    <button type="submit" class="button button-primary delete">Delete</button>
-                    <button type="button" class="button button-secondary cancel">Cancel</button>
-                </div>
+            <h2>Are you sure?</h2>
+            <div class="button-group">
+                <button type="submit" class="button button-primary delete">Delete</button>
+                <button type="button" class="button button-secondary cancel">Cancel</button>
             </div>
         </form>
     </template>

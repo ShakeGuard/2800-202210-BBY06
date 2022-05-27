@@ -22,7 +22,6 @@ import { hideBin } from 'yargs/helpers';
 import {log, accessLog, stdoutLog, errorLog, addDevLog} from './logging.mjs';
 import {readSecrets} from './shakeguardSecrets.mjs';
 import applyEasterEggStyle from './easterEgg.mjs';
-import {join} from "node:path";
 
 const argv = yargs(hideBin(process.argv))
   .option('port', {
@@ -60,6 +59,7 @@ const app = express();
 const upload = multer();
 // Defaults for address and port:
 const dbURL = `mongodb://${argv.instanceAddress ?? 'localhost'}:${argv.instancePort ?? '27017'}`;
+
 const dbName = argv.dbName ?? "COMP2800";
 
 // Log in 'dev' format to stdout, if devLog option is set.
@@ -207,11 +207,9 @@ const loadHeaderFooter = async (baseDOM) => {
 	
 	// Add the header 
 	baseDOM = await loadHTMLComponent(baseDOM, "header", "header", "./templates/header.html");
-	// HACK: Horrible hack to add the <link> element for the manifest to every page.
-	baseDOM = await loadHTMLComponent(baseDOM, "head", "head", "./templates/header.html");
+
 	// Add the footer
 	baseDOM = await loadHTMLComponent(baseDOM, "footer", "footer", "./templates/footer.html");
-
 
 	return baseDOM;
 }
@@ -225,7 +223,7 @@ const loadHTMLComponent = async (baseDOM, placeholderSelector, componentSelector
 	const placeholder = document.querySelector(placeholderSelector);
 	const html = await readFile(componentLocation, "utf8");
 	const componentDOM = new JSDOM(html);
-	placeholder.innerHTML = placeholder.innerHTML + componentDOM.window.document.querySelector(componentSelector).innerHTML;
+	placeholder.innerHTML = componentDOM.window.document.querySelector(componentSelector).innerHTML;
 	return baseDOM;
 }
 
@@ -266,16 +264,6 @@ app.use("/images", express.static("public/images"));
 app.use("/sounds", express.static("public/sounds"));
 app.use("/html", express.static("public/html"));
 app.use("/fonts", express.static("public/fonts"));
-app.use("/shakeguard.webmanifest", (req, res) => {
-	res.sendFile(join(process.cwd(), "/public/shakeguard.webmanifest"));
-});
-app.use("/favicon.ico", (req, res) => {
-	res.sendFile(join(process.cwd(), "/public/images/comp2800_logo_favicon.ico"));
-});
-app.use("/sw.js", (req, res) => {
-	res.setHeader("Service-Worker-Allowed", "/");
-	res.sendFile(join(process.cwd(), "/public/js/sw.js"));
-});
 
 app.get('/', async function (req, res) {
 	if (req.session.loggedIn) {

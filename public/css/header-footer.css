@@ -1,12 +1,19 @@
+@import url('https://api.fontshare.com/css?f[]=satoshi@400,401,700,701&display=swap');
+@import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
+@import url('/css/buttons.css');
+
+:root {
+    font-family: 'Satoshi', sans-serif;
+}
+
 nav {
     position: relative;
     top: 0;
     left: 0;
     right: 0;
-    width: 100vw;
     max-width: 100vw;
     overflow: hidden;
-    color: var(--text-dark) !important;
+    color: black !important;
 }
 
 .logo {

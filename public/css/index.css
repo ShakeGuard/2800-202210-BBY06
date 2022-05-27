@@ -1,9 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
 /* Page contents */
 #grid-container-main {
     text-align: center;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
+    margin-top: -10vh;
 }
 
 #hero-container {
@@ -13,37 +19,40 @@
 }
 
 .heading-emphasis {
-    font-family: var(--ff-emphasis)
+    font-family: "Sharpie", serif;
 }
 
 #hero-message {
     min-height: 10vh;
-    padding: 20% 10% 15% 10%;
+    padding: 30% 10% 15% 10%;
     color: white;
 
     background-image:
         /* color overlay */
         linear-gradient(
-            rgba(255, 255, 255, 0.2), 30%,
+            rgba(23, 165, 186, 0.8), 
             rgba(23, 165, 186, 0.8)
         ),
-        url("../images/ali-kazal-jwyFn9kxQuc-unsplash-blue-gradient.jpg");
+        url("../images/ali-kazal-jwyFn9kxQuc-unsplash-greyscale.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: top;
+    background-position: center;
 
-    border-bottom-left-radius: var(--border-rad-sm);
-    border-bottom-right-radius: var(--border-rad-sm);
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
 }
 
+#hero-message-heading1 {
+    font-size: 2.2em;
+}
 
 /* Keep the two words together in the "Big One" */
-#hero-message h1 span {
+#hero-message-heading1 span {
     white-space: nowrap;
 }
 
 #hero-message-paragraph {
-    font-size: var(--h3-sm);
+    font-size: 1.4em;
     margin-top: 0.5em;
 }
 
@@ -51,10 +60,6 @@
     margin-top: -8%;
     margin-left: 12%;
     margin-right: 12%;
-    display: inline-block;
-}
-#hero-button-start span {
-    font-size: 1.3rem !important;
 }
 
 #section-container {
@@ -62,47 +67,39 @@
     grid-row: 3 / span 1;
 }
 
-#section-heading {
-    font-size: var(--h3-sm);
+#section-heading2 {
+    font-size: 1.3em;
 }
 
-#section-container .button-group {
-    width: 100%;
-}
 
 /* For medium screens */
 @media only screen and (min-width: 768px) {
+
+    h1 {
+        font-size: 3.6em;
+    }
     #hero-message {
         padding: 20% 10% 15% 10%;
-        border-bottom-left-radius: var(--border-rad-med);
-        border-bottom-right-radius: var(--border-rad-med);
+    }
+
+    #hero-button-start {
+        display: inline-block;
     }
 
     #hero-message-paragraph {
-        font-size: var(--h3-med);
+        font-size: 1.6em;
     }
 
     #section-button-resources-checklist,
     #section-button-resources {
         width: 30vw;
     }
-    
-    #section-heading {
-        font-size: var(--h3-med);
-    }
+
 }
 
 /* For larger screens */
 @media only screen and (min-width: 1200px) {
-    #hero-message {
-        border-bottom-left-radius: var(--border-rad-lg);
-        border-bottom-right-radius: var(--border-rad-lg);
-    }
     #hero-message-paragraph {
-        font-size: var(--h3-lg);
-    }
-
-    #section-heading3 {
-        font-size: var(--h3-lg);
+        font-size: 2em;
     }
 }

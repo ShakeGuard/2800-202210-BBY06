@@ -1,7 +1,26 @@
+@import url('https://api.fontshare.com/css?f[]=satoshi@400,401,700,701&display=swap'); 
+@import url('https://api.fontshare.com/css?f[]=sharpie@400,700&display=swap');
+
+
 :root {
+    --color-primary: rgb(23, 165, 186);
+    --color-secondary: rgb(251, 179, 59);
+    --color-error: rgb(235, 65, 13);
+    --color-success: rgb(18, 210, 164);
+    --toast-text: white;
+    --nice-drop-shadow: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    
     --color-unfocused: rgba(0,0,0,0.5);
+    --color-text: rgba(0,0,0,1);
 }
 
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+}
 
 h1 {
     text-align: center;
@@ -9,7 +28,7 @@ h1 {
 
 #dashboard-grid {
     display: grid;
-    grid-template-columns: 10vw minmax(0, 1fr) 10vw;
+    grid-template-columns: 10% minmax(0, 1fr) 10%;
     margin-bottom: 20vh;
 }
 
@@ -43,7 +62,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-light);
+    color: var(--toast-text);
 }
 
 /* Admin user list */
@@ -52,11 +71,11 @@ h1 {
 }
 
 .toast-info {
-    background-color: var(--color-teal);
+    background-color: var(--color-primary);
 }
 
 .toast-warning {
-    background-color: var(--color-yellow);
+    background-color: var(--color-secondary);
 }
 
 .toast-error {
@@ -68,7 +87,6 @@ h1 {
 }
 
 #user-list-panel {
-    width: 100%;
     margin-top: 10%;
     margin-bottom: 5%;
     grid-column: 2 / span 1;
@@ -79,7 +97,7 @@ h1 {
     padding: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--p-sm);
+    gap: 5%;
 }
 
 #user-list-header {
@@ -90,13 +108,13 @@ h1 {
 
 .user-item {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 3rem;
+    grid-template-columns: minmax(0, 1fr) 10%;
     align-items: center;
     gap: 1rem;
-    padding: 1rem;
-    border-radius: var(--border-rad-sm);
-    background-color: var(--bg-light);
-    filter: var(--shadow-light);
+    padding: 5%;
+    border-radius: 1.5rem;
+    background-color: white;
+    filter: var(--nice-drop-shadow);
 }
 
 .user-item-name-pic {
@@ -115,13 +133,14 @@ h1 {
 }
 
 .admin-name:focus {
-    font-weight: var(--ff-bold);
-    color: var(--text-dark);
+    font-weight: 700;
+    color: var(--color-text);
 }
 
 
 .edit-button-group button {
-    width: 100%;
+    color: black;
+    margin: 0;
 }
 
 
@@ -144,12 +163,8 @@ h1 {
 
 /* For medium screens */
 @media only screen and (min-width: 768px) {
-    #dashboard-grid {
-        gap: var(--p-med);
-    }
     #user-list {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        gap: var(--p-med);
     }
 
     #user-list-header {
@@ -157,7 +172,10 @@ h1 {
     }
 
     .user-item-name-pic {
-        gap: 0.5rem;
+        gap: 5%;
+    }
+    .user-item-name {
+        font-size: 1.4em;
     }
 }
 
@@ -165,6 +183,8 @@ h1 {
 @media only screen and (min-width: 1200px) {
     #dashboard-grid {
         grid-template-columns: 15% minmax(0, 1fr) 15%;
-        gap: var(--p-lg);
+    }
+    .user-item-name-pic {
+        gap: 3%;
     }
 }

@@ -1,6 +1,5 @@
 "use strict";
 
-const ProfileForm = document.querySelector('.profile-form');
 const UpdateButton = document.getElementById("Update-Button");
 const FullNameInput = document.getElementById("FullName");
 const EmailInput = document.getElementById("Email");
@@ -12,7 +11,7 @@ const Pen3 = document.getElementById("Pen-3");
 const UserFeedbackFile = document.getElementById("Upload-Avatar-FileName");
 const EditProfile = document.querySelector("#Expand-Profile-Form");
 const CancelProfileChanges = document.querySelector("#Cancel-Profile-Form");
-const hiddenProfileElements = document.querySelectorAll('.toggle-profile-form');
+const hiddenElements = document.querySelectorAll('.toggle');
 
 const createKitButton = document.querySelector('#create-kit-button');
 const kitOptionsFormTemplate = document.querySelector('#kit-options');
@@ -23,13 +22,9 @@ const kitMessageContainer = document.querySelector('.empty-kit-message');
 const addItemFormTemplate = document.querySelector('#add-item');
 let selectedTemplate = 'Home';
 let userKits;
-const deleteConfirmationTemplate = document.querySelector('#delete-confirmation');
+const deleteKitConfirmationTemplate = document.querySelector('#delete-confirmation');
 // Store the kit item HTML that the user wants to edit
-// used in createItemDeleteConfirmation
 let customItem;
-let kitIndex;
-let itemIndex;
-let row;
 
 // Add the logged in user's name to the profile welcome message
 /** @type HTML span */
@@ -37,24 +32,10 @@ const WelcomeMessage = document.querySelector(".user-name-welcome");
 
 // Toggle the profile form when user clicks on "Edit profile"
 function toggleProfileForm() {
-	// Toggle the form elements
-	hiddenProfileElements.forEach(element => {
-		element.classList.toggle('toggle-profile-form');
+	hiddenElements.forEach(element => {
+		element.classList.toggle('toggle');
 	});
-	EditProfile.classList.toggle('toggle-profile-form');
-	// Disable inputs
-	FullNameInput.disabled= true; 
-    FullNameInput.value = userName;
-	EmailInput.disabled = true;
-	EmailInput.value = userEmail;
-	PasswordInput.disabled= true; 
-    PasswordInput.value = "12345";
-	UserFeedbackFile.innerText = "";
-	// Clear all error messages
-	const errorMsgs = document.querySelectorAll('.profile-form .error');
-	errorMsgs.forEach(element => {
-		element.innerText = ""
-	});
+	EditProfile.classList.toggle('toggle');
 }
 EditProfile.addEventListener('click', toggleProfileForm);
 CancelProfileChanges.addEventListener('click', toggleProfileForm);
@@ -106,8 +87,7 @@ const getAvatar = async() => {
 	document.getElementById("Base-Container-ProfilePicture").src = base64;
 }
 
-async function executeUpdate(e){
-	e.preventDefault();
+async function executeUpdate(){
 	checkForInvalidInput(FullNameInput);
 	checkForInvalidInput(PasswordInput);
 	checkForInvalidInput(EmailInput);
@@ -141,11 +121,6 @@ async function executeUpdate(e){
 		})
 	}
 
-	if(Object.keys(payload).length === 0 && !AvatarInput.files[0]) {
-		error.innerText = "Nothing to update."
-		error.style.color = "blue";
-		return;
-	}
 
     const response = await fetch("/profile", {
         method: "PATCH",
@@ -173,7 +148,7 @@ async function executeUpdate(e){
     }
 
 	UserFeedbackFile.innerHTML = '';
-	AvatarInput.value = null;
+
 	getAvatar();
 	getProfileDetails();
 }
@@ -227,26 +202,12 @@ function checkForInvalidInput(input) {
 	}
 }
 
-// Code snippet from Mozilla
-// https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
-function validFileType(file) {
-    const fileTypes = [
-        "image/jpeg",
-        "image/png",
-    ];
-    return fileTypes.includes(file.type);
-}
-
 AvatarInput.addEventListener("input", function(e) {
 	const file = this.files[0];
 	const error = document.getElementById("Avatar-Error");
 	if(file && file.size > 8 * 1024 * 1024) {
 		// Don't allow files larger than 8MB
 		error.innerText = "Max file size is 8MB";
-		errors = errors | errorFlags.Avatar;
-	} else if (!validFileType(file)) {
-		// Don't allow non jpg/png files
-		error.innerText = "File must be a jpg or png";
 		errors = errors | errorFlags.Avatar;
 	} else {
 		error.innerText = "";
@@ -258,7 +219,7 @@ AvatarInput.addEventListener("input", function(e) {
 })
 getAvatar();
 getProfileDetails();
-ProfileForm.addEventListener("submit", executeUpdate, false);
+UpdateButton.addEventListener("click", executeUpdate, false);
 Pen1.addEventListener("click",editFullName,false);
 Pen2.addEventListener("click",editEmail,false);
 Pen3.addEventListener("click",editPasswordInput,false);
@@ -470,7 +431,7 @@ function addItemKit(item, kitIndex, itemIndex, completedItems, totalKitItems, ki
 		const deleteItemButton = itemRow.querySelector('.edit-button-group .delete');
 		deleteItemButton.dataset.kitIndex = kitIndex;
 		deleteItemButton.dataset.itemIndex = itemIndex;
-		deleteItemButton.addEventListener('click', createItemDeleteConfirmation);
+		deleteItemButton.addEventListener('click', deleteItemSubmissionHandler);
 	} else {
 		itemRow.querySelector('.edit-button-group').remove();
 	}
@@ -599,27 +560,13 @@ async function editItem(kitIndex, itemIndex, row) {
 	// TODO: Handle errors
 }
 
-// Delete a kit item
-async function createItemDeleteConfirmation(e) {
-	e.preventDefault();
-	kitIndex = e.target.dataset.kitIndex;
-	itemIndex = e.target.dataset.itemIndex;
-	row = e.target.parentElement.parentElement;
-	
-	const form = deleteConfirmationTemplate.content.cloneNode(true).firstElementChild;
-	const cancelButton = form.querySelector('[type="button"');
-	cancelButton.addEventListener('click', () => {
-		closeForm("#delete-confirmation-form");
-	});
-	createFormOverlay(form);
-	form.addEventListener('submit', deleteItemSubmissionHandler);
-}
-
 async function deleteItemSubmissionHandler(e) {
 	e.preventDefault();
+	const kitIndex = e.target.dataset.kitIndex;
+	const itemIndex = e.target.dataset.itemIndex;
+	const row = e.target.parentElement.parentElement;
 	await deleteItem(kitIndex, itemIndex);
 	row.remove();
-	closeForm("#delete-confirmation-form");
 }
 
 async function deleteItem(kitIndex, itemIndex) {
@@ -639,7 +586,7 @@ let requestedKitID = "";
 async function createDeleteConfirmation(e) {
 	requestedKitID = e.target.parentElement.id;
 	
-	const form = deleteConfirmationTemplate.content.cloneNode(true).firstElementChild;
+	const form = deleteKitConfirmationTemplate.content.cloneNode(true).firstElementChild;
 	const cancelButton = form.querySelector('[type="button"');
 	cancelButton.addEventListener('click', () => {
 		closeForm("#delete-confirmation-form");
@@ -665,8 +612,6 @@ async function deleteKitSubmissionHandler(e) {
 	e.preventDefault();
 	await deleteKit(requestedKitID);
 	closeForm("#delete-confirmation-form");
-	const kit = document.getElementById(requestedKitID);
-	kit.remove();
 }
 
 // Hacky way to refresh the kit list without reloading page

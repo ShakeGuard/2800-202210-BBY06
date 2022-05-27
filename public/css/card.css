@@ -14,23 +14,21 @@ h1 {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
     height: 100%;
-    width: 80%;
+    width: 85%;
+    font-size: 12px;
     text-decoration: none;
-    filter: var(--shadow-dark);
+    margin-bottom: 14px;
+    filter: drop-shadow(0.3em 0.3em 0.5em rgba(0, 0, 0, 0.15));
 }
 
 #Card-Image{
     align-self: end;
     object-fit: cover;
-    height: 19em;
     width: 100%;
-    border-radius: var(--border-rad-sm) var(--border-rad-sm) 0px 0px;
+    border-radius: 3em 3em 0px 0px;
     grid-row: 1 / span 1;
 }
 
-#Card-Title {
-    font-size: var(--h2-sm);
-}
 #Card-Container-Descriptor{
     display: grid;
     color: black;
@@ -38,15 +36,16 @@ h1 {
     grid-template-rows: .5fr 1fr .25fr;
     padding: 2em;
     height: 80%;
-    border-radius: 0px 0px var(--border-rad-sm) var(--border-rad-sm);
-    background-color: var(--bg-light);
-    transition: var(--transition);
+    border-radius: 0px 0px 3em 3em;
+    background-color: #ffffff;
+    transition: background-color .25s, color .25s;
+    transition-timing-function: ease-in-out;
     grid-row: 2 / span 1;
 }
 
 .Card-Container:hover > #Card-Container-Descriptor {
-    background-color: var(--color-teal);
-    color: var(--text-color-light);
+    background-color: #17A5BA;
+    color: #ffffff;
 }
 
 #Description-Author{
@@ -61,13 +60,13 @@ h1 {
 @media only screen and (min-width: 450px) {
     .Card-Container{
         width: 90%;
-        /* font-size: 15px; */
+        font-size: 15px;
     }
 }
 
 @media only screen and (min-width: 1200px) {
     .Card-Container{
         width: 100%;
-        /* font-size: 20px; */
+        font-size: 20px;
     }
 }

@@ -1,19 +1,27 @@
 .popup-form{
-    width: 100vw;
-    height: 100vh;
+	color: black;
+    background-color: white;
+    filter: drop-shadow(0 0.2rem 0.2rem rgba(0, 0, 0, 0.1));
+    border-radius: 1.5rem;
+    padding: 2rem;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 1rem;
 
     position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    display: flex;
-    align-items: center;
+    top: 10%;
+    right: 10%;
+    bottom: 10%;
+    left: 10%;
+    
+    overflow-y: auto;
 }
 
 .popup-form h2 {
     margin-top: 0;
+    font-size: 1.8rem;
     text-align: center;
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
@@ -21,18 +29,17 @@
 
 .popup-form input {
     width: 100%;
-    min-height: 1rem;
-    max-height: 2rem;
+    min-height: 2rem;
     grid-column: 1 / span 1;
     border-style: none;
 
-    padding: 0.2rem;
-    border-bottom: 2px solid var(--color-grey);
+    padding: 0.2rem 0.5rem;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #c4c4c4;
 }
 
 .popup-form input[type=file] {
     border: none;
-    height: auto;
 }
 
 .popup-form .button-group {
@@ -49,7 +56,7 @@
     align-items: center;
     justify-content: center;
     clip-path: circle(50%);
-    background-color: var(--color-grey);
+    background-color: #c4c4c4;
     width: 6rem;
     height: 6rem;
 }
@@ -113,57 +120,41 @@
     display: inline-block;
     width: 100%;
     height: 100%;
-    border-radius: var(--border-rad-sm);
-    background-color: var(--bg-light);
-    color: var(--text-dark);
+    border-radius: 1.5rem;
+    background-color: white;
+    color: black;
     font-size: 2rem;
     vertical-align: middle;
-    filter: var(--shadow-light);
-    transition: var(--transition);
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
+    transition: background-color 0.1s ease-in;
 }
 .custom-upload-button:hover,
 .custom-upload-button:active,
 .custom-upload-button:focus {
-    background-color: var(--color-light-hover);
+    background-color: #f5f5f5;
 }
 
 .active-input {
     font-weight: 700 !important;
     background-color: rgba(251, 179, 59, 0.2);
-    transition: var(--transition);
+    transition: background-color ease-in 0.2s;
 }
 .inactive-input {
     font-weight: 400 !important;
-    background-color: var(--bg-light);
-    transition: var(--transition);
+    background-color: white;
+    transition: background-color ease-in 0.2s;
 }
 
-/* This positions the form's content and adds background, etc. */
-.form-content-wrapper {
-    background-color: var(--bg-light);
-    filter: var(--shadow-light);
-    border-radius: var(--border-rad-sm);
 
-    padding: 2rem;
-    max-width: 70vw;
-    max-height: 80vh;
-    width: fit-content;
-    height: fit-content;
 
-    margin-left: auto;
-    margin-right: auto;
-    overflow-y: auto;
 
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    align-items: baseline;
-    gap: 1rem;
-}
+
+
 
 @media only screen and (min-width: 768px) {
     .popup-form h2 {
         margin-top: 1rem;
+        font-size: 2.4rem;
     }
 
     .popup-form .button-group {
@@ -173,8 +164,6 @@
 }
 
 @media only screen and (min-width: 1200px) {
-    .popup-form input {
-        width: 100%;
-    }
+
 
 }

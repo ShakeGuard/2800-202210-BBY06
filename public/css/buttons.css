@@ -1,25 +1,21 @@
 .material-symbols-outlined {
-    vertical-align: bottom;
-    font-size: 1.8rem !important;
-}
-
-button, input[type=submit] {
-    font-weight: var(--ff-bold);
+    vertical-align: text-bottom;
 }
 
 /* Universal button styles */
 .button {
     height: auto;
     width: auto;
-    padding: var(--btn-padding-sm);
+    padding: 0.8em 1.6em;
     border: none;
-    border-radius: var(--border-rad-sm);
+    border-radius: 4em;
     outline: none;
     font: inherit;
-    font-weight: var(--ff-bold);
-    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 1.2em;
+    color: black;
     margin-top: 1em;
-    transition: var(--transition);
+    transition: background-color 0.1s ease-in;
     place-self: center;
     cursor: pointer;
 }
@@ -27,56 +23,67 @@ button, input[type=submit] {
 .button:hover,
 .button:active,
 .button:focus {
-    filter: var(--shadow-light);
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
 
 }
 
 .button-primary {
-    background-color: var(--color-yellow);
+    background-color: #FBB33B;
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
 }
 
 .button-primary:hover, 
 .button-primary:active, 
 .button-primary:focus {
-    background-color: var(--color-yellow-hover);
+    background-color: #E99812;
 }
 
 
 .button-primary-teal {
-    color: var(--text-light);
-    background-color: var(--color-teal);
+    background-color: rgba(23, 165, 186, 1);
+    filter: drop-shadow(0 0.2em 0.2em rgba(0, 0, 0, 0.1));
 }
 
 .button-primary-teal:hover, 
 .button-primary-teal:active, 
 .button-primary-teal:focus {
-    background-color: var(--color-teal-hover);
+    background-color: rgba(23, 165, 186, 0.8);
 }
 
 
 .button-secondary {
-    border: 2px solid var(--color-yellow);
-    background-color: var(--bg-light);
+    border: 2px solid #FBB33B;
+    background-color: transparent;
 }
 
 .button-secondary:hover, 
 .button-secondary:active, 
 .button-secondary:focus {
-    border-color: var(--color-yellow-hover);
-    background-color: var(--color-yellow-hover);
+    background-color: #FBB33B;
 }
 
+.button-secondary-grey {
+    border: 2px solid rgba(196, 196, 196, 1);
+    background-color: transparent;
+    color: rgba(196, 196, 196, 1);
+}
+
+.button-secondary-grey:hover,
+.button-secondary-grey:active,
+.button-secondary-grey:focus {
+    background-color: rgba(196, 196, 196, 0.25);
+}
 
 .button-secondary-teal {
-    border: 2px solid var(--color-teal);
-    background-color: var(--bg-light);
-    color: var(--text-dark);
+    border: 2px solid rgba(23, 165, 186, 1);
+    background-color: transparent;
+    color: rgba(23, 165, 186, 1);
 }
 
 .button-secondary-teal:hover,
 .button-secondary-teal:active,
 .button-secondary-teal:focus {
-    background-color: var(--color-teal-hover);
+    background-color: rgba(23, 165, 186, 0.25);
 }
 
 
@@ -88,22 +95,20 @@ button, input[type=submit] {
 
 .button-nav:hover,
 .button-nav:active,
-.button-nav:focus,
-.button-nav:visited {
+.button-nav:focus {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
 a.button {
     text-decoration: none;
-    transition: var(--transition);
-    color: var(--text-dark);
+    transition: all ease-in 0.1s;
 }
 
 a.button:hover,
 a.button:active,
-a.button:focus,
-a.button:visited {
-    color: var(--text-dark);
+a.button:focus {
+    color: rgba(23, 165, 186, 1);
+    filter: none;
 }
 
 
@@ -112,28 +117,17 @@ a.button:visited {
 }
 
 .small {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    max-height: 4em;
     width: auto;
     height: auto;
-    font-size: var(--p-sm);
-    padding: var(--btn-padding-xs) !important;
+    font-size: 1em;
 }
 
 .transparent {
     background-color: transparent;
     border-color: transparent;
-}
-
-
-/********************* Media queries  *************************/
-@media only screen and (min-width: 768px) {
-    .button {
-        padding: var(--btn-padding-med);
-        border-radius: var(--border-rad-med);
-    }
-}
-@media only screen and (min-width: 1200px) {
-    .button {
-        padding: var(--btn-padding-lg);
-        border-radius: var(--border-rad-lg);
-    }
 }

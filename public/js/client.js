@@ -5,18 +5,15 @@ document.querySelector("#Button-Login").addEventListener("click", async function
     e.preventDefault();
     const email = document.getElementById("Email").value;
     const password = document.getElementById("Password").value;
-    let response;
-    try {
-        response = await fetch("/login", {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            "method": "POST",
-            "body": JSON.stringify({email, password})
-        });
-    } catch (err) {
-        console.error(err);
-    }
+    const response = await fetch("/login", {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        "method": "POST",
+        "body": JSON.stringify({email, password})
+    });
+    
+
     const status = await response.text();
         switch (status) {
             case 'loginSuccessful':
@@ -28,9 +25,6 @@ document.querySelector("#Button-Login").addEventListener("click", async function
 				break;
             case 'loginSuccessfulAdmin':
                 window.location.href = "./dashboard";
-                break;
-            case 'offline':
-                document.getElementById("Error-Msg").innerText = "You are offline!";
                 break;
             default:
                 break;
