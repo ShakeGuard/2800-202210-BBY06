@@ -4,66 +4,57 @@
   <meta charset="utf-8">
 </head>
 <div>
+  <form id="profile-form" class="profile-form">
+    <div class="form-content-wrapper">
+      <!-- Profile Picture -->
+      <div class="upload-image-container">
+          <div class="upload-image-group">
+              <img src="/images/Default-Profile-Picture.jpg" class="profile-picture" alt="profile-pic" id="Base-Container-ProfilePicture"/>
+              <div class="upload-button-group">
+                  <!-- Label will be overlaid on top and hide the default file button -->
+                  <label for="Upload-Avatar">
+                    <span id="Pen-4" class="material-symbols-outlined pen toggle-profile-form">edit</span>
+                  </label>
+                  <!-- Actual File uploade button -->
+                  <input id="Upload-Avatar" class="default-upload-button" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
+              </div>
+          </div>
+          <!-- Profile Picture User Feedback -->
+          <p id="Upload-Avatar-FileName" class="upload-image-name"></p>
+      </div>
+      <!-- Full Name -->
+      <div class="form-input-container toggle-profile-form">
+        <label for="FullName" class="Form-Label">Name</label>
+        <input id="FullName" type="text" class="Form-Input" value="Name" disabled />
+        <span id="Pen-1" class="material-symbols-outlined pen">edit</span>
+        <p class="error" id="FullName-Error"></p>
+      </div>
+      <!-- Email -->
+      <div class="form-input-container toggle-profile-form">
+        <label for="Email" class="Form-Label">Email</label>
+        <input id="Email" type="email" class="Form-Input" value="Email" disabled />
+        <span id="Pen-2" class="material-symbols-outlined pen">edit</span>
+        <p class="error" id="Email-Error"></p>
+      </div>
+      <!-- Password -->
+      <div class="form-input-container toggle-profile-form">
+        <label for="Password" class="Form-Label">Password</label>
+        <input type="password" class="Form-Input" id="Password" value="Password" disabled />
+        <span id="Pen-3" class="material-symbols-outlined pen">edit</span>
+        <p class="error" id="Password-Error"></p>
+      </div>
+      <!-- Buttons -->
+      <!-- Update Profile Button -->
+      <div class="button-group">
+        <button type="submit" id="Update-Button" class="button button-primary toggle-profile-form">Update</button>
+        <button type="button" id="Cancel-Profile-Form" class="button button-secondary toggle-profile-form">Cancel</button>
+        <!-- Edit Profile Button that should unhide the other fields -->
+        <button type="button" id="Expand-Profile-Form" class="button button-primary">Edit profile</button>
+      </div>
 
-	<!-- Profile Picture -->
-	<div id="Base-Container-ProfilePicture-Container">
-    <img src="images/Default-Profile-Picture.jpg" alt="" id="Base-Container-ProfilePicture"/>
-  </div>
-
-	<!-- Edit Profile Picture "Button" -->
-	<label for="Upload-Avatar" id="Edit-ProfilePicture-Button" class="toggle">
-		<span id="Pen-4" class="material-symbols-outlined">edit</span>
-	</label>
-
-  <!-- Profile Picture User Feedback -->
-  <div id="Base-Container-Upload-Avatar-Centering-Container" class="toggle">
-    <p id="Upload-Avatar-FileName" class="toggle"></p>
-    <input id="Upload-Avatar" type="file" name="Upload-Avatar" accept=".jpg,.png,.jpeg"/>
-  </div>
-
-  <!-- Full Name -->
-  <div id="Base-Container-FullName-Container" class="toggle">
-    <form class="Container-Form toggle">
-      <input disabled="disabled" type="text" id="FullName" class="Form-Input" value="FirstName LastName"/>
-      <span id="Pen-1" class="material-symbols-outlined">edit</span>
-      <p class="error" id="FullName-Error"></p>
-    </form>
-  </div>
-
-  <!-- Email -->
-  <div id="Base-Container-Email-Container" class="Container toggle">
-    <!-- Label -->
-    <p class="Form-Label">Email</p>
-    <!-- Container -->
-    <form class="Container-Form">
-      <input disabled="disabled" type="email" class="Form-Input" id="Email" value="Email Address"/>
-      <span id="Pen-2" class="material-symbols-outlined">edit</span>
-      <p class="error" id="Email-Error"></p>
-    </form>
-  </div>
-
-  <!-- Password -->
-  <div id="Base-Container-Password-Container" class="Container toggle">
-    <!-- Label -->
-    <p class="Form-Label">Password</p>
-    <!-- Container -->
-    <form class="Container-Form">
-      <input disabled="disabled" type="password" class="Form-Input" id="Password" value="Password"/>
-      <span id="Pen-3" class="material-symbols-outlined">edit</span>
-      <p class="error" id="Password-Error"></p>
-    </form>
-  </div>
-
-  <!-- Update Profile Button -->
-  <div id="Base-Container-Update-Container" class="toggle">
-    <p id="Update-Button" class="button button-primary">Update</p>
-  </div>
-  <!-- Edit Profile Button that should unhide the other fields -->
-  <button type="button" class="button button-primary" id="Expand-Profile-Form">Edit profile</button>
-  <button type="button" class="button button-secondary toggle" id="Cancel-Profile-Form">Cancel</button>
-
-  <!-- Error messages -->
-  <p id="Avatar-Error" class="error toggle"></p>
-  <p id="Update-Error" class="toggle"></p>
-
+      <!-- Error messages -->
+      <p id="Avatar-Error" class="error toggle-profile-form"></p>
+      <p id="Update-Error" class="error toggle-profile-form"></p>
+    </div>
+  </form>
 </div>

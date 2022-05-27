@@ -2,9 +2,26 @@
 <head>
   <title>Header</title>
   <meta charset="utf-8"/>
+  <link rel="manifest" href="/shakeguard.webmanifest">
+  <link rel="apple-touch-icon" href="/images/pwa_icons/shakeguard_icon_x192.png">
+  <meta name="theme-color" content="#17a5ba"/>
 </head>
 <header>
     <nav>
+        <!-- Somewhat horrible hack, we put the Service Worker in the header template. -->
+        <script>
+            async function registerSW() {
+                if ('serviceWorker' in navigator) {
+                    return;
+                    try {
+                        const registration = await navigator.serviceWorker.register('./sw.js', {scope: '/',});
+                    } catch (error) {
+                        console.error(`Registration failed with ${error}`);
+                    }
+                }
+            }
+            registerSW();
+        </script>
         <a href="/"><img class="logo" src="/images/comp2800_logo.svg" alt="ShakeGuard" /></a>
         <input id="collapsible" class="toggle" type="checkbox">
         <label for="collapsible" class="label-toggle button button-nav">
