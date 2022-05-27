@@ -37,6 +37,8 @@ async function readSecrets() {
     log.info(`[SECRETS] Parsed ${Object.keys(secrets).length} secret files:`)
     log.info(`[SECRETS] ${JSON.stringify(Object.keys(secrets))}`);
     return secrets;
-};
+}
 
-export { readSecrets };
+const secrets = await readSecrets();
+
+export { readSecrets, secrets };

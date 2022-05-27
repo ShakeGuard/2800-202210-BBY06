@@ -7,4 +7,8 @@ node_modules/
 .secrets/
 
 # Log output: commit the log *folder*, but not the log *files*.
-logs/*
+
+logs/**
+
+# WebStorm IDE files.
+/.idea/**
