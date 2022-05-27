@@ -7,15 +7,8 @@
 // See https://web.dev/learn/pwa/service-workers/ for a basic guide.
 
 // Cache stuff.
-const staticCache = async () => await caches.open("shakeguard-assets-v10");
+const staticCache = async () => await caches.open("shakeguard-assets-v11");
 const baseURL = location.origin;
-
-self.addEventListener("install", evt => {
-    evt.waitUntil(
-        () => {
-        }
-    );
-});
 
 // Intercept network requests.
 
@@ -29,8 +22,12 @@ const offlineRoutes = {
 };
 
 /**
+ * Given a completed Request/Response pair, return whether this
+ * network request should be put in the cache.
  *
  * @param {Request} req
+ * @param {Response} res
+ * @returns {Boolean}
  */
 function shouldCache(req, res) {
     // Don't cache things that have dynamic templates in them.
@@ -102,7 +99,7 @@ self.addEventListener('activate', (e) => {
     // HACK: Putting all this as data-in-code is a horrible bodge and I hate it. -Katy
     // HACK: This is growing to be untenable, but unfortunately it's 8:34 on the day of the submission so we do what we
     // must.
-    e.waitUntil(caches.keys().then((keyList) => {
+    e.waitUntil(caches.keys().then(() => {
         staticCache().then(
             cache => {
                 // Cache completely-static pages.
@@ -151,7 +148,7 @@ self.addEventListener('activate', (e) => {
                     "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
                     "https://api.fontshare.com/css?f[]=satoshi@400,700&display=swap",
                     "https://api.fontshare.com/css?f[]=sharpie@700&display=swap",
-                    "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+                    "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
                     "https://fonts.gstatic.com/s/materialsymbolsoutlined/v7/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2",
                     "https://cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2",
                     "https://cdn.fontshare.com/wf/PIAXUBBFI5TB5V7M6HLDUAHSATPQWSW4/XQHPNLNTXL624THLGR3NLZN3VZPPG2ZS/XKISSNYMTTK6MXKC6X5YIAZNIHJUMZ2M.woff2",
