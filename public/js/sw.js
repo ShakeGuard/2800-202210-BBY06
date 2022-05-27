@@ -72,7 +72,7 @@ self.addEventListener('fetch', (e) => {
                 return null;
             }
             if (response.clone().type === "opaqueredirect") {
-                return response.redirect(res.clone().url, res.clone().status);
+                return response.redirect(response.clone().url, response.clone().status);
             }
             return response;
         }
@@ -101,7 +101,7 @@ self.addEventListener('activate', (e) => {
     // must.
     e.waitUntil(caches.keys().then(() => {
         staticCache().then(
-            cache => {
+            async cache => {
                 // Cache completely-static pages.
                 const toCache = [
                     // Index Page:
@@ -143,26 +143,26 @@ self.addEventListener('activate', (e) => {
                     // Web Manifest (? might be bad)
                     "shakeguard.webmanifest",
                 ].map(pg => baseURL + '/' + pg)
-                // Also cache stuff that isn't ours:
-                .concat([
-                    // Font CSS files:
-                    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
-                    "https://api.fontshare.com/css?f[]=satoshi@400,700&display=swap",
-                    "https://api.fontshare.com/css?f[]=sharpie@700&display=swap",
-                    "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
-                    // Actual Fonts, in WOFF2 format:
-                    // (Material Symbols Icons)
-                    "https://fonts.gstatic.com/s/materialsymbolsoutlined/v7/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2",
-                    // (Satoshi Regular or maybe Satoshi Light)
-                    "https://cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2",
-                    // (Satoshi Bold or maybe Satoshi Regular)
-                    "https://cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff2",
-                    // (Sharpie)
-                    "https://cdn.fontshare.com/wf/PIAXUBBFI5TB5V7M6HLDUAHSATPQWSW4/XQHPNLNTXL624THLGR3NLZN3VZPPG2ZS/XKISSNYMTTK6MXKC6X5YIAZNIHJUMZ2M.woff2",
-                ]);
+                    // Also cache stuff that isn't ours:
+                    .concat([
+                        // Font CSS files:
+                        "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
+                        "https://api.fontshare.com/css?f[]=satoshi@400,700&display=swap",
+                        "https://api.fontshare.com/css?f[]=sharpie@700&display=swap",
+                        "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
+                        // Actual Fonts, in WOFF2 format:
+                        // (Material Symbols Icons)
+                        "https://fonts.gstatic.com/s/materialsymbolsoutlined/v7/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2",
+                        // (Satoshi Regular or maybe Satoshi Light)
+                        "https://cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2",
+                        // (Satoshi Bold or maybe Satoshi Regular)
+                        "https://cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff2",
+                        // (Sharpie)
+                        "https://cdn.fontshare.com/wf/PIAXUBBFI5TB5V7M6HLDUAHSATPQWSW4/XQHPNLNTXL624THLGR3NLZN3VZPPG2ZS/XKISSNYMTTK6MXKC6X5YIAZNIHJUMZ2M.woff2",
+                    ]);
 
                 for (const route of toCache) {
-                    cache.add(route);
+                    await cache.add(route);
                 }
             }
         );
