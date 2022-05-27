@@ -7,7 +7,6 @@
     <link href="/images/comp2800_logo_favicon.ico" rel="icon" type="image/x-icon" />
     <title>Dashboard</title>
 
-    <link href="/css/header-footer.css" rel="stylesheet" />
     <link href="css/user-profile.css" rel="stylesheet"/>
     <link href="css/style.css" rel="stylesheet"/>
     <link href="/css/admin-dashboard.css" rel="stylesheet" />
@@ -49,8 +48,8 @@
             <p>Remember to check and <span class="emphasis">replace expired supplies</span> (including the water!).</p>
         </div>
         <div class="empty-kit-message"></div>
-        <button type="button" class="button button-secondary-teal" id="create-kit-button">
-            <span class="material-symbols-outlined">add</span> Create a kit
+        <button type="button" class="button button-primary-teal" id="create-kit-button">
+            + Create a kit
         </button>
 
         <ul id="user-kit-list">
@@ -84,10 +83,10 @@
                 <input disabled type="text" name="admin-name" class="admin-name" placeholder="FirstName LastName" required />
             </div>
             <div class="edit-button-group">
-                <button class="button button-secondary-teal small transparent edit-button">
+                <button type="button" class="button button-secondary-teal small transparent edit-button">
                     <span class="material-symbols-outlined teal">edit</span>
                 </button>
-                <button class="button button-secondary-teal small transparent delete-button">
+                <button type="button" class="button button-secondary-teal small transparent delete-button">
                     <span class="material-symbols-outlined teal">delete</span>
                 </button>
             </div>
@@ -97,25 +96,27 @@
     <!-- Template for add admin form -->
     <template id="new-admin">
         <form id="add-admin-form" class="popup-form">
-            <h2>Create a new admin</h2>
-            <div class="upload-image-container">
-                <div class="upload-image-group">
-                    <img src="/images/Default-Profile-Picture.jpg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
-                    <div class="upload-button-group">
-                        <!-- Label will be overlaid on top and hide the default file button -->
-                        <label for="Upload-Admin-Avatar" class="custom-upload-button">+</label>
-                        <input id="Upload-Admin-Avatar" class="default-upload-button" type="file" name="Upload-Admin-Avatar" accept=".jpg,.png,.jpeg"/>
+            <div class="form-content-wrapper">
+                <h2>Create a new admin</h2>
+                <div class="upload-image-container">
+                    <div class="upload-image-group">
+                        <img src="/images/Default-Profile-Picture.jpg" class="profile-picture" alt="admin-profile-pic" id="admin-form-input-img"/>
+                        <div class="upload-button-group">
+                            <!-- Label will be overlaid on top and hide the default file button -->
+                            <label for="Upload-Admin-Avatar" class="custom-upload-button">+</label>
+                            <input id="Upload-Admin-Avatar" class="default-upload-button" type="file" name="Upload-Admin-Avatar" accept=".jpg,.png,.jpeg"/>
+                        </div>
                     </div>
+                    <!-- Profile Picture User Feedback -->
+                    <p id="Upload-Avatar-FileName-Admin" class="upload-image-name"></p>
                 </div>
-                <!-- Profile Picture User Feedback -->
-                <p id="Upload-Avatar-FileName-Admin" class="upload-image-name"></p>
-            </div>
-            <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
-            <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
-            <input id="admin-form-input-password" type="password" name="password" placeholder="Password" required />
-            <div class="button-group">
-                <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
-                <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
+                <input id="admin-form-input-name" type="text" name="user-name" placeholder="Name" required />
+                <input id="admin-form-input-email" type="email" name="email" placeholder="Email" required />
+                <input id="admin-form-input-password" type="password" name="password" placeholder="Password" required />
+                <div class="button-group">
+                    <button id="admin-form-submit-button" class="button button-primary" type="submit">Create Admin</button>
+                    <button id="admin-form-cancel-button" class="button button-secondary" type="button">Cancel</button>
+                </div>
             </div>
         </form>
     </template>
