@@ -12,22 +12,20 @@
     margin-right: auto;
 }
 
-.profile-form .form-content-wrapper {
-    display: block;
-    background-color: transparent;
-    width: auto;
-    filter: none;
-    margin-top: -100px;
+.profile-form {
+    min-width: 150px;
 }
-
-/* This is the wrapper for the input, label, and pen */
 .profile-form .form-input-container {
+    min-width: 150px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 2rem;
-    column-gap: 2rem;
-    width: 100%;
+    grid-template-columns: 1fr auto;
 }
-
+.profile-form .upload-image-container {
+    margin-top: -60px;
+}
 .profile-form img {
     width: 75px;
     height: 75px;
@@ -84,7 +82,7 @@
     border: 0px solid var(--color-grey);
     background: transparent;
     border-bottom-width: 1px;
-
+    margin-right: 1rem;
     grid-column: 1 / span 1;
     grid-row: 2 / span 1;
 }
@@ -104,7 +102,7 @@ textarea:enabled {
 }
 
 .profile-form .form-input-container .error {
-    grid-column: 1 / span 1;
+    grid-column: 1 / span 2;
     grid-row: 3 / span 1;
 }
 
