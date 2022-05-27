@@ -152,6 +152,10 @@ self.addEventListener('activate', (e) => {
                     "https://api.fontshare.com/css?f[]=satoshi@400,700&display=swap",
                     "https://api.fontshare.com/css?f[]=sharpie@700&display=swap",
                     "https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+                    "https://fonts.gstatic.com/s/materialsymbolsoutlined/v7/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2",
+                    "https://cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2",
+                    "https://cdn.fontshare.com/wf/PIAXUBBFI5TB5V7M6HLDUAHSATPQWSW4/XQHPNLNTXL624THLGR3NLZN3VZPPG2ZS/XKISSNYMTTK6MXKC6X5YIAZNIHJUMZ2M.woff2",
+                    "https://cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff2",
                 ]);
 
                 for (const route of toCache) {
